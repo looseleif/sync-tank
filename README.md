@@ -1,6 +1,6 @@
 # Sync Tank
 
-![Sync Tank Banner](images/sync.jpeg)
+![Sync Tank Banner](images/sync.jpg)
 
 **Sync Tank** is an open-source platform for intelligent aquarium monitoring, enrichment, and interaction.  
 Designed with modularity and scalability in mind, it connects hardware at the tank to remote compute systems—bridging live aquatic observation with robotics and computer vision.
