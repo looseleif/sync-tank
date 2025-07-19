@@ -23,6 +23,8 @@ It combines Raspberry Pi hardware, camera systems, servos, sensors, and server-s
 - **Education and research**  
   Observe population dynamics, interactions, and environmental changes over time; use Sync Tank as a tool in classrooms, hobby setups, or lab research.
 
+![EXHIBIT](images/synctankimg.jpg)
+
 ---
 
 ## Core Components
