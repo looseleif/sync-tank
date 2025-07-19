@@ -30,8 +30,8 @@ It combines Raspberry Pi hardware, camera systems, servos, sensors, and server-s
 ### SEE SEA TV  
 Multi-camera live streaming: Raspberry Pi 5 with PiCamera (extended CSI) and USB endoscopic cameras, outputting to FPV goggles, browser, or local display.
 
-![SSTV 1](images/sstv1.png)
 ![SSTV 2](images/sstv2.png)
+![SSTV 1](images/sstv1.png)
 ![SSTV 3](images/sstv3.png)
 
 ### REEFLEX  
