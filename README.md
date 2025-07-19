@@ -96,7 +96,6 @@ Computer vision and AI recognition: YOLOv8 object detection models paired with O
 - YOLOv8 models: https://github.com/ultralytics/ultralytics  
 - Ollama `llava:7b`: https://ollama.ai/  
 - Raspberry Pi: https://www.raspberrypi.com/  
-- PCA9685 Servo Driver: https://www.adafruit.com/product/815  
 - Tailscale: https://tailscale.com/  
 - 3D Prints (coming soon): check the `3d_prints/` directory
 
@@ -112,5 +111,4 @@ Please feel free to fork, improve, remix — and share what you discover.
 
 ## Acknowledgments
 
-Thanks to the robotics, maker, aquarist, and open-source communities whose tools, ideas, and experiments inspired this project.  
-Sync Tank exists because of your groundwork and generosity.
+Thanks to the robotics, maker, aquarist, and open-source communities whose tools, ideas, and experiments inspired this project, and Kara cause she kicks ass
