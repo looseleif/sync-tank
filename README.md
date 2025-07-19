@@ -39,6 +39,8 @@ Multi-camera live streaming: Raspberry Pi 5 with PiCamera (extended CSI) and USB
 ### REEFLEX  
 Physical interaction and enrichment: MG995 servo motors controlled through PCA9685 I2C driver board, using 3D-printed tools for habitat adjustment or feeding.
 
+![REEFLEX](images/reeflex.jpg)
+
 ### DEEPLINK  
 Computer vision and AI recognition: YOLOv8 object detection models paired with Ollama `llava:7b` multimodal captioning, providing real-time labels and descriptions.
 
