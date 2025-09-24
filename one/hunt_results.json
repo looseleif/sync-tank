@@ -1,0 +1,44 @@
+{
+  "candidates": [
+    "REDACTED_PRIVATE_IP",
+    "REDACTED_PRIVATE_IP",
+    "REDACTED_PRIVATE_IP"
+  ],
+  "rtsp_found": [],
+  "nmap_ports": {
+    "REDACTED_PRIVATE_IP": {
+      "80": "closed",
+      "443": "closed",
+      "554": "closed",
+      "5544": "closed",
+      "8000": "closed",
+      "8554": "closed"
+    },
+    "REDACTED_PRIVATE_IP": {
+      "80": "open",
+      "443": "closed",
+      "554": "open",
+      "5544": "closed",
+      "8000": "closed",
+      "8554": "closed"
+    },
+    "REDACTED_PRIVATE_IP": {
+      "80": "open",
+      "443": "closed",
+      "554": "open",
+      "5544": "closed",
+      "8000": "closed",
+      "8554": "closed"
+    }
+  },
+  "onvif": {},
+  "http_ui": {
+    "REDACTED_PRIVATE_IP": {},
+    "REDACTED_PRIVATE_IP": {
+      "80": "http"
+    },
+    "REDACTED_PRIVATE_IP": {
+      "80": "http"
+    }
+  }
+}
