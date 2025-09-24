@@ -1,0 +1,2242 @@
+{
+  "summary": {
+    "total": 144,
+    "found": 6,
+    "found_items": [
+      {
+        "ip": "192.168.1.108",
+        "port": 554,
+        "cred": "admin:admin",
+        "path": "(query-style)",
+        "url": "rtsp://192.168.1.108:554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream",
+        "tcp": {
+          "ok": true,
+          "info": "video"
+        },
+        "udp": null
+      },
+      {
+        "ip": "192.168.1.108",
+        "port": 554,
+        "cred": "admin:admin",
+        "path": "/h264/ch1/main/av_stream",
+        "url": "rtsp://admin:admin@192.168.1.108:554/h264/ch1/main/av_stream",
+        "tcp": {
+          "ok": false,
+          "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:admin@192.168.1.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+        },
+        "udp": {
+          "ok": true,
+          "info": "video"
+        }
+      },
+      {
+        "ip": "192.168.1.108",
+        "port": 554,
+        "cred": "admin:",
+        "path": "(query-style)",
+        "url": "rtsp://192.168.1.108:554/user=admin&password=&channel=1&stream=0.sdp?real_stream",
+        "tcp": {
+          "ok": false,
+          "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.1.108:554/user=admin&password=&channel=1&stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+        },
+        "udp": {
+          "ok": true,
+          "info": "video"
+        }
+      },
+      {
+        "ip": "192.168.1.185",
+        "port": 554,
+        "cred": "admin:123456",
+        "path": "(query-style)",
+        "url": "rtsp://192.168.1.185:554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream",
+        "tcp": {
+          "ok": true,
+          "info": "video"
+        },
+        "udp": null
+      },
+      {
+        "ip": "192.168.1.185",
+        "port": 554,
+        "cred": "admin:admin",
+        "path": "(query-style)",
+        "url": "rtsp://192.168.1.185:554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream",
+        "tcp": {
+          "ok": true,
+          "info": "video"
+        },
+        "udp": null
+      },
+      {
+        "ip": "192.168.1.185",
+        "port": 554,
+        "cred": "admin:admin",
+        "path": "/live",
+        "url": "rtsp://admin:admin@192.168.1.185:554/live",
+        "tcp": {
+          "ok": false,
+          "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:admin@192.168.1.185:554/live']' timed out after 2.5 seconds"
+        },
+        "udp": {
+          "ok": true,
+          "info": "video"
+        }
+      }
+    ]
+  },
+  "results": [
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/videoMain",
+      "url": "rtsp://admin:123456@192.168.1.108:554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55563798cd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.1.108:554/videoMain: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55566fe20d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.1.108:554/videoMain: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:@192.168.1.108:554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55567beb8d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.1.108:554/h264Preview_01_main: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555c41a4d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.1.108:554/h264Preview_01_main: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:admin@192.168.1.108:554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x555629d08d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.1.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55557ee90d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.1.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/videoMain",
+      "url": "rtsp://admin:@192.168.1.108:554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55559e600d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.1.108:554/videoMain: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555f972cd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.1.108:554/videoMain: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555ec82cd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.1.108:554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555b3b98d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.1.108:554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:123456@192.168.1.108:554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5556677c0d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.1.108:554/live/ch00_0: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x555603cb4d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.1.108:554/live/ch00_0: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:123456@192.168.1.108:554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5556016dcd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.1.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x555626ed0d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.1.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/live",
+      "url": "rtsp://admin:admin@192.168.1.108:554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55565a240d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.1.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55563e3c8d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.1.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:admin@192.168.1.108:554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55564f224d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.1.108:554/live/ch00_0: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55564eeecd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.1.108:554/live/ch00_0: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:admin@192.168.1.108:554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555b97a0d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.1.108:554/h264Preview_01_main: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555ffeccd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.1.108:554/h264Preview_01_main: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555c50f0d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.1.108:554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555c4588d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.1.108:554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/videoMain",
+      "url": "rtsp://admin:admin@192.168.1.108:554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:admin@192.168.1.108:554/videoMain: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555ddc04d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.1.108:554/videoMain: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:123456@192.168.1.108:554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:123456@192.168.1.108:554/h264Preview_01_main: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555ba8dcd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.1.108:554/h264Preview_01_main: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/live",
+      "url": "rtsp://admin:@192.168.1.108:554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55562ec48d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.1.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555c3304d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.1.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/live",
+      "url": "rtsp://admin:123456@192.168.1.108:554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555eb9acd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.1.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55562df30d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.1.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:@192.168.1.108:554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:@192.168.1.108:554/live/ch00_0: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555d188cd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.1.108:554/live/ch00_0: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:554/user=admin_password=_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5556248ecd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.1.108:554/user=admin_password=_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55565c200d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.1.108:554/user=admin_password=_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:@192.168.1.108:554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x555680cb0d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.1.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55564c140d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.1.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": true,
+        "info": "video"
+      },
+      "udp": null
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/live",
+      "url": "rtsp://admin:123456@192.168.1.108:8554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5556248dab00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/live: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555f8e32b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/live: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:8554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555d1d0eb00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555a9022b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:admin@192.168.1.108:8554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55565c9beb00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/h264/ch1/main/av_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555620f76b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/h264/ch1/main/av_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/videoMain",
+      "url": "rtsp://admin:admin@192.168.1.108:8554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555e1292b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/videoMain: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555a2472b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/videoMain: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:8554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555601abab00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55565022ab00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:123456@192.168.1.108:8554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555682122b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/h264Preview_01_main: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555630082b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/h264Preview_01_main: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:123456@192.168.1.108:8554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555fbb8eb00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/Streaming/Channels/101: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555760e6b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/Streaming/Channels/101: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://192.168.1.108:554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.1.108:554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/videoMain",
+      "url": "rtsp://admin:123456@192.168.1.108:8554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555ca35ab00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/videoMain: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555e4912b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/videoMain: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:admin@192.168.1.108:8554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55562d636b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/Streaming/Channels/101: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555e6602b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/Streaming/Channels/101: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:admin@192.168.1.108:8554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55566772eb00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/h264Preview_01_main: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555609ca2b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/h264Preview_01_main: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:admin@192.168.1.108:554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:admin@192.168.1.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": true,
+        "info": "video"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:admin@192.168.1.108:8554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55563c3f6b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/live/ch00_0: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555599892b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/live/ch00_0: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/live",
+      "url": "rtsp://admin:admin@192.168.1.108:8554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555cb8a6b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/live: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555f41a2b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.108:8554/live: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:8554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555f8a9eb00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55565692eb00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:123456@192.168.1.108:8554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55564f902b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/h264/ch1/main/av_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55565c24eb00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/h264/ch1/main/av_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:8554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555644d66b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555aca9eb00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:@192.168.1.108:8554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555681d26b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/Streaming/Channels/101: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55563a2cab00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/Streaming/Channels/101: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:@192.168.1.108:8554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555ccbe6b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/h264/ch1/main/av_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555953cab00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/h264/ch1/main/av_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:8554/user=admin_password=_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555d9896b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin_password=_channel=1_stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55557ca72b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin_password=_channel=1_stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:123456@192.168.1.108:8554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555bec92b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/live/ch00_0: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555f1c52b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.108:8554/live/ch00_0: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:@192.168.1.108:8554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55559823ab00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/h264Preview_01_main: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555634062b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/h264Preview_01_main: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:8554/user=admin&password=&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555583fb2b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin&password=&channel=1&stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555d359eb00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.108:8554/user=admin&password=&channel=1&stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:@192.168.1.108:8554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555603652b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/live/ch00_0: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555edcf6b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/live/ch00_0: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/live",
+      "url": "rtsp://admin:@192.168.1.108:8554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5556729cab00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/live: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555c849ab00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/live: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/videoMain",
+      "url": "rtsp://admin:@192.168.1.108:8554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555fb72ab00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/videoMain: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555670f2b00] Connection to tcp://192.168.1.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.108:8554/videoMain: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.108:554/user=admin&password=&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.1.108:554/user=admin&password=&channel=1&stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": true,
+        "info": "video"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": true,
+        "info": "video"
+      },
+      "udp": null
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:123456@192.168.1.108:554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:123456@192.168.1.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:123456@192.168.1.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:@192.168.1.108:554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:@192.168.1.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:@192.168.1.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:@192.168.1.185:554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:@192.168.1.185:554/h264/ch1/main/av_stream: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://admin:@192.168.1.185:554/h264/ch1/main/av_stream: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:123456@192.168.1.185:554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:123456@192.168.1.185:554/live/ch00_0: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://admin:123456@192.168.1.185:554/live/ch00_0: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://192.168.1.185:554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://192.168.1.185:554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": true,
+        "info": "video"
+      },
+      "udp": null
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:admin@192.168.1.185:8554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55559bb26b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/h264/ch1/main/av_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55561e2bab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/h264/ch1/main/av_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:admin@192.168.1.185:554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:admin@192.168.1.185:554/live/ch00_0']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://admin:admin@192.168.1.185:554/live/ch00_0: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:admin@192.168.1.185:554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:admin@192.168.1.185:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://admin:admin@192.168.1.185:554/h264/ch1/main/av_stream: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:admin@192.168.1.185:8554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555f9ab2b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/Streaming/Channels/101: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5556023aab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/Streaming/Channels/101: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:admin@192.168.1.185:554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:admin@192.168.1.185:554/h264Preview_01_main']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://admin:admin@192.168.1.185:554/h264Preview_01_main: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:admin@192.168.1.185:554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:admin@192.168.1.185:554/Streaming/Channels/101']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://admin:admin@192.168.1.185:554/Streaming/Channels/101: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/live",
+      "url": "rtsp://admin:123456@192.168.1.185:554/live",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:123456@192.168.1.185:554/live: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://admin:123456@192.168.1.185:554/live: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/videoMain",
+      "url": "rtsp://admin:123456@192.168.1.185:554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:123456@192.168.1.185:554/videoMain: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://admin:123456@192.168.1.185:554/videoMain: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/live",
+      "url": "rtsp://admin:admin@192.168.1.185:554/live",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:admin@192.168.1.185:554/live']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": true,
+        "info": "video"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:@192.168.1.185:554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:@192.168.1.185:554/Streaming/Channels/101: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://admin:@192.168.1.185:554/Streaming/Channels/101: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/live",
+      "url": "rtsp://admin:@192.168.1.185:554/live",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:@192.168.1.185:554/live: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://admin:@192.168.1.185:554/live: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/live",
+      "url": "rtsp://admin:admin@192.168.1.185:8554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555a6222b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/live: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55563583eb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/live: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:admin@192.168.1.185:8554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555ba4b6b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/h264Preview_01_main: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55562e9b6b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/h264Preview_01_main: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/videoMain",
+      "url": "rtsp://admin:admin@192.168.1.185:8554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555fe2eeb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/videoMain: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555d0ebab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/videoMain: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:admin@192.168.1.185:8554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55567cf5ab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/live/ch00_0: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55563ff8ab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.1.185:8554/live/ch00_0: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:8554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555d6e96b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555a751eb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/videoMain",
+      "url": "rtsp://admin:admin@192.168.1.185:554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:admin@192.168.1.185:554/videoMain: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:admin@192.168.1.185:554/videoMain']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://192.168.1.185:554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.1.185:554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:554/user=admin&password=&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://192.168.1.185:554/user=admin&password=&channel=1&stream=0.sdp?real_stream: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.1.185:554/user=admin&password=&channel=1&stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/videoMain",
+      "url": "rtsp://admin:@192.168.1.185:554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:@192.168.1.185:554/videoMain: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:@192.168.1.185:554/videoMain']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/live",
+      "url": "rtsp://admin:123456@192.168.1.185:8554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555e8426b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/live: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55556a47ab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/live: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:123456@192.168.1.185:8554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55558a65ab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/h264/ch1/main/av_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55557a7d2b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/h264/ch1/main/av_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:8554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55566930eb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555604026b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:123456@192.168.1.185:554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:123456@192.168.1.185:554/Streaming/Channels/101: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:123456@192.168.1.185:554/Streaming/Channels/101']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:@192.168.1.185:554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:@192.168.1.185:554/live/ch00_0: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:@192.168.1.185:554/live/ch00_0']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:554/user=admin_password=_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://192.168.1.185:554/user=admin_password=_channel=1_stream=0.sdp?real_stream: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.1.185:554/user=admin_password=_channel=1_stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:123456@192.168.1.185:554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:123456@192.168.1.185:554/h264/ch1/main/av_stream: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:123456@192.168.1.185:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:123456@192.168.1.185:554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:123456@192.168.1.185:554/h264Preview_01_main: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:123456@192.168.1.185:554/h264Preview_01_main']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:123456@192.168.1.185:8554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555cf806b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/Streaming/Channels/101: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555605fbeb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/Streaming/Channels/101: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:123456@192.168.1.185:8554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55562a5f2b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/h264Preview_01_main: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555ca31ab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/h264Preview_01_main: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:@192.168.1.185:8554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55563a27ab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/h264/ch1/main/av_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555bed0eb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/h264/ch1/main/av_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/videoMain",
+      "url": "rtsp://admin:123456@192.168.1.185:8554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555edafeb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/videoMain: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555675be6b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/videoMain: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:@192.168.1.185:554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "rtsp://admin:@192.168.1.185:554/h264Preview_01_main: Invalid data found when processing input"
+      },
+      "udp": {
+        "ok": false,
+        "info": "rtsp://admin:@192.168.1.185:554/h264Preview_01_main: Invalid data found when processing input"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:123456@192.168.1.185:8554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555621552b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/live/ch00_0: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555f5e36b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.1.185:8554/live/ch00_0: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/videoMain",
+      "url": "rtsp://admin:@192.168.1.185:8554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55558c80ab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/videoMain: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5556098aab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/videoMain: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:@192.168.1.185:8554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555e98b2b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/Streaming/Channels/101: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555d317eb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/Streaming/Channels/101: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:8554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555582cfab00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555b537eb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:8554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555607996b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555609ec6b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:@192.168.1.185:8554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555c6ef6b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/h264Preview_01_main: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555c22deb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/h264Preview_01_main: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/live",
+      "url": "rtsp://admin:@192.168.1.185:8554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555a5a9eb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/live: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555625a46b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/live: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/live",
+      "url": "rtsp://admin:admin@192.168.0.108:554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x555618574d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.0.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555ad7bcd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.0.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:8554/user=admin_password=_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555638026b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin_password=_channel=1_stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55559ce76b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin_password=_channel=1_stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:@192.168.1.185:8554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555654e2eb00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/live/ch00_0: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55558a086b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.1.185:8554/live/ch00_0: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:123456@192.168.0.108:554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555e1ebcd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.0.108:554/h264Preview_01_main: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55557cfa0d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.0.108:554/h264Preview_01_main: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:123456@192.168.0.108:554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55564ae44d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.0.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555c0d20d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.0.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.1.185",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.1.185:8554/user=admin&password=&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55560ee72b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin&password=&channel=1&stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555580266b00] Connection to tcp://192.168.1.185:8554?timeout=0 failed: Connection refused\nrtsp://192.168.1.185:8554/user=admin&password=&channel=1&stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:admin@192.168.0.108:554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55562e544d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.0.108:554/live/ch00_0: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55566b054d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.0.108:554/live/ch00_0: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555f4010d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.0.108:554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55561e5e4d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.0.108:554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:admin@192.168.0.108:554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555cefe4d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.0.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x555667d00d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.0.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:admin@192.168.0.108:554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55560ee58d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.0.108:554/h264Preview_01_main: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555b55a0d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.0.108:554/h264Preview_01_main: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:123456@192.168.0.108:554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555c9550d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.0.108:554/live/ch00_0: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x555649ad4d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.0.108:554/live/ch00_0: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/videoMain",
+      "url": "rtsp://admin:admin@192.168.0.108:554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555b4f48d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.0.108:554/videoMain: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5556488d8d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:admin@192.168.0.108:554/videoMain: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/videoMain",
+      "url": "rtsp://admin:123456@192.168.0.108:554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x555601d1cd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.0.108:554/videoMain: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555a5aecd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.0.108:554/videoMain: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/live",
+      "url": "rtsp://admin:123456@192.168.0.108:554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555c83b4d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.0.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555fca48d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:123456@192.168.0.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555d6a60d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.0.108:554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x555645d38d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.0.108:554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:@192.168.0.108:554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555fd090d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.0.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555f4888d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.0.108:554/Streaming/Channels/101: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/videoMain",
+      "url": "rtsp://admin:@192.168.0.108:554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55563f808d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.0.108:554/videoMain: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55560cbf8d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.0.108:554/videoMain: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:@192.168.0.108:554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55556cee8d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.0.108:554/h264Preview_01_main: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55560e910d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.0.108:554/h264Preview_01_main: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:admin@192.168.0.108:8554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555575b26b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/Streaming/Channels/101: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555681222b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/Streaming/Channels/101: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/live",
+      "url": "rtsp://admin:@192.168.0.108:554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555be284d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.0.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55562cdacd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.0.108:554/live: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:@192.168.0.108:554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x55564f53cd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.0.108:554/live/ch00_0: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555bf2acd70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://admin:@192.168.0.108:554/live/ch00_0: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:admin@192.168.0.108:8554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555b832ab00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/h264/ch1/main/av_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555f1456b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/h264/ch1/main/av_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:admin@192.168.0.108:8554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555872f6b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/h264Preview_01_main: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555d5366b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/h264Preview_01_main: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:8554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55559fa82b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555bafe6b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin_password=admin_channel=1_stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:8554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555d621eb00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55565239ab00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/videoMain",
+      "url": "rtsp://admin:admin@192.168.0.108:8554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555646e46b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/videoMain: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55559c7aeb00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/videoMain: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/live",
+      "url": "rtsp://admin:admin@192.168.0.108:8554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555c4ec6b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/live: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5556294e2b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/live: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:554/user=admin_password=_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[rtsp @ 0x555670d74d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.0.108:554/user=admin_password=_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[rtsp @ 0x5555a3b54d70] method DESCRIBE failed: 451 Parameter Not Understood\nrtsp://192.168.0.108:554/user=admin_password=_channel=1_stream=0.sdp?real_stream: Server returned 4XX Client Error, but not one of 40{0,1,3,4}"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:123456@192.168.0.108:8554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555c800eb00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/Streaming/Channels/101: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55563feceb00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/Streaming/Channels/101: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:admin",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:admin@192.168.0.108:8554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555f7cd6b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/live/ch00_0: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55561f662b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:admin@192.168.0.108:8554/live/ch00_0: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:123456@192.168.0.108:8554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55564d612b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/h264/ch1/main/av_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555d0a86b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/h264/ch1/main/av_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/Streaming/Channels/101",
+      "url": "rtsp://admin:@192.168.0.108:8554/Streaming/Channels/101",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555583acab00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/Streaming/Channels/101: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55559a5d6b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/Streaming/Channels/101: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:123456@192.168.0.108:8554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555597892b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/h264Preview_01_main: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55563ff4ab00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/h264Preview_01_main: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:123456@192.168.0.108:8554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555618676b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/live/ch00_0: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555a4d46b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/live/ch00_0: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/live",
+      "url": "rtsp://admin:123456@192.168.0.108:8554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555c51e2b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/live: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555de5b2b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/live: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "/videoMain",
+      "url": "rtsp://admin:123456@192.168.0.108:8554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555659936b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/videoMain: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555e94e6b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:123456@192.168.0.108:8554/videoMain: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:8554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555e2f0eb00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555636aa2b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:@192.168.0.108:8554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555e29deb00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/h264/ch1/main/av_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555689a3ab00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/h264/ch1/main/av_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/live/ch00_0",
+      "url": "rtsp://admin:@192.168.0.108:8554/live/ch00_0",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555582546b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/live/ch00_0: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555584cc6b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/live/ch00_0: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:8554/user=admin&password=&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55565fad2b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin&password=&channel=1&stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555753fab00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin&password=&channel=1&stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:8554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x555640856b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x5555b0736b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin_password=123456_channel=1_stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/h264Preview_01_main",
+      "url": "rtsp://admin:@192.168.0.108:8554/h264Preview_01_main",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55564103eb00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/h264Preview_01_main: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x55560c706b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/h264Preview_01_main: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/live",
+      "url": "rtsp://admin:@192.168.0.108:8554/live",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55566a386b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/live: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555569ef6b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/live: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "/videoMain",
+      "url": "rtsp://admin:@192.168.0.108:8554/videoMain",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55563de46b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/videoMain: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555627cb2b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://admin:@192.168.0.108:8554/videoMain: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 8554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:8554/user=admin_password=_channel=1_stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "[tcp @ 0x55557e6f6b00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin_password=_channel=1_stream=0.sdp?real_stream: Connection refused"
+      },
+      "udp": {
+        "ok": false,
+        "info": "[tcp @ 0x555674efab00] Connection to tcp://192.168.0.108:8554?timeout=0 failed: Connection refused\nrtsp://192.168.0.108:8554/user=admin_password=_channel=1_stream=0.sdp?real_stream: Connection refused"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:admin@192.168.0.108:554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:admin@192.168.0.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:admin@192.168.0.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:admin",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.0.108:554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.0.108:554/user=admin&password=admin&channel=1&stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:123456@192.168.0.108:554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:123456@192.168.0.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:123456@192.168.0.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:123456",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.0.108:554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.0.108:554/user=admin&password=123456&channel=1&stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "/h264/ch1/main/av_stream",
+      "url": "rtsp://admin:@192.168.0.108:554/h264/ch1/main/av_stream",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:@192.168.0.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://admin:@192.168.0.108:554/h264/ch1/main/av_stream']' timed out after 2.5 seconds"
+      }
+    },
+    {
+      "ip": "192.168.0.108",
+      "port": 554,
+      "cred": "admin:",
+      "path": "(query-style)",
+      "url": "rtsp://192.168.0.108:554/user=admin&password=&channel=1&stream=0.sdp?real_stream",
+      "tcp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'tcp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.0.108:554/user=admin&password=&channel=1&stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+      },
+      "udp": {
+        "ok": false,
+        "info": "EXC:Command '['ffprobe', '-v', 'error', '-hide_banner', '-rtsp_transport', 'udp', '-select_streams', 'v:0', '-show_entries', 'stream=codec_type', '-of', 'default=nokey=1:noprint_wrappers=1', 'rtsp://192.168.0.108:554/user=admin&password=&channel=1&stream=0.sdp?real_stream']' timed out after 2.5 seconds"
+      }
+    }
+  ]
+}
