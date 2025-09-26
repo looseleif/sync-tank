@@ -1,0 +1,4 @@
+.venv/
+zero/ultralytics_repo/
+zero/dataset/
+*.pt
