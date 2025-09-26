@@ -25,8 +25,8 @@ CAM_SWAP_SEC = float(os.environ.get("CAM_SWAP_SEC", "4.0"))  # how often to swap
 # Motors: 3 simple channels with midpoint + nudge window
 MOTORS = [
     {"ch": 0, "mid": 400, "nudge": 30, "pos": 400},  # forward/back
-    {"ch": 1, "mid": 400, "nudge": 30, "pos": 400},  # left/right
-    {"ch": 2, "mid": 400, "nudge": 30, "pos": 400},  # up/down
+    {"ch": 4, "mid": 400, "nudge": 30, "pos": 400},  # left/right
+    {"ch": 8, "mid": 400, "nudge": 30, "pos": 400},  # up/down
 ]
 CLAMP = (0, 4095)
 
