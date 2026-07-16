@@ -5,6 +5,38 @@
 **Sync Tank** is an open-source platform for intelligent aquarium monitoring, enrichment, and interaction.  
 It combines Raspberry Pi hardware, camera systems, servos, sensors, and server-side AI to give aquarists, hobbyists, and educators a window into the hidden life inside aquatic habitats.
 
+## Current Tank Node Software
+
+The current Raspberry Pi tank-node software now lives in:
+
+```text
+tank
+```
+
+Use this path for the maintained tank node that handles ESP32 floater ingest, USB camera MJPEG feeds, Lighthouse pan/tilt, REEFLEX servo control, and display/organizer hub payloads.
+
+Fresh Pi setup:
+
+```bash
+cd tank
+./scripts/setup-tank.sh
+```
+
+For tank2 setup and hub integration, see:
+
+```text
+tank/README.md
+docs/NEW_PI_TANK_NODE_AGENT_HANDOFF.md
+docs/TANK2_TANK_NODE_HANDOFF.md
+docs/ARCHIVE.md
+```
+
+Older exploratory scripts from the original repo are kept out of the way under:
+
+```text
+archive/
+```
+
 > Water and low voltage have never made this much sense.
 
 ---

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EDGE NODE 1</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>EDGE NODE 1</h1>
+        <p>1 active tank node · {{ summary.setup_state.status }} setup · {{ summary.host.id }} · hub {{ summary.host.hub_id }}</p>
+      </div>
+      <div class="actions">
+        <button id="refreshNode" type="button" class="secondary-action">Refresh</button>
+        <a class="button-link" href="/api/hub-payload">Hub Payload</a>
+        <a class="button-link" href="/api/pc-hub/payload">PC Hub Payload</a>
+        <a class="button-link" href="/api/nodes">Raw Status</a>
+      </div>
+    </header>
+
+    <main class="node-page">
+      <section class="node-panel boot-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Boot / Setup</h2>
+            <p class="muted panel-note">Baseline controls for starting, checking, and registering this edge node.</p>
+          </div>
+          <span class="count-pill">edge baseline</span>
+        </div>
+        <div class="boot-grid" id="bootSetup"></div>
+      </section>
+
+      <section class="node-panel">
+        <div class="panel-header">
+          <h2>Initialization Devices</h2>
+          <button id="saveNodeConfig" type="button" class="primary-action">Save Config</button>
+        </div>
+        <p class="muted panel-note">Add the devices physically owned by this edge node: feeder, floater, REEFLEX, lighthouse, and scope.</p>
+        <div class="inventory-grid">
+          <label>REEFLEX Cameras <input id="roboticArms" type="number" min="0" step="1"></label>
+          <label>ReefScope Cameras <input id="endoscopeCameras" type="number" min="0" step="1"></label>
+          <label>Floater Cameras <input id="floaterCameras" type="number" min="0" step="1"></label>
+          <label>Lighthouses <input id="lighthouses" type="number" min="0" step="1"></label>
+          <label>Solid Feeders <input id="solidFeeders" type="number" min="0" step="1"></label>
+          <label>Liquid Feeders <input id="liquidFeeders" type="number" min="0" step="1"></label>
+          <label>Misc Feeders <input id="miscFeeders" type="number" min="0" step="1"></label>
+        </div>
+        <label class="check-row setup-check"><input id="validatedByHand" type="checkbox"> Device inventory validated by hand</label>
+        <label class="notes-field">Notes <textarea id="nodeNotes" rows="3" placeholder="Node notes for the PC hub"></textarea></label>
+      </section>
+
+      <section class="node-panel">
+        <div class="panel-header">
+          <h2>Camera Sources</h2>
+          <span class="count-pill">{{ summary.consolidated_cameras|length }} sources</span>
+        </div>
+        <p class="muted panel-note">USB video devices are filtered to capture streams only. Metadata companion nodes are ignored so one physical camera is not counted twice.</p>
+        <div class="source-table" id="cameraConfigList"></div>
+      </section>
+
+      <section class="node-panel">
+        <div class="panel-header">
+          <h2>Systems Manager</h2>
+          <div class="actions inline-actions">
+            <button id="selfTestSystems" type="button" class="secondary-action">Self Test</button>
+            <button id="repairSystems" type="button" class="secondary-action">Repair + Retest</button>
+          </div>
+        </div>
+        <div class="systems-grid" id="systemsManager"></div>
+        <div class="self-test-results" id="selfTestResults" hidden></div>
+      </section>
+
+      <section class="node-panel">
+        <div class="panel-header">
+          <h2>Feeding Viewports</h2>
+          <span class="count-pill">section cameras</span>
+        </div>
+        <p class="muted panel-note">Assign a camera to each feeding section so the PC hub knows which feed to use when checking solid, liquid, or misc feeder activity.</p>
+        <div class="feeder-grid" id="feederViewportList"></div>
+      </section>
+
+      <section class="node-panel">
+        <div class="panel-header">
+          <h2>USB Baseline Capture</h2>
+          <span class="count-pill">{{ summary.usb_cameras|length }} physical source{{ "" if summary.usb_cameras|length == 1 else "s" }}</span>
+        </div>
+        <div class="camera-grid compact-grid">
+          {% for camera in summary.usb_cameras %}
+          <article class="camera-card">
+            <header>
+              <div>
+                <strong>{{ summary.node_config.cameras.get(camera.id, {}).get("label", camera.name) }}</strong>
+                <div class="muted">{{ camera.id }} · ReefScope Camera</div>
+              </div>
+              <span class="status-pill {{ camera.status }}">{{ camera.status }}</span>
+            </header>
+            <img src="/api/usb/{{ camera.id }}/snapshot?t={{ summary.host.id }}" alt="{{ camera.id }} baseline snapshot">
+            <dl class="status-grid node-status">
+              <dt>Device</dt><dd>{{ camera.device }}</dd>
+              <dt>Path</dt><dd>{{ camera.stable_match.get("id_path", "unknown") }}</dd>
+              <dt>Product</dt><dd>{{ camera.stable_match.get("product", camera.name) }}</dd>
+            </dl>
+          </article>
+          {% else %}
+          <div class="empty-frame">No USB capture cameras detected</div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="node-panel">
+        <div class="panel-header">
+          <h2>Latest Floater Images</h2>
+          <span class="count-pill">ESP32 uploads</span>
+        </div>
+        <div class="camera-grid compact-grid">
+          {% for node_id in summary.expected_nodes %}
+          {% set node = summary.nodes.get(node_id, {"node_id": node_id, "status": "waiting"}) %}
+          <article class="camera-card">
+            <header>
+              <div>
+                <strong>{{ summary.node_config.cameras.get(node_id, {}).get("label", node_id) }}</strong>
+                <div class="muted">{{ node_id }} · Floater Camera</div>
+              </div>
+              <span class="status-pill {{ node.status or "waiting" }}">{{ node.status or "waiting" }}</span>
+            </header>
+            {% if node.latest_image %}
+            <img src="{{ node.latest_image.url }}?t={{ node.last_image_at }}" alt="{{ node_id }} latest image">
+            {% else %}
+            <div class="empty-frame">Waiting for image</div>
+            {% endif %}
+            <dl class="status-grid node-status">
+              <dt>Assigned Hub</dt><dd>{{ node.hub_id or summary.host.hub_id }}</dd>
+              <dt>Heartbeat</dt><dd>{{ node.last_heartbeat_at or "none" }}</dd>
+              <dt>Image</dt><dd>{{ node.last_image_at or "none" }}</dd>
+              <dt>RSSI</dt><dd>{{ node.wifi_rssi if node.wifi_rssi is not none else "unknown" }}</dd>
+              <dt>Battery</dt><dd>{{ node.battery_mv if node.battery_mv is not none else "unknown" }}</dd>
+            </dl>
+            <button class="stream-command secondary-action" type="button" data-node-id="{{ node_id }}">
+              Stream 30s
+            </button>
+            <div class="command-status muted" data-command-status="{{ node_id }}">
+              {% if summary.pending_commands.get(node_id) %}pending until next wake{% endif %}
+            </div>
+            <div class="stream-timeline" data-stream-timeline="{{ node_id }}"></div>
+            <img
+              class="stream-preview"
+              data-stream-preview="{{ node_id }}"
+              alt="{{ node_id }} stream preview"
+              hidden
+            >
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
+
+    <script id="ingest-data" type="application/json">{{ summary | tojson }}</script>
+    <script src="/static/node-config.js"></script>
+    <script src="/static/commands.js"></script>
+  </body>
+</html>

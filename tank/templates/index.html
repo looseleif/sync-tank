@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EDGE NODE 1</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>EDGE NODE 1</h1>
+        <p id="statusLine">Connecting to host...</p>
+      </div>
+      <div class="actions">
+        <button id="discoverBtn">Discover Cameras</button>
+        <button id="hubTestBtn">Test Hub</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel arm-panel">
+        <div class="panel-header">
+          <h2>Robotic Arm</h2>
+          <button class="danger" id="stopArmBtn">Stop</button>
+        </div>
+        <div id="servoControls" class="servo-list"></div>
+      </section>
+
+      <section class="panel hub-panel">
+        <h2>Main Hub</h2>
+        <dl class="status-grid">
+          <dt>State</dt><dd id="hubState">unknown</dd>
+          <dt>Mode</dt><dd id="hubMode">unknown</dd>
+          <dt>URL</dt><dd id="hubUrl">not configured</dd>
+        </dl>
+      </section>
+
+      <section class="camera-section">
+        <div class="panel-header">
+          <h2>Cameras</h2>
+          <span id="cameraCount">0 cameras</span>
+        </div>
+        <div id="cameraGrid" class="camera-grid"></div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

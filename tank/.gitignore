@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+config/cameras.json
+.lgd-*
+test_uploads/
+config/ingest_state.json
+config/tank_layout.json
+config/node_config.json

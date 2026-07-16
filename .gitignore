@@ -1,4 +1,13 @@
 .venv/
-zero/ultralytics_repo/
-zero/dataset/
+archive/zero/ultralytics_repo/
+archive/zero/dataset/
 *.pt
+__pycache__/
+*.pyc
+.pytest_cache/
+logs/
+*.log
+test_uploads/
+tank/config/ingest_state.json
+tank/config/cameras.json
+tank/config/tank_layout.json

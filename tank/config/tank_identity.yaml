@@ -1,0 +1,37 @@
+tank:
+  id: tank-main
+  label: Main Tank
+
+node:
+  id: tank-pi-001
+  label: TANK NODE 1
+  role: raspberry_pi_tank_node
+
+network:
+  wired_edge_ip: TANK_ONE_WIRED_IP
+  display_pi_ip: SYNC_WIRED_IP
+  public_url: http://TANK_ONE_WIRED_IP:8080
+  camera_service_url: http://TANK_ONE_WIRED_IP:5050
+  usb_feed_allowed_cidrs:
+    - 127.0.0.0/8
+    - REDACTED_PRIVATE_IP/24
+
+esp32:
+  expected_nodes:
+    - tank-cam-001
+    - tank-cam-002
+  allowed_nodes:
+    - tank-cam-001
+    - tank-cam-002
+  node_angles:
+    tank-cam-001: 0
+    tank-cam-002: 90
+
+inventory:
+  reefscope_cameras: 2
+  lighthouse_cameras: 1
+  reeflex_arms: 1
+  feeders:
+    solid: 1
+    liquid: 0
+    misc: 0
