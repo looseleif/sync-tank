@@ -1,0 +1,74 @@
+profiles:
+  tank1-reeflex:
+    tank:
+      id: tank-1
+      label: Tank 1
+    node:
+      id: tank-pi-001
+      label: TANK NODE 1
+    role_split:
+      lighthouse: false
+      reeflex: true
+      note: Tank 1 owns the REEFLEX arm and REEFLEX camera view.
+    esp32:
+      expected_nodes:
+        - tank-cam-001
+        - tank-cam-002
+      node_angles:
+        tank-cam-001: 0
+        tank-cam-002: 90
+    inventory:
+      reefscope_cameras: 2
+      lighthouse_cameras: 0
+      reeflex_arms: 1
+      feeders:
+        solid: 1
+        liquid: 0
+        misc: 0
+
+  tank2-reeflex:
+    tank:
+      id: tank-2
+      label: Tank 2
+    node:
+      id: tank-pi-002
+      label: TANK NODE 2
+    role_split:
+      lighthouse: false
+      reeflex: true
+      note: Tank 2 owns its own REEFLEX arm when installed; Tank 1 is also REEFLEX-only.
+    esp32:
+      expected_nodes:
+        - tank-cam-003
+        - tank-cam-004
+      node_angles:
+        tank-cam-003: 0
+        tank-cam-004: 90
+    inventory:
+      reefscope_cameras: 2
+      lighthouse_cameras: 0
+      reeflex_arms: 1
+      feeders:
+        solid: 1
+        liquid: 0
+        misc: 0
+
+payload_contract:
+  shared_fields:
+    - node_id
+    - tank_id
+    - camera_id
+    - camera_type
+    - source_type
+    - status
+  usb_camera_fields:
+    - snapshot_url
+    - stream_url
+    - preferred_live_url
+    - feed_mode
+    - content_type
+  esp32_camera_fields:
+    - latest_image_url
+    - capture_command_url
+    - supports_capture_request
+  rule: Both tank nodes must send the same payload shape to the sync/display node, but with unique node_id, tank_id, and camera_id values.

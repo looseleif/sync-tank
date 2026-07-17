@@ -23,11 +23,13 @@ Expected local inventory for a standard tank node:
 
 ```text
 2 ReefScope USB cameras
-1 Lighthouse USB camera
+0 Lighthouse USB cameras
 1 REEFLEX servo/robot system
 1 solid feeder
 2 ESP32 floater cameras
 ```
+
+Tank 1 should cover Lighthouse. Tank 2 should cover REEFLEX. Both tanks should send the same payload shape to the sync/display node, but with unique tank/node/camera IDs.
 
 ## Install
 
@@ -45,11 +47,12 @@ cd tank
 ./scripts/install-tank.sh \
   --node-id tank-pi-002 \
   --label "TANK NODE 2" \
-  --tank-id tank-main \
-  --tank-label "Main Reef" \
+  --profile tank2-reeflex \
+  --tank-id tank-2 \
+  --tank-label "Tank 2" \
   --expected-nodes tank-cam-003,tank-cam-004 \
   --reefscope-count 2 \
-  --lighthouse-count 1 \
+  --lighthouse-count 0 \
   --reeflex-count 1 \
   --solid-feeders 1 \
   --wired-edge-ip TANK_ONE_WIRED_IP \
@@ -68,7 +71,7 @@ For tank2 it should declare:
 
 ```yaml
 tank:
-  id: tank-main
+  id: tank-2
 node:
   id: tank-pi-002
   label: TANK NODE 2
@@ -76,6 +79,12 @@ esp32:
   expected_nodes:
     - tank-cam-003
     - tank-cam-004
+inventory:
+  reefscope_cameras: 2
+  lighthouse_cameras: 0
+  reeflex_arms: 1
+  feeders:
+    solid: 1
 ```
 
 Optional dependency install:

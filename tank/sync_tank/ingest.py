@@ -533,15 +533,20 @@ class NodeStore:
 
     def control_urls(self, lan_url: str) -> dict[str, str]:
         control_base_url = (self.settings.camera_service_url or lan_url).rstrip("/")
-        return {
+        urls = {
             "arm_status": f"{control_base_url}/api/arm",
             "servo_channel": f"{control_base_url}/api/servo/channel",
-            "lighthouse_pose": f"{control_base_url}/api/lighthouse/pose",
             "reeflex_status": f"{control_base_url}/api/arm",
             "reeflex_stop": f"{control_base_url}/api/arm/stop",
             "reeflex_pose": f"{control_base_url}/api/reeflex/pose",
             "reeflex_servo": f"{control_base_url}/api/arm/servo/{{servo_id}}",
+            "reeflex_idle": f"{control_base_url}/api/reeflex/idle",
+            "reeflex_idle_start": f"{control_base_url}/api/reeflex/idle/start",
+            "reeflex_idle_stop": f"{control_base_url}/api/reeflex/idle/stop",
         }
+        if self.device_inventory()["counts"].get("lighthouse", 0):
+            urls["lighthouse_pose"] = f"{control_base_url}/api/lighthouse/pose"
+        return urls
 
     def pc_camera_inventory(self, lan_url: str, include_relayed: bool = False) -> list[dict[str, Any]]:
         base_url = lan_url.rstrip("/")
@@ -1206,14 +1211,23 @@ def create_ingest_app(config_path: str | Path | None = None) -> Flask:
         except FileNotFoundError as exc:
             return jsonify({"error": str(exc)}), 404
 
+    @app.route("/api/pc-hub/payload", methods=["POST"])
     @app.route("/api/images/upload", methods=["POST"])
     def upload() -> Response:
         node_id = request.headers.get("X-Node-Id", "")
         content_type = request.headers.get("content-type", "")
         if "image/jpeg" not in content_type.lower():
             return jsonify({"error": "Content-Type must be image/jpeg"}), 415
+        image_bytes = request.get_data()
         try:
-            node = store.image_upload(node_id, request.get_data(), request.headers)
+            node = store.image_upload(node_id, image_bytes, request.headers)
+            app.logger.info(
+                "accepted JPEG upload path=%s node_id=%s client_ip=%s size_bytes=%s",
+                request.path,
+                node["node_id"],
+                request.remote_addr,
+                len(image_bytes),
+            )
             return jsonify(
                 {
                     "ok": True,
@@ -1314,26 +1328,29 @@ def create_ingest_app(config_path: str | Path | None = None) -> Flask:
 
         def generate():
             import subprocess
+            from time import sleep
 
-            for cmd in usb_mjpeg_command_candidates(device, width, height, fps):
-                process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-                yielded_frame = False
-                try:
-                    while process.stdout:
-                        chunk = process.stdout.read(4096)
-                        if not chunk:
-                            break
-                        yielded_frame = True
-                        yield chunk
-                finally:
-                    process.terminate()
+            while True:
+                yielded_any = False
+                for cmd in usb_mjpeg_command_candidates(device, width, height, fps):
+                    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
                     try:
-                        process.wait(timeout=1)
-                    except subprocess.TimeoutExpired:
-                        process.kill()
-                        process.wait(timeout=1)
-                if yielded_frame:
-                    break
+                        while process.stdout:
+                            chunk = process.stdout.read(4096)
+                            if not chunk:
+                                break
+                            yielded_any = True
+                            yield chunk
+                    finally:
+                        process.terminate()
+                        try:
+                            process.wait(timeout=1)
+                        except subprocess.TimeoutExpired:
+                            process.kill()
+                            process.wait(timeout=1)
+                    if yielded_any:
+                        break
+                sleep(0.5 if yielded_any else 1.5)
 
         return Response(generate(), mimetype="multipart/x-mixed-replace; boundary=frame")
 

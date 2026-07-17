@@ -134,6 +134,32 @@ def create_app(config_path: str | Path | None = None) -> Flask:
         except ValueError as exc:
             return jsonify({"error": str(exc)}), 400
 
+    @app.route("/api/reeflex/idle", methods=["GET"])
+    def reeflex_idle_status() -> Response:
+        return jsonify({"arm": arm.status(), "idle": arm.status().get("idle", {})})
+
+    @app.route("/api/reeflex/idle/start", methods=["POST"])
+    def start_reeflex_idle() -> Response:
+        payload = request.get_json(silent=True) or {}
+        try:
+            return jsonify(
+                arm.start_idle_scan(
+                    str(payload.get("device_id") or "reeflex-001"),
+                    center=payload.get("center") if isinstance(payload.get("center"), dict) else None,
+                    amplitude=float(payload.get("amplitude", 8.0)),
+                    period_seconds=float(payload.get("period_seconds", 9.0)),
+                    step_seconds=float(payload.get("step_seconds", 0.35)),
+                )
+            )
+        except KeyError as exc:
+            return jsonify({"error": str(exc)}), 404
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+
+    @app.route("/api/reeflex/idle/stop", methods=["POST"])
+    def stop_reeflex_idle() -> Response:
+        return jsonify(arm.stop_idle(reason="operator_stop"))
+
     @app.route("/api/arm/stop", methods=["POST"])
     def stop_arm() -> Response:
         return jsonify(arm.stop())
@@ -263,26 +289,29 @@ def _usb_mjpeg_response(camera: dict[str, Any], config: AppConfig) -> Response:
 
     def generate():
         import subprocess
+        from time import sleep
 
-        for cmd in usb_mjpeg_command_candidates(device, width, height, fps):
-            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-            yielded_frame = False
-            try:
-                while process.stdout:
-                    chunk = process.stdout.read(4096)
-                    if not chunk:
-                        break
-                    yielded_frame = True
-                    yield chunk
-            finally:
-                process.terminate()
+        while True:
+            yielded_any = False
+            for cmd in usb_mjpeg_command_candidates(device, width, height, fps):
+                process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
                 try:
-                    process.wait(timeout=1)
-                except subprocess.TimeoutExpired:
-                    process.kill()
-                    process.wait(timeout=1)
-            if yielded_frame:
-                break
+                    while process.stdout:
+                        chunk = process.stdout.read(4096)
+                        if not chunk:
+                            break
+                        yielded_any = True
+                        yield chunk
+                finally:
+                    process.terminate()
+                    try:
+                        process.wait(timeout=1)
+                    except subprocess.TimeoutExpired:
+                        process.kill()
+                        process.wait(timeout=1)
+                if yielded_any:
+                    break
+            sleep(0.5 if yielded_any else 1.5)
 
     return Response(generate(), mimetype="multipart/x-mixed-replace; boundary=frame")
 

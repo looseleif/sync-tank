@@ -11,6 +11,7 @@ Configures this checkout for a Sync Tank Raspberry Pi tank node.
 Common options:
   --node-id ID                 Default: tank-pi-001
   --label TEXT                 Default: TANK NODE
+  --profile ID                 Default: tank1-lighthouse
   --tank-id ID                 Default: tank-main
   --tank-label TEXT            Default: tank ID
   --expected-nodes LIST        Default: tank-cam-001,tank-cam-002
@@ -49,6 +50,7 @@ require_value() {
 
 node_id="${SYNC_TANK_NODE_ID:-tank-pi-001}"
 node_label="${SYNC_TANK_NODE_LABEL:-TANK NODE}"
+profile_id="${SYNC_TANK_PROFILE_ID:-tank1-lighthouse}"
 tank_id="${SYNC_TANK_TANK_ID:-tank-main}"
 tank_label="${SYNC_TANK_TANK_LABEL:-}"
 public_url="${SYNC_TANK_PUBLIC_URL:-}"
@@ -76,6 +78,11 @@ while [ "$#" -gt 0 ]; do
     --label)
       require_value "$@"
       node_label="$2"
+      shift 2
+      ;;
+    --profile)
+      require_value "$@"
+      profile_id="$2"
       shift 2
       ;;
     --tank-id)
@@ -207,7 +214,7 @@ if [ "$install_deps" = "true" ]; then
   python3 -m pip install --user -r requirements.txt
 fi
 
-python3 - "$node_id" "$node_label" "$tank_id" "$tank_label" "$public_url" "$camera_service_url" "$expected_nodes" "$reefscope_count" "$lighthouse_count" "$reeflex_count" "$solid_feeders" "$liquid_feeders" "$misc_feeders" "$wired_host" "$display_pi_ip" <<'PY'
+python3 - "$node_id" "$node_label" "$profile_id" "$tank_id" "$tank_label" "$public_url" "$camera_service_url" "$expected_nodes" "$reefscope_count" "$lighthouse_count" "$reeflex_count" "$solid_feeders" "$liquid_feeders" "$misc_feeders" "$wired_host" "$display_pi_ip" <<'PY'
 from __future__ import annotations
 
 import json
@@ -231,6 +238,7 @@ root = Path.cwd()
 (
     node_id,
     node_label,
+    profile_id,
     tank_id,
     tank_label,
     public_url,
@@ -253,6 +261,11 @@ reeflex_count = as_int(reeflex_count_raw, "reeflex-count")
 solid_feeders = as_int(solid_feeders_raw, "solid-feeders")
 liquid_feeders = as_int(liquid_feeders_raw, "liquid-feeders")
 misc_feeders = as_int(misc_feeders_raw, "misc-feeders")
+role_split = {
+    "lighthouse": lighthouse_count > 0,
+    "reeflex": reeflex_count > 0,
+    "note": "Tank node owns Lighthouse." if lighthouse_count and not reeflex_count else ("Tank node owns REEFLEX." if reeflex_count and not lighthouse_count else "Tank node owns configured Lighthouse/REEFLEX devices."),
+}
 
 config_path = root / "config" / "sync_tank.yaml"
 config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
@@ -293,6 +306,12 @@ identity = {
         "reeflex_arms": reeflex_count,
         "feeders": {"solid": solid_feeders, "liquid": liquid_feeders, "misc": misc_feeders},
     },
+    "profile": {"id": profile_id, "role_split": role_split},
+    "sync_node_contract": {
+        "payload_shape": "pc-hub-payload-v1",
+        "unique_fields": ["node_id", "tank_id", "camera_id"],
+        "poll_endpoint": "/api/pc-hub/payload",
+    },
 }
 identity_path.write_text(yaml.safe_dump(identity, sort_keys=False), encoding="utf-8")
 
@@ -317,6 +336,7 @@ node_config = {
         "validated_by_hand": False,
         "message": "Run the local dashboard and confirm the devices physically present on this tank.",
     },
+    "profile": {"id": profile_id, "role_split": role_split},
     "cameras": {
         camera_id: {
             "label": f"Floater Camera #{index}",
@@ -333,6 +353,7 @@ node_config = {
 node_config_path.write_text(json.dumps(node_config, indent=2, sort_keys=True), encoding="utf-8")
 
 print(f"Configured {node_label} ({node_id})")
+print(f"Profile: {profile_id}")
 print(f"Tank: {tank_label} ({tank_id})")
 print(f"Public URL: {public_url}")
 print(f"Camera service URL: {camera_service_url}")

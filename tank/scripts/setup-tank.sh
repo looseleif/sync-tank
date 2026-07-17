@@ -67,16 +67,67 @@ echo "This script writes config/tank_identity.yaml, config/sync_tank.yaml, and l
 echo "It can also install dependencies, enable I2C, configure the wired link, and install boot startup."
 echo
 
-node_id="$(ask "Pi/node ID" "tank-pi-001")"
-node_label="$(ask "Pi/node label" "TANK NODE 1")"
-tank_id="$(ask "Tank ID this Pi serves" "tank-main")"
-tank_label="$(ask "Human tank label" "$tank_id")"
-expected_nodes="$(ask "ESP32 floater node IDs, comma-separated" "tank-cam-001,tank-cam-002")"
+echo "Available recommended profiles:"
+echo "  tank1-lighthouse  -> 1 feeder, 2 ReefScopes, 2 floaters, 1 Lighthouse, no REEFLEX"
+echo "  tank2-reeflex     -> 1 feeder, 2 ReefScopes, 2 floaters, 1 REEFLEX, no Lighthouse"
+echo
+profile_id="$(ask "Tank profile" "tank1-lighthouse")"
 
-reefscope_count="$(ask "Expected ReefScope USB cameras" "2")"
-lighthouse_count="$(ask "Expected Lighthouse pan/tilt cameras" "1")"
-reeflex_count="$(ask "Expected REEFLEX arms" "1")"
-solid_feeders="$(ask "Expected solid feeders" "1")"
+case "$profile_id" in
+  tank1-lighthouse)
+    default_node_id="tank-pi-001"
+    default_node_label="TANK NODE 1"
+    default_tank_id="tank-1"
+    default_tank_label="Tank 1"
+    default_expected_nodes="tank-cam-001,tank-cam-002"
+    default_reefscope_count="2"
+    default_lighthouse_count="1"
+    default_reeflex_count="0"
+    default_solid_feeders="1"
+    ;;
+  tank2-reeflex)
+    default_node_id="tank-pi-002"
+    default_node_label="TANK NODE 2"
+    default_tank_id="tank-2"
+    default_tank_label="Tank 2"
+    default_expected_nodes="tank-cam-003,tank-cam-004"
+    default_reefscope_count="2"
+    default_lighthouse_count="0"
+    default_reeflex_count="1"
+    default_solid_feeders="1"
+    ;;
+  *)
+    default_node_id="tank-pi-001"
+    default_node_label="TANK NODE"
+    default_tank_id="$profile_id"
+    default_tank_label="$profile_id"
+    default_expected_nodes="tank-cam-001,tank-cam-002"
+    default_reefscope_count="2"
+    default_lighthouse_count="0"
+    default_reeflex_count="0"
+    default_solid_feeders="1"
+    echo "Custom profile selected. Defaults are generic; edit config/tank_profiles.yaml later if this should be reusable."
+    ;;
+esac
+
+node_id="$(ask "Pi/node ID" "$default_node_id")"
+node_label="$(ask "Pi/node label" "$default_node_label")"
+tank_id="$(ask "Tank ID this Pi serves" "$default_tank_id")"
+tank_label="$(ask "Human tank label" "$default_tank_label")"
+expected_nodes="$(ask "ESP32 floater node IDs, comma-separated" "$default_expected_nodes")"
+
+reefscope_count="$(ask "Expected ReefScope USB cameras" "$default_reefscope_count")"
+lighthouse_count="$(ask "Expected Lighthouse pan/tilt cameras" "$default_lighthouse_count")"
+reeflex_count="$(ask "Expected REEFLEX arms" "$default_reeflex_count")"
+if [ "$lighthouse_count" != "0" ] && [ "$reeflex_count" != "0" ]; then
+  echo "Warning: recommended split is one tank owns Lighthouse and the other owns REEFLEX."
+fi
+if [ "$lighthouse_count" = "0" ] && [ "$reeflex_count" = "0" ]; then
+  echo "Warning: this tank has neither Lighthouse nor REEFLEX configured."
+fi
+echo "Role split: Lighthouse count=$lighthouse_count, REEFLEX count=$reeflex_count"
+echo
+solid_feeders="$(ask "Expected solid feeders" "$default_solid_feeders")"
 liquid_feeders="$(ask "Expected liquid feeders" "0")"
 misc_feeders="$(ask "Expected misc feeders" "0")"
 
@@ -122,6 +173,7 @@ esac
 ./scripts/install-tank.sh \
   --node-id "$node_id" \
   --label "$node_label" \
+  --profile "$profile_id" \
   --tank-id "$tank_id" \
   --tank-label "$tank_label" \
   --expected-nodes "$expected_nodes" \

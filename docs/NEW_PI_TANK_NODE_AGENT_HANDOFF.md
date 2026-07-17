@@ -2,14 +2,32 @@
 
 Use this document to bring up a fresh Raspberry Pi as a Sync Tank tank node.
 
-The expected hardware for this setup:
+Recommended two-tank split:
 
-- 1 USB Lighthouse camera
-- 2 USB ReefScope/endoscopic cameras
-- PCA9685 servo controller at I2C address `0x40`
-- Lighthouse pan/tilt servos on PCA9685 channels `0` and `1`
-- Optional REEFLEX servos on channels `2`, `3`, and `4`
-- ESP32 floater cameras assigned to this tank node
+```text
+Tank 1 / tank1-lighthouse:
+  1 feeder
+  2 USB ReefScope/endoscopic cameras
+  2 ESP32 floater cameras
+  1 Lighthouse pan/tilt camera
+  0 REEFLEX arms
+
+Tank 2 / tank2-reeflex:
+  1 feeder
+  2 USB ReefScope/endoscopic cameras
+  2 ESP32 floater cameras
+  0 Lighthouse cameras
+  1 REEFLEX arm
+```
+
+The point is coverage: one tank node owns Lighthouse and the other owns REEFLEX. Do not configure both Lighthouse and REEFLEX on both tanks unless the physical hardware really exists.
+
+Shared hardware assumptions:
+
+- PCA9685 servo controller at I2C address `0x40` when servos are present
+- Lighthouse pan/tilt servos use PCA9685 channels `0` and `1`
+- REEFLEX servos use channels `2`, `3`, and `4`
+- Both tank nodes send the same payload format to the sync/display node, with unique `node_id`, `tank_id`, and `camera_id` values
 
 ## Clone
 
@@ -38,14 +56,15 @@ Run the interactive setup wizard:
 Recommended answers for a standard tank node:
 
 ```text
-Pi/node ID: tank-pi-001 or tank-pi-002
+Tank profile: tank1-lighthouse or tank2-reeflex
+Pi/node ID: tank-pi-001 for Tank 1, tank-pi-002 for Tank 2
 Pi/node label: TANK NODE 1 or TANK NODE 2
-Tank ID this Pi serves: tank-main
-Human tank label: Main Tank
-ESP32 floater node IDs: tank-cam-001,tank-cam-002
+Tank ID this Pi serves: tank-1 or tank-2
+Human tank label: Tank 1 or Tank 2
+ESP32 floater node IDs: tank-cam-001,tank-cam-002 for Tank 1; tank-cam-003,tank-cam-004 for Tank 2
 Expected ReefScope USB cameras: 2
-Expected Lighthouse pan/tilt cameras: 1
-Expected REEFLEX arms: 1
+Expected Lighthouse pan/tilt cameras: 1 for Tank 1, 0 for Tank 2
+Expected REEFLEX arms: 0 for Tank 1, 1 for Tank 2
 Expected solid feeders: 1
 Expected liquid feeders: 0
 Expected misc feeders: 0
@@ -118,8 +137,8 @@ The target result for this node is:
 
 ```text
 3 working USB video feeds total:
-  2 ReefScope/endoscopic cameras
-  1 Lighthouse camera
+  Tank 1: 2 ReefScope/endoscopic cameras and 1 Lighthouse camera
+  Tank 2: 2 ReefScope/endoscopic cameras, plus REEFLEX control if connected
 ```
 
 The hub/display side should eventually receive unique camera IDs such as:
@@ -159,9 +178,9 @@ http://<tank-pi-ip>:8080
 In setup/device inventory:
 
 - mark 2 USB feeds as ReefScope/endoscopic cameras
-- mark 1 USB feed as Lighthouse camera
+- mark 1 USB feed as Lighthouse camera only on the Lighthouse tank
 - keep 2 ESP32 feeds as Floater cameras
-- confirm 1 REEFLEX
+- confirm 1 REEFLEX only on the REEFLEX tank
 - confirm feeder count
 - save/validate the node inventory by hand
 
@@ -271,6 +290,27 @@ reeflex_stop:
 ```
 
 The display/organizer should render the Lighthouse camera feed and provide pan/tilt controls that call `lighthouse_pose`.
+
+Tank 1 and Tank 2 must remain payload-compatible:
+
+```text
+Tank 1 node_id: tank-pi-001
+Tank 1 tank_id: tank-1
+Tank 1 floaters: tank-cam-001, tank-cam-002
+
+Tank 2 node_id: tank-pi-002
+Tank 2 tank_id: tank-2
+Tank 2 floaters: tank-cam-003, tank-cam-004
+```
+
+Both should expose:
+
+```text
+GET /api/pc-hub/payload
+GET /api/hub-payload
+```
+
+and both should register all cameras with unique IDs.
 
 ## Boot Recovery
 

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from time import sleep
+from math import cos, pi, sin
+from threading import Event, Lock, Thread, current_thread
+from time import monotonic, sleep
 from typing import Any, Protocol
 
 
@@ -226,6 +228,10 @@ class ArmController:
             for servo_id, servo_data in (config.get("servos") or {}).items()
         }
         self.positions = {servo_id: servo.neutral_angle for servo_id, servo in self.servos.items()}
+        self._idle_lock = Lock()
+        self._idle_stop = Event()
+        self._idle_thread: Thread | None = None
+        self._idle_state: dict[str, Any] = {"active": False}
         self.driver_status = "mock"
         self.driver: ServoDriver = MockServoDriver(self.servos)
 
@@ -251,6 +257,7 @@ class ArmController:
             "address": f"0x{int(str(self.pca9685.get('address', '0x40')), 0):02x}" if self.pca9685 else None,
             "frequency_hz": int(self.pca9685.get("frequency_hz", 50)) if self.pca9685 else None,
             "disable_pwm_after_move": self.disable_after_move,
+            "idle": dict(self._idle_state),
             "servos": {
                 servo_id: {
                     "id": servo_id,
@@ -267,7 +274,9 @@ class ArmController:
             "devices": self.devices,
         }
 
-    def set_angle(self, servo_id: str, angle: float, *, reject_out_of_range: bool = False) -> dict[str, Any]:
+    def set_angle(self, servo_id: str, angle: float, *, reject_out_of_range: bool = False, stop_idle: bool = True) -> dict[str, Any]:
+        if stop_idle:
+            self.stop_idle(reason="manual_servo")
         if servo_id not in self.servos:
             raise KeyError(f"Unknown servo: {servo_id}")
 
@@ -283,14 +292,16 @@ class ArmController:
         return {"servo_id": servo_id, "angle": clamped, "requested_angle": float(angle), "clamped": clamped != float(angle)}
 
     def set_channel(self, channel: int, angle: float, *, device_id: str | None = None, joint: str | None = None) -> dict[str, Any]:
+        self.stop_idle(reason="manual_channel")
         for servo_id, servo in self.servos.items():
             if servo.channel == int(channel):
-                result = self.set_angle(servo_id, angle, reject_out_of_range=True)
+                result = self.set_angle(servo_id, angle, reject_out_of_range=True, stop_idle=False)
                 result.update({"channel": int(channel), "device_id": device_id, "joint": joint})
                 return result
         raise KeyError(f"Unknown PCA9685 channel: {channel}")
 
     def set_device_pose(self, device_id: str, pose: dict[str, float]) -> dict[str, Any]:
+        self.stop_idle(reason="manual_pose")
         device = self.devices.get(device_id)
         if not device:
             raise KeyError(f"Unknown device: {device_id}")
@@ -300,9 +311,90 @@ class ArmController:
             servo_id = joints.get(joint)
             if not servo_id:
                 raise KeyError(f"Unknown joint for {device_id}: {joint}")
-            applied[joint] = self.set_angle(str(servo_id), float(angle), reject_out_of_range=True)
+            applied[joint] = self.set_angle(str(servo_id), float(angle), reject_out_of_range=True, stop_idle=False)
         return {"device_id": device_id, "device_type": device.get("type"), "pose": applied, "arm": self.status()}
 
+    def start_idle_scan(
+        self,
+        device_id: str = "reeflex-001",
+        *,
+        center: dict[str, float] | None = None,
+        amplitude: float = 8.0,
+        period_seconds: float = 9.0,
+        step_seconds: float = 0.35,
+    ) -> dict[str, Any]:
+        device = self.devices.get(device_id)
+        if not device:
+            raise KeyError(f"Unknown device: {device_id}")
+        joints = device.get("joints") or {}
+        required = ("base", "shoulder", "elbow")
+        for joint in required:
+            if joint not in joints:
+                raise KeyError(f"{device_id} does not expose {joint}")
+
+        amplitude = max(1.0, min(float(amplitude), 18.0))
+        period_seconds = max(3.0, float(period_seconds))
+        step_seconds = max(0.15, float(step_seconds))
+        center = center or {}
+        neutral = {
+            joint: float(center.get(joint, self.servos[str(joints[joint])].neutral_angle))
+            for joint in required
+        }
+
+        self.stop_idle(reason="restart_idle")
+        self._idle_stop = Event()
+        self._idle_state = {
+            "active": True,
+            "device_id": device_id,
+            "mode": "small_arc_circle",
+            "amplitude": amplitude,
+            "period_seconds": period_seconds,
+            "step_seconds": step_seconds,
+            "center": neutral,
+            "started_at_monotonic": monotonic(),
+            "last_reason": "started",
+        }
+        self._idle_thread = Thread(
+            target=self._idle_loop,
+            args=(device_id, neutral, amplitude, period_seconds, step_seconds),
+            daemon=True,
+        )
+        self._idle_thread.start()
+        return {"status": "idle_started", "idle": dict(self._idle_state), "arm": self.status()}
+
+    def stop_idle(self, reason: str = "stopped") -> dict[str, Any]:
+        with self._idle_lock:
+            thread = self._idle_thread
+            active = bool(thread and thread.is_alive())
+            self._idle_stop.set()
+            self._idle_state = {**self._idle_state, "active": False, "last_reason": reason}
+            self._idle_thread = None
+        if active and thread and thread is not current_thread():
+            thread.join(timeout=1)
+        return {"status": "idle_stopped", "idle": dict(self._idle_state)}
+
+    def _idle_loop(self, device_id: str, center: dict[str, float], amplitude: float, period_seconds: float, step_seconds: float) -> None:
+        joints = self.devices[device_id].get("joints") or {}
+        start = monotonic()
+        while not self._idle_stop.is_set():
+            phase = ((monotonic() - start) / period_seconds) * 2 * pi
+            pose = {
+                "base": center["base"] + amplitude * sin(phase),
+                "shoulder": center["shoulder"] + amplitude * cos(phase),
+                "elbow": center["elbow"] + (amplitude * 0.55) * sin(phase + (pi / 2)),
+            }
+            for joint, angle in pose.items():
+                servo_id = str(joints[joint])
+                try:
+                    self.set_angle(servo_id, angle, reject_out_of_range=False, stop_idle=False)
+                except Exception:
+                    self._idle_stop.set()
+                    self._idle_state = {**self._idle_state, "active": False, "last_reason": f"idle_error_{joint}"}
+                    break
+            self._idle_state = {**self._idle_state, "active": not self._idle_stop.is_set(), "last_pose": pose}
+            self._idle_stop.wait(step_seconds)
+
     def stop(self) -> dict[str, str]:
+        self.stop_idle(reason="arm_stop")
         self.driver.stop_all()
         return {"status": "stopped"}

@@ -27,6 +27,7 @@ For tank2 setup and hub integration, see:
 ```text
 tank/README.md
 docs/NEW_PI_TANK_NODE_AGENT_HANDOFF.md
+docs/TANK_ONE_SETUP.md
 docs/TANK2_TANK_NODE_HANDOFF.md
 docs/ARCHIVE.md
 ```
