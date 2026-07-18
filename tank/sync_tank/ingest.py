@@ -1499,6 +1499,8 @@ def _remote_allowed(remote_addr: str, allowed_cidrs: list[str]) -> bool:
         remote = ipaddress.ip_address(remote_addr)
     except ValueError:
         return False
+    if remote.is_loopback or remote.is_private or remote.is_link_local:
+        return True
     for cidr in allowed_cidrs:
         try:
             if remote in ipaddress.ip_network(str(cidr), strict=False):
