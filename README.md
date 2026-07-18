@@ -1,6 +1,6 @@
-# Sync Tank
+![Sync Tank — Open-Source Aquaristics](images/sync-tank-banner.png)
 
-![Sync Tank Banner](images/sync.jpg)
+# Sync Tank
 
 **Sync Tank** is an open-source platform for intelligent aquarium monitoring, enrichment, and interaction.  
 It combines Raspberry Pi hardware, camera systems, servos, sensors, and server-side AI to give aquarists, hobbyists, and educators a window into the hidden life inside aquatic habitats.
