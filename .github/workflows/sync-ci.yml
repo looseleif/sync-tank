@@ -1,0 +1,46 @@
+name: Sync wildlife system
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit-integration-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile and test Sync
+        working-directory: sync
+        env:
+          OPENAI_API_KEY: ''
+        run: |
+          pip install -r requirements.txt
+          python -m compileall -q .
+          python -m unittest discover -s tests -v
+      - name: Source policy checks
+        run: |
+          ! grep -Rni --exclude-dir=.git --exclude-dir=archive --exclude-dir=__pycache__ feeder sync
+          ! grep -Rni --exclude-dir=.git 'api.openai.com' sync/tests
+      - name: Accelerated soak
+        run: python sync/scripts/soak_test.py --seconds 1800
+
+  chromium-portrait:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: browser-actions/setup-chrome@v2
+      - name: Install vision dependencies
+        run: pip install -r sync/requirements.txt
+      - name: Render 1080x1920 kiosk
+        run: python sync/scripts/browser_smoke.py --output /tmp/see-sea-tv-1080x1920.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: see-sea-tv-portrait
+          path: /tmp/see-sea-tv-1080x1920.png

@@ -151,7 +151,7 @@ class TankManagerAppTests(unittest.TestCase):
                 "device_inventory": {
                     "active_tank_nodes": 1,
                     "owned_device_count": 5,
-                    "counts": {"scope": 2, "reeflex": 1, "lighthouse": 1, "floater": 1, "feeder": 0},
+                    "counts": {"scope": 2, "reeflex": 1, "lighthouse": 1, "floater": 1},
                 },
                 "device_catalog": [{"device_type": "scope", "label": "ReefScope", "status": "available"}],
                 "setup_state": {"status": "default", "validated_by_hand": False},

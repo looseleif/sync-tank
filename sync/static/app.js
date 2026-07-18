@@ -34,6 +34,8 @@ const state = {
   padDrag: null,
   initialSetupPrompted: false,
   identifyPromptedFor: new Set(),
+  floaterRevisions: new Map(),
+  floaterCards: new Map(),
   lighthouse: {
     pan: 90,
     tilt: 90,
@@ -125,6 +127,18 @@ const floaterLeftLabel = document.getElementById('floater-left-label');
 const floaterRight = document.getElementById('floater-right');
 const floaterRightImage = document.getElementById('floater-right-image');
 const floaterRightLabel = document.getElementById('floater-right-label');
+const feedPrevious = document.getElementById('feed-previous');
+const feedNext = document.getElementById('feed-next');
+const feedPin = document.getElementById('feed-pin');
+const sightingShutter = document.getElementById('sighting-shutter');
+const feedEmpty = document.getElementById('feed-empty');
+const feedThumbnails = document.getElementById('feed-thumbnails');
+const cctvState = document.getElementById('cctv-state');
+const sightingsDrawer = document.getElementById('sightings-drawer');
+const sightingsGrid = document.getElementById('sightings-grid');
+const deepDialog = document.getElementById('deep-dialog');
+const deepImage = document.getElementById('deep-image');
+let pendingDeepSightingId = null;
 
 const scene = new THREE.Scene();
 scene.background = null;
@@ -209,6 +223,12 @@ for (const x of [-1, 1]) {
 }
 tankGroup.add(tableGroup);
 
+tankGroup.scale.setScalar(0.72);
+tankGroup.position.x = -1.65;
+const companionTankGroup = tankGroup.clone(true);
+companionTankGroup.position.x = 1.65;
+scene.add(companionTankGroup);
+
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 const faceTargets = [tankMesh];
@@ -287,10 +307,6 @@ function isRobotArm(item) {
   return item.item_type === 'robot_arm';
 }
 
-function isFeeder(item) {
-  return item.item_type === 'feeder';
-}
-
 function isCameraItem(item) {
   return Boolean(cameraId(item));
 }
@@ -305,12 +321,12 @@ function isConnectedItem(item) {
 function itemKind(item) {
   if (isFloater(item)) return 'Floater';
   if (isCameraItem(item) && item.source_type === 'usb_camera' && !item.role_locked) return 'USB feed - identify';
-  if (isEndoscope(item)) return 'Scope';
+  if (isEndoscope(item)) return 'Reel';
   if (isRobotArm(item)) return 'Robot arm rail';
   if (isReeflex(item)) return 'Reeflex 3-servo arm';
-  if (isLighthouse(item)) return 'Lighthouse pan-tilt';
+  if (isLighthouse(item)) return 'Raydar pan-tilt';
   if (item.item_type === 'pan_tilt_cam') return 'Reeflex';
-  if (item.item_type === 'feeder') return 'Feeder';
+  if (item.item_type === 'structure_shape') return `Structure · ${text(item.structure_type, 'shape')}`;
   return text(item.item_type || item.camera_type, 'Scene item');
 }
 
@@ -320,6 +336,8 @@ function displayName(item) {
   if (isCameraItem(item) && item.source_type === 'usb_camera' && !item.role_locked) {
     return `USB feed ${id}`;
   }
+  if (isLighthouse(item)) return text(item.label || item.name, 'Raydar').replace(/lighthouse/ig, 'Raydar');
+  if (isEndoscope(item)) return text(item.label || item.name, `Reel ${id}`).replace(/scope|endoscope/ig, 'Reel');
   return text(item.label || item.name, id);
 }
 
@@ -371,11 +389,10 @@ function expectedUsbVideoCount() {
 function manifestSummary() {
   const counts = manifestCounts();
   const order = [
-    ['scope', 'scope'],
+    ['scope', 'Reel'],
     ['reeflex', 'reeflex'],
-    ['lighthouse', 'lighthouse'],
+    ['lighthouse', 'Raydar'],
     ['floater', 'floater'],
-    ['feeder', 'feeder'],
   ];
   const parts = order
     .filter(([key]) => counts[key] !== undefined)
@@ -400,6 +417,11 @@ function normToWorld(position) {
     (position.y - 0.5) * tankSize.y,
     (position.z - 0.5) * tankSize.z
   );
+}
+
+function tankSceneOffset(tankId = activeTank().tank_id) {
+  const tanks = state.layout.tanks || [];
+  return Math.max(0, tanks.findIndex(tank => tank.tank_id === tankId)) % 2 === 1 ? 1.65 : -1.65;
 }
 
 function worldToNorm(vector) {
@@ -522,17 +544,27 @@ function defaultPlacement(item) {
     const position = { x: 0.5, y: 1, z: 1 };
     return { placed: true, mount_face: 'z+', position, target: { x: 0.5, y: 0.48, z: 0.5 }, fov_degrees: 78 };
   }
-  if (isFeeder(item)) {
-    const position = { x: 0.18, y: 1, z: 1 };
-    return { placed: true, mount_face: 'z+', position, target: { x: 0.18, y: 0.88, z: 0.82 }, fov_degrees: 60 };
-  }
   const position = { x: 0.5, y: 0.5, z: 0.5 };
   return { placed: true, position, target: { x: 0.5, y: 0.5, z: 0.75 }, fov_degrees: isEndoscope(item) ? 70 : 60 };
 }
 
 function createMesh(item) {
   let mesh;
-  if (isFloater(item)) {
+  if (item.item_type === 'structure_shape') {
+    const material = new THREE.MeshStandardMaterial({ color: item.color || '#698f88', roughness: 0.82, metalness: 0.02 });
+    const kind = item.structure_type || 'block';
+    if (kind === 'rounded-rock') mesh = new THREE.Mesh(new THREE.DodecahedronGeometry(0.28, 1), material);
+    else if (kind === 'pillar') mesh = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.19, 0.7, 18), material);
+    else if (kind === 'mound') mesh = new THREE.Mesh(new THREE.SphereGeometry(0.36, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), material);
+    else if (kind === 'slab') mesh = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.12, 0.42), material);
+    else if (kind === 'arch') {
+      mesh = new THREE.Group();
+      const left = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.48, 0.18), material);
+      const right = left.clone(); left.position.x = -0.27; right.position.x = 0.27;
+      const top = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.14, 0.18), material); top.position.y = 0.24;
+      mesh.add(left, right, top);
+    } else mesh = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.35, 0.42), material);
+  } else if (isFloater(item)) {
     mesh = new THREE.Group();
     const body = new THREE.Mesh(
       new THREE.CylinderGeometry(0.18, 0.18, 0.045, 32),
@@ -632,25 +664,6 @@ function createMesh(item) {
     lens.rotation.z = Math.PI / 2;
     lens.position.set(0.102, 0.17, 0);
     mesh.add(base, head, lens);
-  } else if (isFeeder(item)) {
-    mesh = new THREE.Group();
-    const drum = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.15, 0.15, 0.22, 28),
-      new THREE.MeshStandardMaterial({ color: 0xd8d8d2, roughness: 0.48, metalness: 0.08 })
-    );
-    drum.rotation.z = Math.PI / 2;
-    const cap = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.154, 0.154, 0.024, 28),
-      new THREE.MeshStandardMaterial({ color: 0x202124, roughness: 0.44, metalness: 0.12 })
-    );
-    cap.rotation.z = Math.PI / 2;
-    cap.position.x = 0.124;
-    const chute = new THREE.Mesh(
-      new THREE.BoxGeometry(0.07, 0.18, 0.08),
-      new THREE.MeshStandardMaterial({ color: 0x102033, roughness: 0.55, metalness: 0.08 })
-    );
-    chute.position.set(0, -0.14, 0);
-    mesh.add(drum, cap, chute);
   } else {
     mesh = new THREE.Mesh(
       new THREE.BoxGeometry(0.22, 0.22, 0.22),
@@ -711,7 +724,7 @@ function updateFrustum(item) {
   if (!id) return;
   const placement = placementOf(item);
   let frustum = state.frustums.get(id);
-  if (!isFloater(item) && !isEndoscope(item) && item.item_type !== 'pan_tilt_cam' && !isLighthouse(item) && !isReeflex(item) && !isFeeder(item)) {
+  if (!isFloater(item) && !isEndoscope(item) && item.item_type !== 'pan_tilt_cam' && !isLighthouse(item) && !isReeflex(item)) {
     if (frustum) frustum.visible = false;
     return;
   }
@@ -720,8 +733,10 @@ function updateFrustum(item) {
     return;
   }
   if (!frustum) frustum = createFrustum(id);
-  const origin = normToWorld(placement.position);
-  const target = normToWorld(placement.target || { x: 0.5, y: 0.5, z: 0.5 });
+  const origin = normToWorld(placement.position).multiplyScalar(0.72);
+  const target = normToWorld(placement.target || { x: 0.5, y: 0.5, z: 0.5 }).multiplyScalar(0.72);
+  origin.x += tankSceneOffset(item.tank_id);
+  target.x += tankSceneOffset(item.tank_id);
   const direction = target.sub(origin);
   if (direction.lengthSq() < 0.01) {
     frustum.visible = false;
@@ -798,7 +813,7 @@ function updateMesh(item) {
     mesh = createMesh(item);
     state.meshes.set(id, mesh);
   }
-  if (isLighthouse(item) || isReeflex(item) || isFeeder(item)) {
+  if (isLighthouse(item) || isReeflex(item)) {
     const face = placement.mount_face || 'z+';
     placement.mount_face = face;
     if (placement.position) {
@@ -810,18 +825,22 @@ function updateMesh(item) {
     }
     placement.target = placement.target || {
       x: isReeflex(item) ? 0.5 : placement.position?.x || 0.5,
-      y: isFeeder(item) ? 0.82 : isReeflex(item) ? 0.62 : 0.48,
+      y: isReeflex(item) ? 0.62 : 0.48,
       z: isReeflex(item) ? 0.5 : placement.position?.z || 0.5,
     };
   }
   mesh.visible = true;
   mesh.position.copy(normToWorld(placement.position));
-  setObjectColor(mesh, displayColorForItem(id));
-  const scale = id === state.stageCameraId && id !== state.selectedId ? 1.12 : 1;
+  mesh.position.multiplyScalar(0.72);
+  mesh.position.x += tankSceneOffset(item.tank_id);
+  if (item.item_type !== 'structure_shape') setObjectColor(mesh, displayColorForItem(id));
+  const baseScale = Number(item.scale || 1) * 0.72;
+  const scale = id === state.stageCameraId && id !== state.selectedId ? baseScale * 1.12 : baseScale;
   mesh.scale.setScalar(scale);
+  if (item.item_type === 'structure_shape') mesh.rotation.y = Number(item.rotation || 0) * Math.PI / 180;
   if (isFloater(item)) orientFloater(mesh, placement.mount_face || 'y+');
   else if (isEndoscope(item)) orientEndoscope(mesh, placement);
-  else if (isRobotArm(item) || isLighthouse(item) || isReeflex(item) || isFeeder(item)) orientRail(mesh, placement.mount_face || 'z+');
+  else if (isRobotArm(item) || isLighthouse(item) || isReeflex(item)) orientRail(mesh, placement.mount_face || 'z+');
   updateFrustum(item);
 }
 
@@ -888,18 +907,18 @@ function assignmentOptionsFor(item) {
   if (!item) return [];
   return [
     {
-      label: 'Scope',
-      detail: 'Inside-tank endoscope or reef scope feed',
+      label: 'Reel',
+      detail: 'Inside-tank Reel camera feed',
       camera_type: 'endoscope_cam',
       item_type: 'endoscope_cam',
-      name: 'ReefScope Camera',
+      name: 'Reel Camera',
     },
     {
-      label: 'Lighthouse',
+      label: 'Raydar',
       detail: 'Pan-tilt camera on the rim',
       camera_type: 'lighthouse_cam',
       item_type: 'lighthouse',
-      name: 'Lighthouse Camera',
+      name: 'Raydar Camera',
       device_id: 'lighthouse-001',
     },
     {
@@ -907,7 +926,7 @@ function assignmentOptionsFor(item) {
       detail: 'Robot-arm camera or arm-mounted view',
       camera_type: 'reeflex_cam',
       item_type: 'reeflex',
-      name: 'REEFLEX Camera',
+      name: 'Reeflex Camera',
       device_id: 'reeflex-001',
     },
   ].map(option => ({
@@ -1107,8 +1126,16 @@ function updateStageFeed() {
     state.stageCameraId = null;
     stageFeedBackdrop.dataset.cameraId = '';
     updateLiveControlHighlights();
+    if (feedEmpty) feedEmpty.hidden = false;
+    renderFeedThumbnails();
     if (previousStageCameraId) updateAllMeshes();
     return;
+  }
+  if (feedEmpty) feedEmpty.hidden = true;
+  if (view.tank_id && view.tank_id !== activeTank().tank_id && Date.now() > state.manualTankUntil) {
+    state.activeTankId = view.tank_id;
+    applyTankDimensions();
+    renderTankTabs();
   }
   state.stageCameraId = cameraId(view.camera) || view.observation?.camera_id || null;
   stageFeedBackdrop.hidden = false;
@@ -1118,8 +1145,9 @@ function updateStageFeed() {
     state.stageFeedSource = view.src;
     stageFeedImage.src = view.src;
   }
-  stageFeedLabel.textContent = view.label;
-  renderFloaterSideFeeds();
+  const tank = (state.layout.tanks || []).find(item => item.tank_id === view.tank_id);
+  stageFeedLabel.textContent = `${text(tank?.label, view.tank_id || 'Tank')} · ${view.label} · ${view.type === 'pinned' ? 'PINNED' : 'LIVE'}`;
+  renderFeedThumbnails();
   updateLiveControlHighlights();
   renderLighthouseControls();
   if (previousStageCameraId !== state.stageCameraId) updateAllMeshes();
@@ -1182,19 +1210,72 @@ function renderFloaterSideFeeds() {
   });
 }
 
+async function pollFloaterFrames() {
+  const floaters = (state.layout.cameras || []).filter(item => isFloater(item) && item.status !== 'offline');
+  for (const item of floaters) {
+    const id = cameraId(item);
+    try {
+      const response = await fetch(`/api/cameras/${encodeURIComponent(id)}/snapshot?revision=${Date.now()}`, { cache: 'no-store' });
+      if (!response.ok) continue;
+      const bytes = await response.arrayBuffer();
+      let revision = response.headers.get('ETag') || response.headers.get('Last-Modified');
+      if (!revision) {
+        const digest = await crypto.subtle.digest('SHA-256', bytes);
+        revision = Array.from(new Uint8Array(digest)).map(value => value.toString(16).padStart(2, '0')).join('');
+      }
+      const previous = state.floaterRevisions.get(id);
+      state.floaterRevisions.set(id, revision);
+      if (previous && previous !== revision) showFloaterMarkerImage(item);
+    } catch {
+      // Missing floater stills are expected when hardware is disconnected.
+    }
+  }
+}
+
+function showFloaterMarkerImage(item, reopened = false) {
+  const id = cameraId(item);
+  if (!id) return;
+  let card = state.floaterCards.get(id);
+  if (!card) {
+    card = document.createElement('button');
+    card.className = 'floater-marker-card';
+    card.innerHTML = '<img alt=""><span></span>';
+    stage.appendChild(card);
+    state.floaterCards.set(id, card);
+  }
+  card.querySelector('img').src = `/api/cameras/${encodeURIComponent(id)}/snapshot?popup=${Date.now()}`;
+  card.querySelector('span').textContent = displayName(item);
+  card.hidden = false;
+  const fishCandidate = observationsForAllTanks().some(obs => obs.camera_id === id && String(obs.label || obs.classifier_label).toLowerCase() === 'fish');
+  window.clearTimeout(card._hideTimer);
+  if (!fishCandidate || reopened) card._hideTimer = window.setTimeout(() => { card.hidden = true; }, 5000);
+  card.onclick = () => showFloaterMarkerImage(item, true);
+}
+
+function positionFloaterCards() {
+  state.floaterCards.forEach((card, id) => {
+    if (card.hidden) return;
+    const mesh = state.meshes.get(id);
+    if (!mesh) { card.hidden = true; return; }
+    const point = mesh.position.clone().project(camera);
+    card.style.left = `${(point.x * .5 + .5) * stage.clientWidth}px`;
+    card.style.top = `${(-point.y * .5 + .5) * stage.clientHeight}px`;
+  });
+}
+
 function cameraIndexById(id) {
   return liveCameras().findIndex(item => cameraId(item) === id);
 }
 
 function liveCameras() {
-  const cameras = allCamerasForActiveTank().filter(item => item.status === 'online');
+  const cameras = (state.layout.cameras || []).filter(item => !item.hidden_from_layout && item.status === 'online');
   const usb = cameras.filter(item => item.stream_url);
   const rest = cameras.filter(item => !item.stream_url);
   return [...usb, ...rest];
 }
 
 function rotatingLiveCameras() {
-  return allCamerasForActiveTank().filter(item => item.status === 'online' && item.stream_url);
+  return (state.layout.cameras || []).filter(item => !item.hidden_from_layout && item.status === 'online' && item.stream_url);
 }
 
 function placementComplete() {
@@ -1404,7 +1485,7 @@ function renderReeflexControls() {
     : state.reeflex.status === 'mock'
       ? 'Servo controller not connected'
       : state.reeflex.status === 'missing reeflex axes'
-        ? 'REEFLEX axes not reported by tank node'
+        ? 'Reeflex axes not reported by tank node'
         : 'Servo status unavailable';
   reeflexBaseSlider.min = state.reeflex.minBase;
   reeflexBaseSlider.max = state.reeflex.maxBase;
@@ -1610,7 +1691,146 @@ function ensureLiveRotation() {
       setLiveCamera(0);
       updateStageFeed();
     }
-  }, 5000);
+  }, 8000);
+}
+
+function renderFeedThumbnails() {
+  if (!feedThumbnails) return;
+  feedThumbnails.innerHTML = '';
+  const cameras = rotatingLiveCameras();
+  cameras.forEach((item, index) => {
+    const button = document.createElement('button');
+    const id = cameraId(item);
+    const tank = (state.layout.tanks || []).find(entry => entry.tank_id === item.tank_id);
+    button.className = `feed-thumb${id === state.stageCameraId ? ' active' : ''}`;
+    button.innerHTML = `<img alt=""><span></span>`;
+    button.querySelector('img').src = `/api/cameras/${encodeURIComponent(id)}/snapshot?thumb=1`;
+    button.querySelector('span').textContent = `${text(tank?.label, item.tank_id)} · ${displayName(item)}`;
+    button.addEventListener('click', () => {
+      state.liveIndex = index;
+      pinView(id);
+      updateStageFeed();
+    });
+    feedThumbnails.appendChild(button);
+  });
+}
+
+async function captureActiveSighting() {
+  if (!state.stageCameraId) return;
+  sightingShutter.disabled = true;
+  const cameraItem = (state.layout.cameras || []).find(item => cameraId(item) === state.stageCameraId);
+  try {
+    const response = await fetch('/api/sightings/capture', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ camera_id: state.stageCameraId, tank_id: cameraItem?.tank_id, trigger: 'manual', label: 'Unknown' }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Capture failed');
+    cctvState.textContent = 'Sighting captured';
+    await loadSightings();
+  } catch (error) {
+    cctvState.textContent = error.message;
+  } finally {
+    sightingShutter.disabled = false;
+  }
+}
+
+function fieldNoteMarkup(note) {
+  if (!note) return '';
+  return `<div class="field-note"><strong>${text(note.label)}</strong><p>${text(note.visual_evidence)}</p><p><b>Possible subject:</b> ${text(note.possible_subject, 'Unknown')} · <b>Uncertainty:</b> ${text(note.uncertainty, 'High')}</p><p>${text(note.interesting_fact)}</p><em>${text(note.narration)}</em></div>`;
+}
+
+async function loadSightings() {
+  if (!sightingsGrid) return;
+  const response = await fetch('/api/sightings', { cache: 'no-store' });
+  const data = await response.json();
+  sightingsGrid.innerHTML = '';
+  if (!(data.sightings || []).length) sightingsGrid.innerHTML = '<div class="empty">No sightings yet. Use Capture on a live feed.</div>';
+  (data.sightings || []).forEach(sighting => {
+    const card = document.createElement('article');
+    card.className = 'sighting-card';
+    card.innerHTML = `<img src="${sighting.image_url}" alt="Captured aquarium sighting"><div class="sighting-meta"><strong>${text(sighting.label, 'Unknown')}</strong><span>${text(sighting.tank_id)} · ${text(sighting.camera_id)}</span><time>${new Date(sighting.timestamp * 1000).toLocaleString()}</time><div class="sighting-labels"><select aria-label="Sighting label">${(data.labels || []).map(label => `<option${label === sighting.label ? ' selected' : ''}>${label}</option>`).join('')}</select><button class="favorite">${sighting.favorite ? '★ Favorite' : '☆ Favorite'}</button></div><button class="ask-deep">✦ Ask the Deep</button><small>Sends this captured image to OpenAI for analysis</small>${fieldNoteMarkup(sighting.ai_field_note)}</div>`;
+    const update = payload => fetch(`/api/sightings/${encodeURIComponent(sighting.sighting_id)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(() => loadSightings());
+    card.querySelector('select').addEventListener('change', event => update({ label: event.target.value }));
+    card.querySelector('.favorite').addEventListener('click', () => update({ favorite: !sighting.favorite }));
+    card.querySelector('.ask-deep').disabled = !data.ask_the_deep.enabled;
+    card.querySelector('.ask-deep').addEventListener('click', () => {
+      pendingDeepSightingId = sighting.sighting_id;
+      deepImage.src = sighting.image_url;
+      deepDialog.showModal();
+    });
+    sightingsGrid.appendChild(card);
+  });
+}
+
+async function analyzePendingSighting(event) {
+  event.preventDefault();
+  if (!pendingDeepSightingId) return;
+  const response = await fetch(`/api/sightings/${encodeURIComponent(pendingDeepSightingId)}/analyze`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirmed: true }),
+  });
+  const result = await response.json();
+  deepDialog.close();
+  cctvState.textContent = response.ok ? 'AI field note saved' : text(result.error, 'Ask the Deep unavailable');
+  await loadSightings();
+}
+
+function structureRecord(kind, index = 0) {
+  const snap = value => Math.round(clamp(value, 0.05, 0.95) / 0.05) * 0.05;
+  return {
+    item_id: `structure-${Date.now()}-${index}`,
+    item_type: 'structure_shape', structure_type: kind, tank_id: activeTank().tank_id,
+    label: `${kind.replace('-', ' ')} ${index + 1}`, color: ['#698f88', '#927c62', '#647f94', '#8c6d78'][index % 4],
+    rotation: (index * 45) % 360, scale: 1,
+    placement: { placed: true, position: { x: snap(0.2 + ((index * 0.23) % 0.65)), y: 0.08, z: snap(0.2 + ((index * 0.31) % 0.65)) }, target: null },
+  };
+}
+
+async function saveStructures(items) {
+  state.layout.scene_items = [...(state.layout.scene_items || []), ...items];
+  await fetch('/api/layout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ scene_items: items }) });
+  updateAllMeshes();
+}
+
+function addStructure() {
+  const kind = document.getElementById('structure-type')?.value || 'block';
+  saveStructures([structureRecord(kind)]).catch(() => {});
+}
+
+function scatterStructures() {
+  const kinds = ['block', 'slab', 'rounded-rock', 'pillar', 'arch', 'mound'];
+  const count = 3 + Math.floor(Math.random() * 4);
+  saveStructures(Array.from({ length: count }, (_, index) => structureRecord(kinds[index % kinds.length], index))).catch(() => {});
+}
+
+function associatedRigCamera(kind) {
+  const tankId = activeTank().tank_id;
+  return (state.layout.cameras || []).find(item => item.tank_id === tankId && (kind === 'raydar' ? isLighthouse(item) : isReeflex(item)));
+}
+
+async function setAutonomy(rig, action) {
+  const cameraItem = associatedRigCamera(rig);
+  const response = await fetch(`/api/vision/${rig}/${action}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tank_id: activeTank().tank_id, camera_id: cameraId(cameraItem), reason: action === 'stop' ? 'Dashboard STOP' : undefined }),
+  });
+  const result = await response.json();
+  if (!response.ok) cctvState.textContent = result.error || `${rig} unavailable`;
+  await refreshVisionStatus();
+}
+
+async function refreshVisionStatus() {
+  const response = await fetch('/api/vision/status', { cache: 'no-store' });
+  if (!response.ok) return;
+  const status = await response.json();
+  const raydarMode = document.getElementById('raydar-mode');
+  const reeflexMode = document.getElementById('reeflex-mode');
+  if (raydarMode) { raydarMode.textContent = `Raydar · ${status.raydar.state}`; raydarMode.title = status.raydar.detail; }
+  if (reeflexMode) { reeflexMode.textContent = `Reeflex · ${status.reeflex.state}`; reeflexMode.title = status.reeflex.detail; }
+  if (stageFeedBackdrop) {
+    stageFeedBackdrop.classList.toggle('tracking-crop', status.raydar.state === 'Track' && state.stageCameraId === status.raydar.camera_id);
+    if (status.raydar.target) stageFeedImage.style.transformOrigin = `${status.raydar.target.x * 100}% ${status.raydar.target.y * 100}%`;
+  }
 }
 
 function renderFeedMarquee() {
@@ -1665,7 +1885,7 @@ function renderSelection() {
   if (src) pipPreview.src = src;
   pipLabel.textContent = displayName(item) + ' / ' + itemKind(item);
   const faceRow = selectedSection.querySelector('.face-row');
-  if (faceRow) faceRow.hidden = !(isFloater(item) || isLighthouse(item) || isReeflex(item) || isRobotArm(item) || isFeeder(item));
+  if (faceRow) faceRow.hidden = !(isFloater(item) || isLighthouse(item) || isReeflex(item) || isRobotArm(item));
   document.querySelectorAll('.endoscope-only').forEach(button => {
     button.hidden = !isEndoscope(item);
   });
@@ -1677,7 +1897,7 @@ function renderSelection() {
   if (!placementOf(item).placed && state.pendingId === id) {
     tankSubtitle.textContent = isFloater(item)
       ? 'Click a side wall or the top to mount this camera.'
-      : isReeflex(item) || isLighthouse(item) || isFeeder(item)
+      : isReeflex(item) || isLighthouse(item)
         ? 'Click a tank rim or side to place this hardware.'
         : 'Click the tank to place this item.';
   } else {
@@ -1809,7 +2029,7 @@ function renderObservations() {
         updateStageFeed();
       }
     });
-    const labels = ['Fish', 'Shrimp', 'Snail', 'Coral', 'Feeder', 'Unknown'];
+    const labels = ['Fish', 'Shrimp', 'Snail', 'Coral', 'Unknown'];
     const grid = card.querySelector('.label-grid');
     labels.forEach(label => {
       const button = document.createElement('button');
@@ -1896,12 +2116,6 @@ function ensureSceneItemForActive(itemId, label, itemType) {
 
 const DEVICE_CATALOG = [
   {
-    itemId: 'feeder-001',
-    label: 'Feeder',
-    itemType: 'feeder',
-    detail: 'Food dropper or perimeter feeding station',
-  },
-  {
     itemId: 'floater-manual-001',
     label: 'Floater',
     itemType: 'floater_cam',
@@ -1915,13 +2129,13 @@ const DEVICE_CATALOG = [
   },
   {
     itemId: 'lighthouse-001',
-    label: 'Lighthouse',
+    label: 'Raydar',
     itemType: 'lighthouse',
     detail: 'Pan-tilt camera head mounted just above the rim',
   },
   {
     itemId: 'scope-001',
-    label: 'Scope',
+    label: 'Reel',
     itemType: 'endoscope_cam',
     detail: 'Endoscope-style probe camera inside the tank',
   },
@@ -2034,7 +2248,7 @@ function setupSteps() {
         options: [
           { label: 'Measure tank', detail: 'Set tank type, size, and node before placing hardware', mode: 'measure', apply: () => activeTank() },
           { label: 'Manage feeds', detail: usbCount ? 'Identify, preview, enable, or hide USB feeds' : 'No USB feeds are online yet', mode: 'feeds', apply: () => activeTank() },
-          { label: 'Add hardware', detail: unplacedCount ? `Place ${unplacedCount} assigned item${unplacedCount === 1 ? '' : 's'} or add optional hardware` : 'Add feeder, floater, reeflex, lighthouse, or scope hardware by hand', mode: 'edit', apply: () => activeTank() },
+          { label: 'Add hardware', detail: unplacedCount ? `Place ${unplacedCount} assigned item${unplacedCount === 1 ? '' : 's'} or add optional hardware` : 'Add floater, Reeflex, Raydar, or Reel hardware by hand', mode: 'edit', apply: () => activeTank() },
           { label: 'Tanks', detail: 'Create or reset one/two tank profiles', mode: 'fresh', apply: () => activeTank() },
         ].concat(nodesConnected
           ? [
@@ -2084,7 +2298,7 @@ function setupSteps() {
         question: `Active node manifest: ${manifestSummary()}`,
         options: [
           { label: 'Manifest looks right', detail: `${usbOnline}/${usb.length} registered USB streams online; manifest expects ${expectedUsb || 'unknown'} USB-video devices; ${snapshots.length} snapshot endpoint${snapshots.length === 1 ? '' : 's'}`, mode: 'edit', apply: () => activeTank() },
-          { label: 'Add missing hardware', detail: 'Choose feeder, floaters, reeflex, lighthouse, or scopes by hand', mode: 'edit', apply: () => activeTank() },
+          { label: 'Add missing hardware', detail: 'Choose floaters, Reeflex, Raydar, or Reels by hand', mode: 'edit', apply: () => activeTank() },
           { label: 'Use default tank', detail: 'Keep live feeds and default dimensions without marking hardware validated', close: true, apply: () => activeTank() },
         ],
       },
@@ -2225,7 +2439,7 @@ function setupSteps() {
       tankIndex: index,
       options: [
         { label: 'Use defaults', detail: 'Camera status, node health, feed freshness', profile: 'default' },
-        { label: 'Reef basics', detail: 'Temperature, pH, flow, feeder status', profile: 'reef_basic' },
+        { label: 'Reef basics', detail: 'Temperature, pH, flow, and camera status', profile: 'reef_basic' },
         { label: 'Camera only', detail: 'Feeds and placement without sensor metrics', profile: 'camera_only' },
       ].map(option => ({
         ...option,
@@ -2507,16 +2721,12 @@ function placeItemOnTank(item, point, face) {
     placement.mount_face = rail.mount_face;
     placement.position = rail.position;
     placement.target = rail.target;
-  } else if (isLighthouse(item) || isReeflex(item) || isFeeder(item)) {
+  } else if (isLighthouse(item) || isReeflex(item)) {
     const rim = snapLighthouseToRim(point, face);
     placement.placed = true;
     placement.mount_face = rim.mount_face;
     placement.position = rim.position;
-    placement.target = isFeeder(item)
-      ? { x: rim.position.x, y: 0.82, z: rim.position.z }
-      : isReeflex(item)
-        ? { x: 0.5, y: 0.62, z: 0.5 }
-      : rim.target;
+    placement.target = isReeflex(item) ? { x: 0.5, y: 0.62, z: 0.5 } : rim.target;
   } else {
     placement.placed = true;
     placement.position = worldToNorm(point);
@@ -2535,7 +2745,10 @@ function onPointerDown(event) {
   const meshes = [...state.meshes.values()].filter(mesh => mesh.visible);
   const objectHit = raycaster.intersectObjects(meshes, true)[0];
   if (objectHit) {
-    selectById(objectHit.object.userData.itemId || objectHit.object.parent?.userData.itemId);
+    const id = objectHit.object.userData.itemId || objectHit.object.parent?.userData.itemId;
+    selectById(id);
+    const item = allItems().find(entry => (cameraId(entry) || entry.item_id) === id);
+    if (item && isFloater(item)) showFloaterMarkerImage(item, true);
     return;
   }
 
@@ -2616,14 +2829,14 @@ function moveSelected(action) {
     if (face === 'z+') pos.z = 1;
     if (face === 'z-') pos.z = 0;
     placement.target = inwardTargetFor(pos, face);
-  } else if (isLighthouse(item) || isReeflex(item) || isFeeder(item)) {
+  } else if (isLighthouse(item) || isReeflex(item)) {
     const face = placement.mount_face || 'z+';
     if (face === 'x+') pos.x = 1;
     if (face === 'x-') pos.x = 0;
     if (face === 'z+') pos.z = 1;
     if (face === 'z-') pos.z = 0;
     pos.y = 1;
-    placement.target = isFeeder(item) ? { x: pos.x, y: 0.82, z: pos.z } : target;
+    placement.target = target;
   } else {
     placement.target = target;
   }
@@ -2672,14 +2885,14 @@ function applyPlacementFromPad(offsetX, offsetY) {
     if (face === 'z+') pos.z = 1;
     if (face === 'z-') pos.z = 0;
     placement.target = inwardTargetFor(pos, face);
-  } else if (isLighthouse(item) || isReeflex(item) || isFeeder(item)) {
+  } else if (isLighthouse(item) || isReeflex(item)) {
     const face = placement.mount_face || 'z+';
     if (face === 'x+') pos.x = 1;
     if (face === 'x-') pos.x = 0;
     if (face === 'z+') pos.z = 1;
     if (face === 'z-') pos.z = 0;
     pos.y = 1;
-    placement.target = isFeeder(item) ? { x: pos.x, y: 0.82, z: pos.z } : target;
+    placement.target = target;
   } else {
     placement.target = target;
   }
@@ -2747,15 +2960,13 @@ function mountSelectedToFace(face) {
   if (!item) return;
   const placement = placementOf(item);
   if (isEndoscope(item)) return;
-  if (isLighthouse(item) || isFeeder(item)) {
+  if (isLighthouse(item)) {
     const currentWorld = normToWorld(placement.position || { x: 0.5, y: 1, z: 0.5 });
     const rim = snapLighthouseToRim(currentWorld, face);
     placement.placed = true;
     placement.mount_face = rim.mount_face;
     placement.position = rim.position;
-    placement.target = isFeeder(item)
-      ? { x: rim.position.x, y: 0.82, z: rim.position.z }
-      : rim.target;
+    placement.target = rim.target;
     updateMesh(item);
     renderUnplaced();
     renderFeedMarquee();
@@ -2964,6 +3175,7 @@ function animate() {
   updateSimulatorCamera();
   controls.update();
   updateWorldControls();
+  positionFloaterCards();
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
@@ -2976,6 +3188,8 @@ refreshReeflexStatus().catch(() => {});
 window.setInterval(() => refreshLayout().catch(() => {}), 2000);
 window.setInterval(() => refreshLighthouseStatus().catch(() => {}), 3000);
 window.setInterval(() => refreshReeflexStatus().catch(() => {}), 3000);
+window.setInterval(() => refreshVisionStatus().catch(() => {}), 2000);
+window.setInterval(() => pollFloaterFrames().catch(() => {}), 5000);
 window.setInterval(() => {
   const item = selectedItem();
   const src = sourceForPreview(item);
@@ -2985,6 +3199,29 @@ window.setInterval(() => {
   }
 }, 10000);
 window.addEventListener('resize', resize);
+feedPrevious?.addEventListener('click', () => {
+  state.manualViewId = null; state.liveIndex -= 1; setLiveCamera(state.liveIndex); updateStageFeed();
+});
+feedNext?.addEventListener('click', () => {
+  state.manualViewId = null; state.liveIndex += 1; setLiveCamera(state.liveIndex); updateStageFeed();
+});
+feedPin?.addEventListener('click', () => {
+  if (state.manualViewId) { state.manualViewId = null; state.manualViewUntil = 0; feedPin.textContent = 'Pin'; }
+  else if (state.stageCameraId) { pinView(state.stageCameraId); feedPin.textContent = 'Unpin'; }
+  updateStageFeed();
+});
+sightingShutter?.addEventListener('click', () => captureActiveSighting());
+document.getElementById('open-sightings')?.addEventListener('click', () => {
+  sightingsDrawer.hidden = false; loadSightings().catch(() => {});
+});
+document.getElementById('close-sightings')?.addEventListener('click', () => { sightingsDrawer.hidden = true; });
+document.getElementById('deep-confirm')?.addEventListener('click', analyzePendingSighting);
+document.getElementById('add-structure')?.addEventListener('click', addStructure);
+document.getElementById('scatter-structures')?.addEventListener('click', scatterStructures);
+document.getElementById('raydar-survey')?.addEventListener('click', () => setAutonomy('raydar', 'start'));
+document.getElementById('raydar-stop')?.addEventListener('click', () => setAutonomy('raydar', 'stop'));
+document.getElementById('reeflex-survey')?.addEventListener('click', () => setAutonomy('reeflex', 'start'));
+document.getElementById('reeflex-auto-stop')?.addEventListener('click', () => setAutonomy('reeflex', 'stop'));
 setupButton.addEventListener('click', openSetup);
 dockToggle.addEventListener('click', () => {
   if (!sidePanel) return;

@@ -1,0 +1,4 @@
+# Optional runtime vision acceleration. The dashboard and all non-vision features
+# remain available when these are not installed.
+numpy
+opencv-python-headless

@@ -1979,3 +1979,93 @@ button.active {
 .setup-feed-preview.feed-error .setup-feed-frame {
   border-color: rgba(255,255,255,0.34);
 }
+
+/* SEE SEA TV portrait composition: simulator 44%, camera wall 56%. */
+.workspace {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 44fr) minmax(0, 56fr);
+}
+
+.tank-stage { grid-column: 1; grid-row: 1; }
+.primary-feed-stage { grid-column: 1; grid-row: 2; border-top: 1px solid var(--line-hot); }
+.side-panel {
+  position: absolute; z-index: 40; top: 0; right: 0; bottom: 0; width: min(390px, 88vw);
+  transform: translateX(105%); transition: transform .22s ease;
+}
+.side-panel.open { transform: translateX(0); }
+
+.cctv-bar {
+  position: absolute; z-index: 12; inset: 0 0 auto 0; min-height: 64px; padding: 9px 14px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  border-bottom: 1px solid rgba(141,223,255,.3); background: rgba(2,8,17,.91);
+}
+.cctv-bar > div:first-child { display: grid; gap: 3px; }
+.cctv-bar strong { color: #eaf9ff; font-size: 24px; letter-spacing: .09em; }
+.cctv-bar span { color: var(--muted); font-size: 11px; }
+.cctv-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.cctv-actions button { min-height: 36px; }
+.cctv-actions .shutter { border-radius: 999px; border-color: #eaf9ff; color: #fff; }
+.stage-feed-backdrop { inset: 64px 0 112px; }
+.stage-feed-backdrop img { opacity: 1; }
+.stage-feed-backdrop.tracking-crop img { transform: scale(1.5); transition: transform .25s ease, transform-origin .25s ease; }
+.primary-feed-hud { top: 70px; }
+.feed-empty { position: absolute; z-index: 2; inset: 64px 0 112px; display: grid; place-items: center; padding: 30px; color: var(--muted); text-align: center; }
+.feed-empty[hidden] { display: none; }
+.feed-thumbnails {
+  position: absolute; z-index: 12; inset: auto 0 0; height: 112px; padding: 8px 12px;
+  display: flex; gap: 8px; overflow-x: auto; background: rgba(2,8,17,.92); border-top: 1px solid var(--line);
+}
+.feed-thumb { min-width: 145px; height: 94px; padding: 4px; display: grid; grid-template-rows: 65px 1fr; overflow: hidden; }
+.feed-thumb img { width: 100%; height: 100%; object-fit: cover; background: #020712; }
+.feed-thumb span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; padding-top: 4px; }
+.feed-thumb.active { outline: 2px solid var(--oxygen); }
+
+.simulator-heading { position: absolute; z-index: 8; top: 10px; left: 14px; display: grid; pointer-events: none; }
+.simulator-heading strong { font-size: 17px; }
+.simulator-heading span { color: var(--muted); font-size: 10px; }
+.tank-name, .tank-direction { position: absolute; z-index: 8; color: var(--oxygen); font-weight: 900; pointer-events: none; text-shadow: 0 2px 8px #000; }
+.tank-name { top: 12%; font-size: 16px; letter-spacing: .08em; }
+.tank-name-one { left: 22%; } .tank-name-two { right: 22%; }
+.tank-direction { font-size: 10px; color: rgba(234,246,255,.72); }
+.tank-direction-front { bottom: 8px; left: 48%; }
+.tank-direction-back { top: 42px; left: 48%; }
+.tank-direction-left { bottom: 48%; left: 8px; transform: rotate(-90deg); }
+.tank-direction-right { bottom: 48%; right: 8px; transform: rotate(90deg); }
+.structure-toolbar { position: absolute; z-index: 9; left: 12px; bottom: 12px; display: flex; gap: 6px; }
+.structure-toolbar select { min-height: 38px; color: var(--text); background: #0a1421; border: 1px solid var(--line); border-radius: 7px; }
+.autonomy-toolbar { position: absolute; z-index: 9; right: 12px; bottom: 12px; display: flex; align-items: center; gap: 5px; padding: 5px; border: 1px solid var(--line); border-radius: 8px; background: rgba(2,8,17,.84); }
+.autonomy-toolbar span { padding: 0 4px; color: var(--oxygen); font-size: 10px; font-weight: 900; }
+.autonomy-toolbar button { min-height: 32px; font-size: 10px; }
+.floater-marker-card { position: absolute; z-index: 11; width: 150px; padding: 4px; transform: translate(-50%, -105%); display: grid; grid-template-rows: 95px auto; }
+.floater-marker-card[hidden] { display: none; }
+.floater-marker-card img { width: 100%; height: 100%; object-fit: cover; background: #000; }
+.floater-marker-card span { padding: 4px; font-size: 10px; overflow: hidden; text-overflow: ellipsis; }
+
+.sightings-drawer {
+  position: fixed; z-index: 100; inset: 6% 4%; padding: 16px; overflow: auto;
+  border: 1px solid var(--line-hot); border-radius: 12px; background: rgba(3,10,18,.97); box-shadow: 0 24px 80px #000;
+}
+.sightings-drawer[hidden] { display: none; }
+.sightings-drawer > header { position: sticky; top: -16px; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 14px 0; background: #030a12; }
+.sightings-drawer header div { display: grid; } .sightings-drawer header strong { font-size: 26px; } .sightings-drawer header span { color: var(--muted); }
+.sightings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.sighting-card { overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); }
+.sighting-card > img { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: #000; }
+.sighting-meta { display: grid; gap: 5px; padding: 10px; } .sighting-meta span, .sighting-meta time, .sighting-meta small { color: var(--muted); font-size: 11px; }
+.field-note { margin-top: 8px; padding: 10px; border-left: 3px solid var(--oxygen); background: rgba(81,199,255,.08); }
+.field-note p { margin: 5px 0; font-size: 12px; }
+.deep-dialog { width: min(560px, 92vw); color: var(--text); border: 1px solid var(--line-hot); border-radius: 12px; background: #07111e; }
+.deep-dialog::backdrop { background: rgba(0,0,0,.78); }
+.deep-dialog img { width: 100%; max-height: 52vh; object-fit: contain; background: #000; }
+.deep-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+
+@media (max-width: 700px) {
+  .app-shell { grid-template-rows: 122px minmax(0, 1fr); }
+  .app-header { padding: 8px 10px; }
+  .brand-mark { font-size: 28px; }
+  .cctv-bar { align-items: flex-start; }
+  .cctv-bar strong { font-size: 19px; }
+  .cctv-actions button { min-height: 30px; font-size: 10px; }
+  .structure-toolbar button { font-size: 10px; }
+  .autonomy-toolbar { bottom: 58px; }
+}

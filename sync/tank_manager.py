@@ -1,16 +1,22 @@
 #!/usr/bin/env python3
 import argparse
 import base64
+import binascii
+import hashlib
 import json
 import os
 import sys
+import threading
 import time
+import uuid
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Dict, List, Optional
 from urllib.parse import parse_qs, urlparse
 from urllib import error as urlerror, request as urlrequest
+
+from wildlife_system import AI_DISCLOSURE, SIGHTING_LABELS, VisionController, ask_the_deep, is_jpeg, normalize_structure, select_best_capture
 
 
 CONTENT_TYPES = {
@@ -30,7 +36,7 @@ NODE_STALE_SECONDS = float(os.environ.get("SYNC_TANK_NODE_STALE_SECONDS", "20"))
 
 
 class TankManagerApp:
-    def __init__(self, storage_dir: str = "./storage") -> None:
+    def __init__(self, storage_dir: str = "./storage", openai_transport=None, control_transport=None) -> None:
         self.storage_dir = Path(storage_dir)
         self.storage_dir.mkdir(parents=True, exist_ok=True)
         self.state_path = self.storage_dir / "layout.json"
@@ -41,11 +47,24 @@ class TankManagerApp:
         self.detections: List[Dict] = []
         self.observations: Dict[str, Dict] = {}
         self.organisms: Dict[str, Dict] = {}
+        self.sightings: Dict[str, Dict] = {}
+        self.capture_locks: set[str] = set()
+        self.capture_guard = threading.Lock()
+        self.auto_capture_at: Dict[str, float] = {}
+        self.openai_transport = openai_transport
         self.frame_dir = self.storage_dir / "frames"
         self.frame_dir.mkdir(parents=True, exist_ok=True)
         self.uploads_dir = self.storage_dir / "uploads"
         self.uploads_dir.mkdir(parents=True, exist_ok=True)
+        self.sightings_dir = self.storage_dir / "sightings"
+        self.sightings_dir.mkdir(parents=True, exist_ok=True)
         self._load_state()
+        self.vision = VisionController(
+            self.get_control_url,
+            post_json=control_transport,
+            frame_source=self._vision_frame,
+            capture_callback=self.capture_sighting,
+        )
 
     def _load_state(self) -> None:
         if not self.state_path.exists():
@@ -61,6 +80,7 @@ class TankManagerApp:
         self.detections = state.get("detections", [])
         self.observations = state.get("observations", {})
         self.organisms = state.get("organisms", {})
+        self.sightings = state.get("sightings", {})
         self._clear_unsaved_setup_state()
         self._save_state()
 
@@ -75,7 +95,10 @@ class TankManagerApp:
             if tank.get("saved_by_user") or (tank.get("hardware_validated") and node_setup_saved)
         }
         if not saved_tank_ids:
-            self.scene_items = {}
+            self.scene_items = {
+                item_id: item for item_id, item in self.scene_items.items()
+                if item.get("item_type") == "structure_shape"
+            }
         for tank_id, tank in self.tanks.items():
             if tank_id in saved_tank_ids:
                 continue
@@ -102,6 +125,7 @@ class TankManagerApp:
             "detections": self.detections,
             "observations": self.observations,
             "organisms": self.organisms,
+            "sightings": self.sightings,
         }
         self.state_path.write_text(json.dumps(state, indent=2))
 
@@ -295,6 +319,8 @@ class TankManagerApp:
             "detections": self.detections,
             "observations": list(self.observations.values()),
             "organisms": list(self.organisms.values()),
+            "sightings": self.list_sightings(),
+            "vision": self.vision.status(),
             "health": self.get_health(),
         }
 
@@ -360,6 +386,8 @@ class TankManagerApp:
         for item in payload.get("scene_items", []):
             item_id = item.get("item_id") or item.get("id")
             if item_id:
+                if item.get("item_type") == "structure_shape":
+                    item = normalize_structure(item)
                 self.scene_items[item_id] = {**self.scene_items.get(item_id, {}), **item, "item_id": item_id}
 
         if "detections" in payload:
@@ -440,6 +468,135 @@ class TankManagerApp:
     def get_camera(self, camera_id: str) -> Dict:
         return self.cameras.get(camera_id, {})
 
+    def _remote_snapshot_bytes(self, camera: Dict) -> Optional[bytes]:
+        remote_url = camera.get("snapshot_url") or camera.get("latest_image_url")
+        if not remote_url:
+            return None
+        with urlrequest.urlopen(remote_url, timeout=4) as response:
+            data = response.read(8 * 1024 * 1024 + 1)
+        return data
+
+    def _vision_frame(self, camera_id: str) -> Optional[bytes]:
+        image = self.get_snapshot_bytes(camera_id)
+        if image:
+            return image
+        camera = self.cameras.get(camera_id) or {}
+        return self._remote_snapshot_bytes(camera)
+
+    def capture_sighting(self, payload: Dict) -> Dict:
+        camera_id = str(payload.get("camera_id") or "")
+        if not camera_id or camera_id not in self.cameras:
+            raise ValueError("a known camera_id is required")
+        trigger = str(payload.get("trigger") or "manual")
+        if trigger not in ("manual", "raydar-auto"):
+            raise ValueError("trigger must be manual or raydar-auto")
+        now = time.time()
+        if trigger == "raydar-auto" and now - self.auto_capture_at.get(camera_id, 0) < 30:
+            raise ValueError("automatic capture cooldown is active")
+        with self.capture_guard:
+            if camera_id in self.capture_locks:
+                raise ValueError("capture already in progress for this camera")
+            self.capture_locks.add(camera_id)
+        try:
+            image = None
+            burst_choice = select_best_capture(payload.get("burst") or [])
+            if burst_choice and burst_choice.get("image_base64"):
+                image = base64.b64decode(burst_choice["image_base64"], validate=True)
+            if payload.get("image_base64"):
+                image = base64.b64decode(payload["image_base64"], validate=True)
+            image = image or self.get_snapshot_bytes(camera_id)
+            if image is None:
+                try:
+                    image = self._remote_snapshot_bytes(self.cameras[camera_id])
+                except (urlerror.URLError, TimeoutError, OSError):
+                    image = None
+            if not image or not is_jpeg(image):
+                raise ValueError("camera does not currently have a valid JPEG")
+            sighting_id = "sighting-" + uuid.uuid4().hex[:16]
+            image_path = self.sightings_dir / f"{sighting_id}.jpg"
+            image_path.write_bytes(image)
+            label = payload.get("label", "Unknown")
+            if label not in SIGHTING_LABELS:
+                raise ValueError("invalid sighting label")
+            camera = self.cameras[camera_id]
+            sighting = {
+                "sighting_id": sighting_id,
+                "camera_id": camera_id,
+                "tank_id": payload.get("tank_id") or camera.get("tank_id"),
+                "timestamp": now,
+                "trigger": trigger,
+                "focus_region": payload.get("focus_region"),
+                "scores": (burst_choice or {}).get("scores") or payload.get("scores") or {},
+                "crop_url": payload.get("crop_url"),
+                "image_url": f"/api/sightings/{sighting_id}/image",
+                "label": label,
+                "favorite": bool(payload.get("favorite", False)),
+                "ai_field_note": None,
+            }
+            self.sightings[sighting_id] = sighting
+            if trigger == "raydar-auto":
+                self.auto_capture_at[camera_id] = now
+            self._save_state()
+            self.cleanup_sightings()
+            return sighting
+        finally:
+            with self.capture_guard:
+                self.capture_locks.discard(camera_id)
+
+    def list_sightings(self) -> List[Dict]:
+        return sorted(self.sightings.values(), key=lambda item: item.get("timestamp", 0), reverse=True)
+
+    def cleanup_sightings(self, max_count: int = 500) -> int:
+        removed = 0
+        candidates = sorted(
+            (item for item in self.sightings.values() if not item.get("favorite") and item.get("label", "Unknown") == "Unknown"),
+            key=lambda item: item.get("timestamp", 0),
+        )
+        while len(self.sightings) > max_count and candidates:
+            item = candidates.pop(0)
+            sighting_id = item["sighting_id"]
+            self.sightings.pop(sighting_id, None)
+            path = self.sightings_dir / f"{sighting_id}.jpg"
+            if path.exists():
+                path.unlink()
+            removed += 1
+        if removed:
+            self._save_state()
+        return removed
+
+    def sighting_image(self, sighting_id: str) -> Optional[bytes]:
+        if sighting_id not in self.sightings:
+            return None
+        path = self.sightings_dir / f"{sighting_id}.jpg"
+        return path.read_bytes() if path.exists() else None
+
+    def analyze_sighting(self, sighting_id: str, payload: Dict) -> Dict:
+        sighting = self.sightings.get(sighting_id)
+        if not sighting:
+            raise ValueError("unknown sighting")
+        if payload.get("confirmed") is not True:
+            raise ValueError("explicit image confirmation is required")
+        image = self.sighting_image(sighting_id)
+        if not image:
+            raise ValueError("sighting image is unavailable")
+        note = ask_the_deep(image, persona=payload.get("persona"), transport=self.openai_transport)
+        sighting["ai_field_note"] = {**note, "created_at": time.time(), "disclosure": AI_DISCLOSURE}
+        self._save_state()
+        return sighting
+
+    def update_sighting(self, sighting_id: str, payload: Dict) -> Dict:
+        sighting = self.sightings.get(sighting_id)
+        if not sighting:
+            raise ValueError("unknown sighting")
+        if "label" in payload:
+            if payload["label"] not in SIGHTING_LABELS:
+                raise ValueError("invalid sighting label")
+            sighting["label"] = payload["label"]
+        if "favorite" in payload:
+            sighting["favorite"] = bool(payload["favorite"])
+        self._save_state()
+        return sighting
+
     def get_control_url(self, *keys: str, node_id: Optional[str] = None, tank_id: Optional[str] = None) -> Optional[str]:
         self._refresh_node_activity()
         ordered_nodes = [
@@ -478,6 +635,35 @@ class TankManagerHandler(BaseHTTPRequestHandler):
             self.send_json(self.server.app.active_nodes_payload())
             return
 
+        if path == "/api/vision/status":
+            self.send_json(self.server.app.vision.status())
+            return
+
+        if path == "/api/sightings":
+            self.send_json({
+                "sightings": self.server.app.list_sightings(),
+                "labels": list(SIGHTING_LABELS),
+                "ask_the_deep": {
+                    "enabled": bool(os.environ.get("OPENAI_API_KEY")),
+                    "disclosure": AI_DISCLOSURE,
+                },
+            })
+            return
+
+        if path.startswith("/api/sightings/") and path.endswith("/image"):
+            sighting_id = path.split("/")[3]
+            image = self.server.app.sighting_image(sighting_id)
+            if image is None:
+                self.send_error(HTTPStatus.NOT_FOUND, "sighting image not found")
+                return
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "image/jpeg")
+            self.send_header("Cache-Control", "private, max-age=31536000, immutable")
+            self.send_header("Content-Length", str(len(image)))
+            self.end_headers()
+            self.wfile.write(image)
+            return
+
         if path == "/api/controls/arm":
             params = parse_qs(parsed.query)
             self.proxy_control_get(
@@ -506,6 +692,10 @@ class TankManagerHandler(BaseHTTPRequestHandler):
                 return
             self.send_response(HTTPStatus.OK)
             self.send_header("Content-Type", "image/jpeg")
+            self.send_header("ETag", f'"{hashlib.sha256(snapshot).hexdigest()}"')
+            camera = self.server.app.get_camera(camera_id)
+            if camera.get("last_frame_at"):
+                self.send_header("Last-Modified", self.date_time_string(camera["last_frame_at"]))
             self.end_headers()
             self.wfile.write(snapshot)
             return
@@ -537,6 +727,10 @@ class TankManagerHandler(BaseHTTPRequestHandler):
                 return
             self.send_response(HTTPStatus.OK)
             self.send_header("Content-Type", "image/jpeg")
+            self.send_header("ETag", f'"{hashlib.sha256(snapshot).hexdigest()}"')
+            camera = self.server.app.get_camera(camera_id)
+            if camera.get("last_frame_at"):
+                self.send_header("Last-Modified", self.date_time_string(camera["last_frame_at"]))
             self.end_headers()
             self.wfile.write(snapshot)
             return
@@ -567,6 +761,9 @@ class TankManagerHandler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path
         length = int(self.headers.get("Content-Length", "0"))
+        if length > 10 * 1024 * 1024:
+            self.send_json({"status": "error", "error": "request is too large"}, HTTPStatus.REQUEST_ENTITY_TOO_LARGE)
+            return
         body = self.rfile.read(length).decode("utf-8") if length else ""
 
         if path == "/api/nodes/register":
@@ -618,13 +815,61 @@ class TankManagerHandler(BaseHTTPRequestHandler):
             self.send_json({"status": "ok"})
             return
 
+        if path == "/api/vision/raydar/start":
+            self._vision_action(lambda payload: self.server.app.vision.start_raydar({**payload, "background": True}), body)
+            return
+
+        if path == "/api/vision/raydar/stop":
+            self._vision_action(self.server.app.vision.stop_raydar, body)
+            return
+
+        if path == "/api/vision/reeflex/start":
+            self._vision_action(self.server.app.vision.start_reeflex, body)
+            return
+
+        if path == "/api/vision/reeflex/stop":
+            self._vision_action(self.server.app.vision.stop_reeflex, body)
+            return
+
+        if path == "/api/sightings/capture":
+            try:
+                sighting = self.server.app.capture_sighting(json.loads(body or "{}"))
+                self.send_json({"status": "ok", "sighting": sighting}, HTTPStatus.CREATED)
+            except (ValueError, TypeError, binascii.Error) as exc:
+                self.send_json({"status": "error", "error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
+        if path.startswith("/api/sightings/") and path.endswith("/analyze"):
+            sighting_id = path.split("/")[3]
+            try:
+                sighting = self.server.app.analyze_sighting(sighting_id, json.loads(body or "{}"))
+                self.send_json({"status": "ok", "sighting": sighting})
+            except ValueError as exc:
+                self.send_json({"status": "error", "error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            except RuntimeError as exc:
+                self.send_json({"status": "disabled", "error": str(exc)}, HTTPStatus.SERVICE_UNAVAILABLE)
+            except (urlerror.URLError, TimeoutError, OSError) as exc:
+                self.send_json({"status": "offline", "error": f"Ask the Deep unavailable: {exc}"}, HTTPStatus.BAD_GATEWAY)
+            return
+
+        if path.startswith("/api/sightings/") and len(path.strip("/").split("/")) == 3:
+            sighting_id = path.split("/")[3]
+            try:
+                sighting = self.server.app.update_sighting(sighting_id, json.loads(body or "{}"))
+                self.send_json({"status": "ok", "sighting": sighting})
+            except ValueError as exc:
+                self.send_json({"status": "error", "error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+
         if path == "/api/controls/lighthouse/pose":
             payload = json.loads(body or "{}")
+            self.server.app.vision.set_manual("raydar")
             self.proxy_control_post(("lighthouse_pose",), payload)
             return
 
         if path == "/api/controls/reeflex/pose":
             payload = json.loads(body or "{}")
+            self.server.app.vision.set_manual("reeflex")
             self.proxy_control_post(("reeflex_pose",), payload)
             return
 
@@ -638,9 +883,16 @@ class TankManagerHandler(BaseHTTPRequestHandler):
     def log_message(self, format: str, *args) -> None:  # noqa: A003
         return
 
-    def send_json(self, payload: Dict) -> None:
+    def _vision_action(self, action, body: str) -> None:
+        try:
+            result = action(json.loads(body or "{}"))
+            self.send_json({"status": "ok", "controller": result})
+        except (ValueError, json.JSONDecodeError) as exc:
+            self.send_json({"status": "error", "error": str(exc)}, HTTPStatus.BAD_REQUEST)
+
+    def send_json(self, payload: Dict, status: HTTPStatus = HTTPStatus.OK) -> None:
         data = json.dumps(payload).encode("utf-8")
-        self.send_response(HTTPStatus.OK)
+        self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
@@ -764,7 +1016,7 @@ class TankManagerHandler(BaseHTTPRequestHandler):
   <head>
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-    <title>Sync Tank</title>
+    <title>SEE SEA TV — Sync Tank</title>
     <link rel=\"stylesheet\" href=\"/static/app.css\">
   </head>
   <body>
@@ -779,18 +1031,20 @@ class TankManagerHandler(BaseHTTPRequestHandler):
       </header>
       <section class=\"workspace\">
         <section class=\"primary-feed-stage\" id=\"primary-feed-stage\">
+          <div class=\"cctv-bar\">
+            <div><strong>SEE SEA TV</strong><span id=\"cctv-state\">Rotating every 8 seconds</span></div>
+            <div class=\"cctv-actions\">
+              <button id=\"feed-previous\">Previous</button><button id=\"feed-pin\">Pin</button>
+              <button id=\"feed-next\">Next</button><button id=\"sighting-shutter\" class=\"shutter\">Capture</button>
+              <button id=\"open-sightings\">Sightings</button>
+            </div>
+          </div>
           <div class=\"stage-feed-backdrop\" id=\"stage-feed-backdrop\" hidden>
             <img id=\"stage-feed-image\" alt=\"\">
             <div id=\"stage-feed-label\"></div>
           </div>
-          <div class=\"floater-side floater-side-left\" id=\"floater-left\" hidden>
-            <img id=\"floater-left-image\" alt=\"\">
-            <div id=\"floater-left-label\"></div>
-          </div>
-          <div class=\"floater-side floater-side-right\" id=\"floater-right\" hidden>
-            <img id=\"floater-right-image\" alt=\"\">
-            <div id=\"floater-right-label\"></div>
-          </div>
+          <div class=\"feed-empty\" id=\"feed-empty\">No camera is connected. Simulator and Sightings remain available.</div>
+          <div class=\"feed-thumbnails\" id=\"feed-thumbnails\"></div>
           <div class=\"primary-feed-hud\">
             <div>
               <div class=\"hud-title\" id=\"tank-title\">Sync Tank</div>
@@ -805,15 +1059,15 @@ class TankManagerHandler(BaseHTTPRequestHandler):
           <section class=\"lighthouse-control-section\" id=\"lighthouse-control-section\" hidden>
             <div class=\"lighthouse-header\">
               <div>
-                <div class=\"section-title\">Lighthouse aim</div>
+                <div class=\"section-title\">Raydar aim</div>
                 <div class=\"lighthouse-readout\">
                   <span id=\"lighthouse-current\">Pan -- / Tilt --</span>
                   <span id=\"lighthouse-status\">Checking servos</span>
                 </div>
               </div>
-              <button class=\"lighthouse-close\" id=\"lighthouse-close\" aria-label=\"Close Lighthouse controls\">X</button>
+              <button class=\"lighthouse-close\" id=\"lighthouse-close\" aria-label=\"Close Raydar controls\">X</button>
             </div>
-            <div class=\"lighthouse-pad\" aria-label=\"Lighthouse pan tilt controls\">
+            <div class=\"lighthouse-pad\" aria-label=\"Raydar pan tilt controls\">
               <button data-lighthouse-move=\"up\" aria-label=\"Tilt up\">Up</button>
               <div>
                 <button data-lighthouse-move=\"left\" aria-label=\"Pan left\">Left</button>
@@ -826,7 +1080,7 @@ class TankManagerHandler(BaseHTTPRequestHandler):
               <label>Pan <input id=\"lighthouse-pan-slider\" type=\"range\" min=\"20\" max=\"160\" step=\"1\"></label>
               <label>Tilt <input id=\"lighthouse-tilt-slider\" type=\"range\" min=\"45\" max=\"125\" step=\"1\"></label>
             </div>
-            <div class=\"lighthouse-step\" role=\"group\" aria-label=\"Lighthouse step size\">
+            <div class=\"lighthouse-step\" role=\"group\" aria-label=\"Raydar step size\">
               <button data-lighthouse-step=\"1\">1 deg</button>
               <button data-lighthouse-step=\"3\" class=\"active\">3 deg</button>
               <button data-lighthouse-step=\"5\">5 deg</button>
@@ -835,15 +1089,15 @@ class TankManagerHandler(BaseHTTPRequestHandler):
           <section class=\"reeflex-control-section\" id=\"reeflex-control-section\" hidden>
             <div class=\"lighthouse-header\">
               <div>
-                <div class=\"section-title\">REEFLEX arm</div>
+                <div class=\"section-title\">Reeflex survey rig</div>
                 <div class=\"lighthouse-readout\">
                   <span id=\"reeflex-current\">Base -- / Shoulder -- / Elbow --</span>
                   <span id=\"reeflex-status\">Checking servos</span>
                 </div>
               </div>
-              <button class=\"lighthouse-close\" id=\"reeflex-close\" aria-label=\"Close REEFLEX controls\">X</button>
+              <button class=\"lighthouse-close\" id=\"reeflex-close\" aria-label=\"Close Reeflex controls\">X</button>
             </div>
-            <div class=\"reeflex-joints\" aria-label=\"REEFLEX axis controls\">
+            <div class=\"reeflex-joints\" aria-label=\"Reeflex axis controls\">
               <div class=\"reeflex-row\">
                 <span>Base</span>
                 <button data-reeflex-move=\"base-\" aria-label=\"Base left\">-</button>
@@ -867,7 +1121,7 @@ class TankManagerHandler(BaseHTTPRequestHandler):
               <button data-reeflex-center>Center</button>
               <button data-reeflex-stop>Stop</button>
             </div>
-            <div class=\"lighthouse-step\" role=\"group\" aria-label=\"REEFLEX step size\">
+            <div class=\"lighthouse-step\" role=\"group\" aria-label=\"Reeflex step size\">
               <button data-reeflex-step=\"1\">1 deg</button>
               <button data-reeflex-step=\"3\" class=\"active\">3 deg</button>
               <button data-reeflex-step=\"5\">5 deg</button>
@@ -875,6 +1129,15 @@ class TankManagerHandler(BaseHTTPRequestHandler):
           </section>
         </section>
         <section class=\"tank-stage\" id=\"tank-stage\">
+          <div class=\"simulator-heading\"><strong>Two-tank simulator</strong><span>Drag to orbit · wheel or pinch to zoom</span></div>
+          <div class=\"tank-direction tank-direction-front\">FRONT</div><div class=\"tank-direction tank-direction-back\">BACK</div>
+          <div class=\"tank-direction tank-direction-left\">LEFT</div><div class=\"tank-direction tank-direction-right\">RIGHT</div>
+          <div class=\"tank-name tank-name-one\">TANK 1</div><div class=\"tank-name tank-name-two\">TANK 2</div>
+          <div class=\"structure-toolbar\" id=\"structure-toolbar\">
+            <select id=\"structure-type\"><option value=\"block\">Block</option><option value=\"slab\">Slab</option><option value=\"rounded-rock\">Rounded rock</option><option value=\"pillar\">Pillar</option><option value=\"arch\">Arch</option><option value=\"mound\">Mound</option></select>
+            <button id=\"add-structure\">Add shape</button><button id=\"scatter-structures\">Scatter shapes</button>
+          </div>
+          <div class=\"autonomy-toolbar\"><span id=\"raydar-mode\">Raydar · STOP</span><button id=\"raydar-survey\">Survey</button><button id=\"raydar-stop\">STOP</button><span id=\"reeflex-mode\">Reeflex · STOP</span><button id=\"reeflex-survey\">Survey</button><button id=\"reeflex-auto-stop\">STOP</button></div>
           <div class=\"pip\" id=\"stage-pip\" hidden>
             <img id=\"pip-preview\" alt=\"\">
             <div id=\"pip-label\"></div>
@@ -902,7 +1165,7 @@ class TankManagerHandler(BaseHTTPRequestHandler):
             <div class=\"feed-list\" id=\"unplaced-list\"></div>
           </section>
           <section class=\"panel-section live-section\" id=\"live-section\" hidden>
-            <div class=\"section-title\">Camera views</div>
+            <div class=\"section-title\">SEE SEA TV views</div>
             <div class=\"live-viewer\">
               <img id=\"live-feed\" alt=\"\">
               <div class=\"live-meta\">
@@ -965,6 +1228,16 @@ class TankManagerHandler(BaseHTTPRequestHandler):
         </button>
       </section>
     </main>
+    <section class=\"sightings-drawer\" id=\"sightings-drawer\" hidden aria-label=\"Sightings album\">
+      <header><div><strong>Sightings</strong><span>Wildlife moments saved locally</span></div><button id=\"close-sightings\">Close</button></header>
+      <div class=\"sightings-grid\" id=\"sightings-grid\"></div>
+    </section>
+    <dialog class=\"deep-dialog\" id=\"deep-dialog\">
+      <form method=\"dialog\"><h2>✦ Ask the Deep</h2><p>Sends this captured image to OpenAI for analysis</p>
+        <img id=\"deep-image\" alt=\"The exact captured sighting that will be sent\">
+        <div class=\"deep-actions\"><button value=\"cancel\">Cancel</button><button id=\"deep-confirm\" value=\"default\">Send this image</button></div>
+      </form>
+    </dialog>
     <section class=\"setup-overlay\" id=\"setup-overlay\" hidden>
       <div class=\"setup-card\">
         <div class=\"setup-kicker\">Tank setup</div>
