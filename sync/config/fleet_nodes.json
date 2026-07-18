@@ -1,0 +1,65 @@
+{
+  "nodes": [
+    {
+      "id": "zero",
+      "role": "sync-display-node",
+      "host": "127.0.0.1",
+      "user": "zero",
+      "transport": "local",
+      "wired_ip": "SYNC_WIRED_IP",
+      "repo_candidates": [
+        "/home/zero/sync-tank"
+      ],
+      "services": [
+        "tank-manager.service",
+        "sync-tank-display.service"
+      ]
+    },
+    {
+      "id": "tank-one",
+      "role": "tank-node",
+      "host": "TANK_ONE_WIRED_IP",
+      "user": "one",
+      "transport": "ssh",
+      "wired_ip": "TANK_ONE_WIRED_IP",
+      "tank_id": "tank-1",
+      "node_id": "tank-pi-001",
+      "payload_url": "http://TANK_ONE_WIRED_IP:8080/api/pc-hub/payload",
+      "fallback_payload_url": "http://TANK_ONE_WIRED_IP:8080/api/hub-payload",
+      "control_url": "http://TANK_ONE_WIRED_IP:5050",
+      "repo_candidates": [
+        "/home/one/sync-tank",
+        "/home/one/SyncTank",
+        "/home/one/sync_tank"
+      ],
+      "services": [
+        "sync-tank-ingest.service",
+        "sync-tank-camera.service",
+        "sync-tank-control.service"
+      ]
+    },
+    {
+      "id": "tank-two",
+      "role": "tank-node",
+      "host": "TANK_TWO_WIRED_IP",
+      "user": "two",
+      "transport": "ssh",
+      "wired_ip": "TANK_TWO_WIRED_IP",
+      "tank_id": "tank-2",
+      "node_id": "tank-pi-002",
+      "payload_url": "http://TANK_TWO_WIRED_IP:8080/api/pc-hub/payload",
+      "fallback_payload_url": "http://TANK_TWO_WIRED_IP:8080/api/hub-payload",
+      "control_url": "http://TANK_TWO_WIRED_IP:5050",
+      "repo_candidates": [
+        "/home/two/sync-tank",
+        "/home/two/SyncTank",
+        "/home/two/sync_tank"
+      ],
+      "services": [
+        "sync-tank-ingest.service",
+        "sync-tank-camera.service",
+        "sync-tank-control.service"
+      ]
+    }
+  ]
+}

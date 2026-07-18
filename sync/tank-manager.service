@@ -1,0 +1,16 @@
+[Unit]
+Description=Sync Tank Manager
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/zero/sync-tank
+Environment=SYNC_TANK_STORAGE_DIR=/home/zero/sync-tank/storage
+ExecStart=/home/zero/sync-tank/.venv/bin/python /home/zero/sync-tank/tank_manager.py --host 0.0.0.0 --port 8765
+Restart=always
+RestartSec=5
+User=zero
+
+[Install]
+WantedBy=multi-user.target
