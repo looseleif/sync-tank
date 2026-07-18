@@ -1,15 +1,16 @@
 # Sync node controller
 
-This directory contains the Sync dashboard and connector processes that coordinate multiple tank nodes.
+This directory contains the local Sync hub: the controller, connectors, and dashboard services that coordinate multiple tank nodes. The current deployment proves the design with two independent nodes while the fleet configuration and payload interfaces leave room for more.
 
 ## Responsibilities
 
-- Render the multi-tank dashboard and camera views.
 - Poll tank edge nodes for camera inventory and health.
 - Proxy snapshots and streams from tank nodes to the dashboard.
-- Organize observations and device state across tanks.
+- Preserve tank ownership while organizing observations and device state across the local fleet.
+- Render the multi-tank dashboard and camera views, including SEE SEA TV.
 - Receive ESP32 heartbeats and JPEG uploads when deployed as an edge receiver.
-- Run SEE SEA TV, the two-tank simulator, local motion analysis, safe Raydar seeking, bounded Reeflex control, and the Sightings album.
+- Run the spatial simulator, local motion analysis, safe Raydar seeking, bounded Reeflex control, and the Sightings album.
+- Keep local operation independent of optional community sharing or cloud services.
 
 ## Main entry points
 

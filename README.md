@@ -2,15 +2,45 @@
 
 # Sync Tank
 
-Sync Tank is an open-source camera, simulation, and wildlife-observation platform for aquariums. Raspberry Pi tank nodes collect camera and device data, while a separate Sync controller combines multiple tanks into one portrait dashboard called **SEE SEA TV**.
+Sync Tank is an open-source, local-first hub for aquaristics. It connects aquarium cameras, inspection tools, device nodes, and Raspberry Pis so multiple tanks can be observed and coordinated as one system without giving up local ownership or offline operation.
 
-The project is designed to remain useful without cloud services or connected hardware. Cameras and rigs may be absent, local analysis may be disabled, and the complete dashboard, simulator, Sightings album, and fake-node test environment will still run.
+The current installation proves the model with two independent tank nodes: `n=2` is the starting point, not the limit. Additional tanks, cameras, people, and software blocks should be able to join through the same open interfaces. **SEE SEA TV is one block within Sync Tank**—the visual display—not the project as a whole.
 
 > Water and low voltage have never made this much sense.
 
+## The Sync Tank mission
+
+Sync Tank exists to make aquarium work easier to connect, understand, share, and improve. Each aquarium can keep its footage, controls, and analysis on a local hub while still benefiting from a wider open-source community.
+
+### Start with two, design for many
+
+- Prove that separate Raspberry Pi tank nodes can report into one local Sync hub.
+- Keep tank identity, camera identity, layout, and control boundaries intact as the network grows.
+- Allow each node to keep working when another tank, the internet, a camera, or an optional analysis service is unavailable.
+- Add capabilities as interoperable blocks: SEE SEA TV, the spatial tank model, Reels, Reeflex, Raydar, local motion observation, Sightings, alerts, and future tools.
+- Treat the two-tank deployment as a real reference implementation for larger personal, classroom, research, and community installations.
+
+### More eyes on aquatic life
+
+The long-term goal is a community of aquarists who can choose to share useful footage, Sightings, failure cases, configurations, and improvements. More people observing similar animals and systems can create earlier signals when something is unusual:
+
+- changes in movement, appearance, hiding, feeding response, or habitat use;
+- equipment failures, blocked views, stale cameras, unsafe motion, or environmental changes;
+- recurring false detections and difficult visual conditions;
+- software, firmware, network, and hardware vulnerabilities;
+- patterns that one person or one short observation might miss.
+
+Sync Tank should help turn those signals into understandable notifications for the people responsible for the aquarium. It is not a substitute for attentive husbandry, water testing, veterinary expertise, or human judgment; its value is helping the right person notice and investigate sooner.
+
+### Local ownership, voluntary sharing
+
+Community participation must not require sending every feed to a central service. Raw footage and controls stay local by default. Sharing should be explicit and selective—such as a chosen clip, a captured Sighting, an anonymized failure case, or an open-source fix. The same model lets contributors improve camera support, tests, safety limits, visual analysis, documentation, and hardware designs without needing identical tanks.
+
+Success means that someone can add a new node or observation tool for their own aquarium, keep control of it locally, and still contribute knowledge that makes other aquariums safer and easier to understand.
+
 ## The project in 2026
 
-Sync Tank returned to active development around Open Sauce 2026 with a multi-tank controller, a camera-first interface, offline simulation, local motion observation, and stricter motion-control safety.
+Sync Tank returned to active development around Open Sauce 2026 with a two-tank local controller, a shared device and camera model, offline simulation, local motion observation, stricter motion-control safety, and a rebuilt display block.
 
 <p align="center">
   <img src="images/readme/open-sauce-2026-chase-and-kara.jpg" alt="Chase and Kara standing outside an Open Sauce 2026 exhibit hall in San Mateo" width="560">
@@ -18,9 +48,9 @@ Sync Tank returned to active development around Open Sauce 2026 with a multi-tan
 
 *Chase and Kara outside one of the main exhibit halls at Open Sauce 2026 in San Mateo, California.*
 
-## From SSTV to SEE SEA TV
+## One block: from SSTV to SEE SEA TV
 
-The project began with SSTV: direct aquarium camera pages built to prove that several inexpensive video devices could be viewed, selected, and analyzed together. The 2026 SEE SEA TV prototypes build on that foundation by connecting the footage to tanks, physical camera positions, interior landmarks, device state, and wildlife observations.
+The display block began as SSTV: direct aquarium camera pages built to prove that several inexpensive video devices could be viewed, selected, and analyzed together. The 2026 SEE SEA TV prototypes build on that foundation by connecting footage to tank nodes, physical camera positions, interior landmarks, device state, and wildlife observations. This is the visible interface for Sync Tank, but only one consumer of the local hub.
 
 ### Original SSTV — 2025
 
@@ -257,6 +287,14 @@ Reeflex is a motorized inspection platform built around printed mechanical parts
 
 ## What works today
 
+### Multi-node local hub
+
+- Polls independent Raspberry Pi tank nodes and combines their camera and device inventories without erasing tank ownership.
+- Demonstrates two active tank nodes and keeps their identities, status, feeds, layouts, and controls separate.
+- Uses configuration and open payload interfaces so `n=2` can grow without redesigning the hub around a fixed number of tanks.
+- Keeps the dashboard, simulator, Sightings, fake nodes, and manual controls useful when physical hardware or the internet is missing.
+- Provides one local source of truth for downstream blocks such as SEE SEA TV, spatial modeling, observation, capture, and safe rig control.
+
 ### SEE SEA TV
 
 - Rotates available MJPEG feeds every eight seconds.
@@ -300,20 +338,21 @@ No detection, feed rotation, startup task, or background job sends an image to O
 ## Architecture
 
 ```text
-ESP32-S3 still cameras ─────┐
-Reels / USB cameras ────────┼─> Raspberry Pi tank node(s)
-Raydar / Reeflex ───────────┘          │
-                                  │ existing payload, camera, and control URLs
-                                  ▼
-                         Raspberry Pi Sync controller
-                                  │
-                    ┌─────────────┼─────────────┐
-                    ▼             ▼             ▼
-              SEE SEA TV     Local vision    Sightings
-               simulator      and safety       album
+Tank 1: Pi, cameras, and rigs ─┐
+Tank 2: Pi, cameras, and rigs ─┼──> Local Sync hub
+Additional tank nodes ─────────┘           │
+                                          ├── SEE SEA TV display
+                                          ├── Spatial tank model
+                                          ├── Motion observation and alerts
+                                          ├── Sightings and field notes
+                                          └── Safe inspection-tool control
+
+Chosen clips, Sightings, tests, and fixes ───> Optional community exchange
 ```
 
-Tank nodes own local camera discovery, ESP32 JPEG ingest, servo endpoints, and machine-readable inventory. The Sync controller polls those existing interfaces, proxies camera media, maintains the combined layout, runs optional local analysis, and serves the portrait dashboard. Deployed tank URLs and internal Lighthouse identifiers do not need to change.
+Tank nodes own local camera discovery, ESP32 JPEG ingest, servo endpoints, and machine-readable inventory. The Sync hub polls those existing interfaces, proxies camera media, maintains combined but separately owned tank layouts, runs optional local analysis, and serves its software blocks. The current `n=2` deployment validates the pattern while configuration leaves room for more tank nodes. Deployed tank URLs and internal Lighthouse identifiers do not need to change.
+
+Community exchange sits outside the local control path. Nothing in the aquarium should depend on public sharing, and no footage should leave the local hub without an explicit choice.
 
 ## Repository map
 
