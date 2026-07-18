@@ -12,6 +12,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 from io import BytesIO
+from urllib.parse import urlsplit, urlunsplit
 
 from flask import Flask, Response, jsonify, render_template, request, send_file, send_from_directory
 
@@ -99,15 +100,25 @@ class NodeStore:
             return
 
         config = self.node_config()
-        current_profile = config.get("profile") or {}
-        if str(current_profile.get("id") or "") == profile_id:
-            return
-
         inventory = identity.get("inventory") or {}
         node_inventory = config.setdefault("inventory", {})
         node_inventory["lighthouses"] = int(inventory.get("lighthouse_cameras", 0))
         node_inventory["robotic_arms"] = int(inventory.get("reeflex_arms", 0))
         config["profile"] = desired_profile
+        role_split = desired_profile.get("role_split") or {}
+        cameras = config.get("cameras") or {}
+        if role_split.get("lighthouse") and not role_split.get("reeflex"):
+            for camera in cameras.values():
+                if camera.get("camera_type") == "reeflex_cam":
+                    camera["camera_type"] = "lighthouse_cam"
+                    if "reeflex" in str(camera.get("label", "")).lower():
+                        camera["label"] = "Raydar Camera #1"
+        elif role_split.get("reeflex") and not role_split.get("lighthouse"):
+            for camera in cameras.values():
+                if camera.get("camera_type") == "lighthouse_cam":
+                    camera["camera_type"] = "reeflex_cam"
+                    if any(name in str(camera.get("label", "")).lower() for name in ("lighthouse", "raydar")):
+                        camera["label"] = "Reeflex Camera #1"
         self._write_node_config(config)
 
     def heartbeat(self, payload: dict[str, Any]) -> dict[str, Any]:
@@ -554,7 +565,7 @@ class NodeStore:
         }
 
     def control_urls(self, lan_url: str) -> dict[str, str]:
-        control_base_url = (self.settings.camera_service_url or lan_url).rstrip("/")
+        control_base_url = _reachable_service_url(self.settings.camera_service_url, lan_url, 5050)
         urls = {
             "arm_status": f"{control_base_url}/api/arm",
             "servo_channel": f"{control_base_url}/api/servo/channel",
@@ -1461,9 +1472,26 @@ def _command_response(command: dict[str, Any]) -> dict[str, Any]:
 
 
 def _lan_url(settings: IngestSettings) -> str:
-    if settings.public_url:
+    if settings.public_url and not _is_placeholder_url(settings.public_url):
         return settings.public_url
     return request.host_url.rstrip("/")
+
+
+def _is_placeholder_url(value: str) -> bool:
+    try:
+        hostname = (urlsplit(str(value)).hostname or "").upper()
+    except ValueError:
+        return True
+    return not hostname or any(token in hostname for token in ("PRIVATE", "WIRED", "TANK_", "PC_", "SYNC_"))
+
+
+def _reachable_service_url(configured_url: str, request_url: str, port: int) -> str:
+    if configured_url and not _is_placeholder_url(configured_url):
+        return configured_url.rstrip("/")
+    parsed = urlsplit(request_url)
+    hostname = parsed.hostname or "localhost"
+    host = f"[{hostname}]" if ":" in hostname else hostname
+    return urlunsplit((parsed.scheme or "http", f"{host}:{int(port)}", "", "", "")).rstrip("/")
 
 
 def _remote_allowed(remote_addr: str, allowed_cidrs: list[str]) -> bool:

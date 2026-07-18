@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from sync_tank.ingest import create_ingest_app
+from sync_tank.ingest import _is_placeholder_url, _reachable_service_url, create_ingest_app
 
 
 class TestNodeConfig(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestNodeConfig(unittest.TestCase):
             config_dir.mkdir()
             node_config_path = config_dir / "node_config.json"
             node_config_path.write_text(
-                '{"inventory":{"robotic_arms":1,"lighthouses":0},"cameras":{},"profile":{"id":"tank1-reeflex"}}',
+                '{"inventory":{"robotic_arms":1,"lighthouses":0},"cameras":{"usb_4":{"camera_type":"reeflex_cam","label":"Reeflex Camera #1","source_type":"usb_camera"}},"profile":{"id":"tank1-reeflex"}}',
                 encoding="utf-8",
             )
             (config_dir / "tank_identity.yaml").write_text(
@@ -50,6 +50,17 @@ ingest:
             assert migrated["profile"]["id"] == "tank1-raydar"
             assert migrated["inventory"]["lighthouses"] == 1
             assert migrated["inventory"]["robotic_arms"] == 0
+            assert migrated["cameras"]["usb_4"]["camera_type"] == "lighthouse_cam"
+            assert migrated["cameras"]["usb_4"]["label"] == "Raydar Camera #1"
+
+    def test_placeholder_urls_fall_back_to_the_request_host(self):
+        assert _is_placeholder_url("http://TANK_WIRED_HOST:8080")
+        assert not _is_placeholder_url("http://tank-node.local:8080")
+        assert _reachable_service_url(
+            "http://TANK_WIRED_HOST:5050",
+            "http://tank-node.local:8080",
+            5050,
+        ) == "http://tank-node.local:5050"
 
     def test_node_config_and_hub_payload(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -87,7 +98,7 @@ ingest:
             assert save.status_code == 200
             assert payload["inventory"]["robotic_arms"] == 2
             assert payload["cameras"][0]["label"] == "left floater"
-            pc_camera = pc_payload["camera_registration"]["cameras"][0]
+            pc_camera = pc_payload["relayed_camera_registration"]["cameras"][0]
             assert pc_payload["node"]["tank_ids"] == ["tank-secondary"]
             assert pc_camera["node_id"] == "raspi-sync-tank-002"
             assert pc_camera["relay_node_id"] == "pi-test"
