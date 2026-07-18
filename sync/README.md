@@ -9,6 +9,7 @@ This directory contains the local Sync hub: the controller, connectors, and dash
 - Preserve tank ownership while organizing observations and device state across the local fleet.
 - Render the multi-tank dashboard and camera views, including SEE SEA TV.
 - Receive ESP32 heartbeats and JPEG uploads when deployed as an edge receiver.
+- Treat Floaters as tank-owned AP clients: they upload to their tank Pi, and Sync reaches that Pi over the isolated PoE Ethernet link.
 - Run the spatial simulator, local motion analysis, safe Raydar seeking, bounded Reeflex control, and the Sightings album.
 - Keep local operation independent of optional community sharing or cloud services.
 

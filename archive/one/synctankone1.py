@@ -32,9 +32,9 @@ CSI_JPEG_QUALITY = int(os.environ.get("CSI_JPEG_QUALITY", "70"))
 
 # Put your RTSP cameras here (name -> URL)
 RTSP_SOURCES: Dict[str, str] = {
-    "ipcam1": os.environ.get("RTSP0", "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/h264/ch1/main/av_stream"),
-    "ipcam2": os.environ.get("RTSP1", "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/Streaming/Channels/101"),
-    "ipcam3": os.environ.get("RTSP2", "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/h264/ch1/main/av_stream"),
+    "ipcam1": os.environ.get("RTSP0", "rtsp://admin:admin@PRIVATE_IP:554/h264/ch1/main/av_stream"),
+    "ipcam2": os.environ.get("RTSP1", "rtsp://admin:admin@PRIVATE_IP:554/Streaming/Channels/101"),
+    "ipcam3": os.environ.get("RTSP2", "rtsp://admin:admin@PRIVATE_IP:554/h264/ch1/main/av_stream"),
 }
 
 # ------------------------

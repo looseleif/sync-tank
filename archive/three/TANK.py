@@ -37,9 +37,9 @@ CSI_SNAPSHOT_SEC = float(os.environ.get("CSI_SNAPSHOT_SEC", "1.0"))
 CSI_INDEXES = [i.strip() for i in os.environ.get("CSI_INDEXES", "0,1").split(",") if i.strip() != ""]
 
 KNOWN_URLS = [
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/h264/ch1/main/av_stream",
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/Streaming/Channels/101",
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/h264/ch1/main/av_stream",
+    "rtsp://admin:admin@PRIVATE_IP:554/h264/ch1/main/av_stream",
+    "rtsp://admin:admin@PRIVATE_IP:554/Streaming/Channels/101",
+    "rtsp://admin:admin@PRIVATE_IP:554/h264/ch1/main/av_stream",
 ]
 HUNT_TARGET = os.environ.get("HUNT_TARGET", "").strip()
 

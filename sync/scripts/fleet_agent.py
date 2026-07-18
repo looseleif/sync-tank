@@ -2,7 +2,7 @@
 """Small operator agent for the three-Pi Sync Tank wired fleet.
 
 Runs from the display/index node. It treats this machine as local and talks to
-tank nodes over SSH on the REDACTED_PRIVATE_IP/24 wired network.
+tank nodes over SSH on the PRIVATE_IP/24 wired network.
 """
 from __future__ import annotations
 

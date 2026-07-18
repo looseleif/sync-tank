@@ -1400,7 +1400,7 @@ def _settings_from_config(raw: dict[str, Any]) -> IngestSettings:
         pc_sync_interval_seconds=int(raw.get("pc_sync_interval_seconds", 15)),
         public_url=str(raw.get("public_url", "")),
         camera_service_url=str(raw.get("camera_service_url", "")),
-        usb_feed_allowed_cidrs=list(raw.get("usb_feed_allowed_cidrs") or ["127.0.0.0/8", "REDACTED_PRIVATE_IP/24"]),
+        usb_feed_allowed_cidrs=list(raw.get("usb_feed_allowed_cidrs") or ["127.0.0.0/8"]),
     )
 
 

@@ -15,9 +15,9 @@ RTSP_SNAPSHOT_SEC = float(os.environ.get("RTSP_SNAPSHOT_SEC", "5.0"))
 RTSP_MAX_PAR = int(os.environ.get("RTSP_MAX_PAR", "1"))
 KNOWN_URLS = [
     # replace or extend as needed
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/h264/ch1/main/av_stream",
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/Streaming/Channels/101",
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/h264/ch1/main/av_stream",
+    "rtsp://admin:admin@PRIVATE_IP:554/h264/ch1/main/av_stream",
+    "rtsp://admin:admin@PRIVATE_IP:554/Streaming/Channels/101",
+    "rtsp://admin:admin@PRIVATE_IP:554/h264/ch1/main/av_stream",
 ]
 
 # Nudge FFmpeg/RTSP behavior

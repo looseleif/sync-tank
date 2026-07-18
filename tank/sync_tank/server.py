@@ -40,7 +40,7 @@ def create_app(config_path: str | Path | None = None) -> Flask:
 
     @app.before_request
     def restrict_usb_feeds_to_wired_link() -> tuple[Response, int] | None:
-        allowed_cidrs = list(config.raw.get("ingest", {}).get("usb_feed_allowed_cidrs") or ["127.0.0.0/8", "REDACTED_PRIVATE_IP/24"])
+        allowed_cidrs = list(config.raw.get("ingest", {}).get("usb_feed_allowed_cidrs") or ["127.0.0.0/8"])
         control_paths = ("/api/arm", "/api/servo", "/api/lighthouse", "/api/reeflex")
         if request.path.startswith(control_paths):
             if _remote_allowed(request.remote_addr or "", allowed_cidrs):

@@ -11,12 +11,14 @@ Recommended defaults:
 ```text
 node_id: tank-pi-002
 label: TANK NODE 2
-tank_id: tank-main
+tank_id: tank-2
 expected ESP32 floaters:
   - tank-cam-003
   - tank-cam-004
-wired edge IP: TANK_ONE_WIRED_IP
+wired edge IP: TANK_TWO_WIRED_IP
 display/organizer IP: SYNC_WIRED_IP
+Floater AP SSID: TANK_TWO_AP_SSID
+Floater AP IP: TANK_TWO_AP_IP/24
 ```
 
 Expected local inventory for a standard tank node:
@@ -55,7 +57,7 @@ cd tank
   --lighthouse-count 0 \
   --reeflex-count 1 \
   --solid-feeders 1 \
-  --wired-edge-ip TANK_ONE_WIRED_IP \
+  --wired-edge-ip TANK_TWO_WIRED_IP \
   --display-pi-ip SYNC_WIRED_IP \
   --install-deps \
   --install-boot cron
@@ -104,10 +106,10 @@ Services:
 
 ```text
 ESP32 ingest / inventory:
-  http://TANK_ONE_WIRED_IP:8080
+  http://TANK_TWO_WIRED_IP:8080
 
 USB camera / servo control:
-  http://TANK_ONE_WIRED_IP:5050
+  http://TANK_TWO_WIRED_IP:5050
 ```
 
 ## Wired Link
@@ -123,16 +125,34 @@ Expected network:
 
 ```text
 Display Pi eth0: SYNC_WIRED_IP/24
-Edge Pi eth0:    TANK_ONE_WIRED_IP/24
+Tank Two eth0:   TANK_TWO_WIRED_IP/24
 ```
+
+This is the local PoE-backed upstream path to Sync. Tank Two does not require a normal Wi-Fi or internet connection in deployment; `wlan0` is reserved for its Floater AP.
+
+## Floater AP
+
+Tank Two owns `tank-cam-003` and `tank-cam-004`. Both join the Pi-hosted AP and send all commands, heartbeats, and JPEGs to the Pi rather than to Sync:
+
+```text
+SSID: TANK_TWO_AP_SSID
+Password: TANK_AP_PASSWORD
+AP address: TANK_TWO_AP_IP/24
+
+GET  http://TANK_TWO_AP_IP:8080/api/node/<camera-id>/command
+POST http://TANK_TWO_AP_IP:8080/api/node/heartbeat
+POST http://TANK_TWO_AP_IP:8080/api/images/upload
+```
+
+Sync learns about those images from the Tank Two payload on `TANK_TWO_WIRED_IP`; it never connects to the Floaters directly.
 
 ## Hub Payload
 
 The display/organizer should poll:
 
 ```text
-GET http://TANK_ONE_WIRED_IP:8080/api/pc-hub/payload
-GET http://TANK_ONE_WIRED_IP:8080/api/hub-payload
+GET http://TANK_TWO_WIRED_IP:8080/api/pc-hub/payload
+GET http://TANK_TWO_WIRED_IP:8080/api/hub-payload
 ```
 
 The payload includes:
@@ -154,11 +174,11 @@ node.control_urls
 Important control URLs:
 
 ```text
-arm_status:       http://TANK_ONE_WIRED_IP:5050/api/arm
-lighthouse_pose: http://TANK_ONE_WIRED_IP:5050/api/lighthouse/pose
-reeflex_pose:    http://TANK_ONE_WIRED_IP:5050/api/reeflex/pose
-reeflex_stop:    http://TANK_ONE_WIRED_IP:5050/api/arm/stop
-servo_channel:   http://TANK_ONE_WIRED_IP:5050/api/servo/channel
+arm_status:       http://TANK_TWO_WIRED_IP:5050/api/arm
+lighthouse_pose: http://TANK_TWO_WIRED_IP:5050/api/lighthouse/pose
+reeflex_pose:    http://TANK_TWO_WIRED_IP:5050/api/reeflex/pose
+reeflex_stop:    http://TANK_TWO_WIRED_IP:5050/api/arm/stop
+servo_channel:   http://TANK_TWO_WIRED_IP:5050/api/servo/channel
 ```
 
 ## Lighthouse Pan/Tilt
@@ -175,7 +195,7 @@ Observer command:
 ```bash
 curl -s -H 'Content-Type: application/json' \
   -d '{"device_id":"lighthouse-001","pan":90,"tilt":90}' \
-  http://TANK_ONE_WIRED_IP:5050/api/lighthouse/pose
+  http://TANK_TWO_WIRED_IP:5050/api/lighthouse/pose
 ```
 
 ## REEFLEX
@@ -193,7 +213,7 @@ Observer command:
 ```bash
 curl -s -H 'Content-Type: application/json' \
   -d '{"device_id":"reeflex-001","base":90,"shoulder":90,"elbow":90}' \
-  http://TANK_ONE_WIRED_IP:5050/api/reeflex/pose
+  http://TANK_TWO_WIRED_IP:5050/api/reeflex/pose
 ```
 
 ## Validation

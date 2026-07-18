@@ -13,7 +13,7 @@ from sync_tank.ingest import create_ingest_app
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Register this Sync Tank edge node and all camera feeds with the PC hub.")
-    parser.add_argument("pc_hub_url", help="PC hub base URL, for example http://REDACTED_PRIVATE_IP:8765")
+    parser.add_argument("pc_hub_url", help="PC hub base URL, for example http://PRIVATE_IP:8765")
     parser.add_argument("--api-key", default="", help="Optional PC hub bearer token")
     parser.add_argument("--timeout", type=float, default=5.0)
     args = parser.parse_args()

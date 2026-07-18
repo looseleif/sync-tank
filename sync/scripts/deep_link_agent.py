@@ -28,7 +28,7 @@ def post_json(url: str, payload: dict, timeout_seconds: float = 3.0) -> bool:
 def detect_lan_ip() -> str:
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        sock.connect(("REDACTED_PRIVATE_IP", 1))
+        sock.connect(("PRIVATE_IP", 1))
         return sock.getsockname()[0]
     except OSError:
         return "127.0.0.1"
@@ -133,7 +133,7 @@ def sync_deep_link(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Relay Pi display-node camera inventory to the Sync Tank main PC deep-link backend")
     parser.add_argument("--organizer-base", default="http://127.0.0.1:8765")
-    parser.add_argument("--deep-link-base", required=True, help="main PC backend URL, for example http://REDACTED_PRIVATE_IP:8765")
+    parser.add_argument("--deep-link-base", required=True, help="main PC backend URL, for example http://PRIVATE_IP:8765")
     parser.add_argument("--display-base", default=None, help="display node URL visible to the main PC")
     parser.add_argument("--display-node-id", default="pi-zero-display-001")
     parser.add_argument("--label", default="Pi Zero Display Node")

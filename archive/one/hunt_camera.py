@@ -3,15 +3,15 @@
 hunt_camera.py
 
 Fast camera hunter:
-- supply IPS or CIDRS via env (IPS=REDACTED_PRIVATE_IP,REDACTED_PRIVATE_IP),
-  or CIDRS=REDACTED_PRIVATE_IP/24 (defaults to that range if omitted)
+- supply IPS or CIDRS via env (IPS=PRIVATE_IP,PRIVATE_IP),
+  or CIDRS=PRIVATE_IP/24 (defaults to that range if omitted)
 - configure PORTS, PATHS, CREDS as env vars (comma-separated)
 - runs nmap ping-sweep, port scans, onvif (UDP 3702), then parallel ffprobe checks
 - outputs JSON to hunt_results.json
 - use LOOP=1 and INTERVAL=<seconds> to keep trying until found
 
 Example:
-  IPS=REDACTED_PRIVATE_IP,REDACTED_PRIVATE_IP CIDRS=REDACTED_PRIVATE_IP/24 PORTS=554,8554 \
+  IPS=PRIVATE_IP,PRIVATE_IP CIDRS=PRIVATE_IP/24 PORTS=554,8554 \
   PATHS=/Streaming/Channels/101,/h264/ch1/main/av_stream \
   CREDS=admin:admin,admin:123456 THREADS=32 \
   python3 hunt_camera.py
@@ -22,7 +22,7 @@ from typing import List, Tuple, Dict
 
 # -------- configuration via env (defaults sensible for IP cams) --------
 ENV_IPS = [x.strip() for x in os.getenv("IPS", "").split(",") if x.strip()]
-ENV_CIDRS = [x.strip() for x in os.getenv("CIDRS", "REDACTED_PRIVATE_IP/24").split(",") if x.strip()]
+ENV_CIDRS = [x.strip() for x in os.getenv("CIDRS", "PRIVATE_IP/24").split(",") if x.strip()]
 ENV_PORTS = [int(x) for x in os.getenv("PORTS", "554,8554,80,443,8000,5544").split(",") if x.strip().isdigit()]
 ENV_PATHS = [p.strip() for p in os.getenv("PATHS", (
     "/Streaming/Channels/101,/h264/ch1/main/av_stream,/h264Preview_01_main,"
@@ -55,7 +55,7 @@ def nmap_ping_hosts(cidrs: List[str]) -> List[str]:
             continue
         for line in out.splitlines():
             if line.startswith("Host:"):
-                # Host: REDACTED_PRIVATE_IP ()  Status: Up
+                # Host: PRIVATE_IP ()  Status: Up
                 parts = line.split()
                 if len(parts) >= 2:
                     ip = parts[1]
@@ -98,7 +98,7 @@ def nmap_onvif_scan(cidrs: List[str]) -> Dict[str, str]:
             continue
         for line in out.splitlines():
             if "Ports:" in line and "3702/open" in line or "3702/open|filtered" in line:
-                # Host: REDACTED_PRIVATE_IP (hostname)   Ports: 3702/open|filtered/udp///
+                # Host: PRIVATE_IP (hostname)   Ports: 3702/open|filtered/udp///
                 parts = line.split()
                 if len(parts) >= 2:
                     ip = parts[1]

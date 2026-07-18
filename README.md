@@ -213,7 +213,25 @@ No finished current-interface photograph is in the repository yet. The images ab
 | Saved frame | **Sighting** | A captured observation with image, source, scores, label, and notes |
 | Remote captioning experiments | **Ask the Deep** | A manual-only AI field note for an already captured Sighting |
 
-Floater cameras remain available as spatial markers. Their still images appear only when a frame changes or a marker is opened, so they no longer cover the primary camera view.
+### Floaters: isolated wireless camera nodes
+
+Floaters are ESP32-S3 Sense still-camera nodes assigned to a specific tank Pi. They do not join the household network, need internet access, or connect directly to the Sync hub. Each Floater joins the private Wi-Fi access point hosted by its owning tank Pi, checks for a command, sends a heartbeat, and uploads a raw JPEG to that Pi on port `8080`.
+
+| Tank | Floater IDs | Private AP | AP address | Tank Pi wired address |
+| --- | --- | --- | --- | --- |
+| Tank One | `tank-cam-001`, `tank-cam-002` | `TANK_ONE_AP_SSID` | `TANK_ONE_AP_IP/24` | `TANK_ONE_WIRED_IP` |
+| Tank Two | `tank-cam-003`, `tank-cam-004` | `TANK_TWO_AP_SSID` | `TANK_TWO_AP_IP/24` | `TANK_TWO_WIRED_IP` |
+
+The deployed AP password is `TANK_AP_PASSWORD`. These AP addresses are stable NetworkManager shared-mode gateway addresses, while individual Floater client addresses may change. The tank Pi stores the latest JPEG and exposes its inventory and image URL to Sync over the isolated wired link.
+
+The tank Pis do not require a normal Wi-Fi or internet connection in deployment. Their `wlan0` interface serves the Floaters; their Ethernet/PoE connection is the only upstream path to the main Sync node at `SYNC_WIRED_IP`. This keeps camera collection working as a fully local chain:
+
+```text
+Floater ESP32 ──private tank AP──> tank Pi ──PoE Ethernet──> Sync hub
+       JPEG + heartbeat              ingest + ownership       display + storage + analysis
+```
+
+In the interface, Floaters remain available as spatial markers. Their still images appear only when a frame changes or a marker is opened, so they do not cover the primary camera view. See [`docs/FLOATER_NETWORK.md`](docs/FLOATER_NETWORK.md) for the endpoint and network handoff.
 
 ### Three ways to place an inspection camera
 
@@ -338,9 +356,10 @@ No detection, feed rotation, startup task, or background job sends an image to O
 ## Architecture
 
 ```text
-Tank 1: Pi, cameras, and rigs ─┐
-Tank 2: Pi, cameras, and rigs ─┼──> Local Sync hub
-Additional tank nodes ─────────┘           │
+Tank 1 Floaters ──private AP──> Tank 1 Pi ─┐
+Tank 2 Floaters ──private AP──> Tank 2 Pi ─┼──PoE Ethernet──> Local Sync hub
+Other local cameras and rigs ──────────────┤                       │
+Additional tank nodes ─────────────────────┘                       │
                                           ├── SEE SEA TV display
                                           ├── Spatial tank model
                                           ├── Motion observation and alerts
@@ -350,7 +369,7 @@ Additional tank nodes ─────────┘           │
 Chosen clips, Sightings, tests, and fixes ───> Optional community exchange
 ```
 
-Tank nodes own local camera discovery, ESP32 JPEG ingest, servo endpoints, and machine-readable inventory. The Sync hub polls those existing interfaces, proxies camera media, maintains combined but separately owned tank layouts, runs optional local analysis, and serves its software blocks. The current `n=2` deployment validates the pattern while configuration leaves room for more tank nodes. Deployed tank URLs and internal Lighthouse identifiers do not need to change.
+Tank nodes own their private Floater AP, ESP32 JPEG ingest, local camera discovery, servo endpoints, and machine-readable inventory. The Sync hub reaches those nodes through the local PoE Ethernet segment, proxies camera media, maintains combined but separately owned tank layouts, runs optional local analysis, and serves its software blocks. Neither Floaters nor tank Pis require an internet route for normal operation. The current `n=2` deployment validates the pattern while configuration leaves room for more tank nodes. Deployed tank URLs and internal Lighthouse identifiers do not need to change.
 
 Community exchange sits outside the local control path. Nothing in the aquarium should depend on public sharing, and no footage should leave the local hub without an explicit choice.
 

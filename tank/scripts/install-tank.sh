@@ -280,7 +280,7 @@ ingest["camera_service_url"] = camera_service_url
 ingest["expected_nodes"] = expected_nodes
 ingest["allowed_nodes"] = expected_nodes
 ingest["node_angles"] = {camera_id: index * 90 for index, camera_id in enumerate(expected_nodes)}
-ingest.setdefault("usb_feed_allowed_cidrs", ["127.0.0.0/8", "REDACTED_PRIVATE_IP/24"])
+ingest.setdefault("usb_feed_allowed_cidrs", ["127.0.0.0/8"])
 
 config_path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
 
@@ -293,7 +293,7 @@ identity = {
         "display_pi_ip": display_pi_ip,
         "public_url": public_url,
         "camera_service_url": camera_service_url,
-        "usb_feed_allowed_cidrs": ingest.get("usb_feed_allowed_cidrs", ["127.0.0.0/8", "REDACTED_PRIVATE_IP/24"]),
+        "usb_feed_allowed_cidrs": ingest.get("usb_feed_allowed_cidrs", ["127.0.0.0/8"]),
     },
     "esp32": {
         "expected_nodes": expected_nodes,

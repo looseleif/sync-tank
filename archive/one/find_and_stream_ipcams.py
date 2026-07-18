@@ -16,7 +16,7 @@ JPEG_QUALITY = 80
 
 # Defaults (can be overridden via env):
 # Comma-separated subnets; we'll merge with auto-inferred subnet.
-DEFAULT_EXTRA_CIDRS = ["REDACTED_PRIVATE_IP/24", "REDACTED_PRIVATE_IP/24"]
+DEFAULT_EXTRA_CIDRS = ["PRIVATE_IP/24", "PRIVATE_IP/24"]
 DEFAULT_RTSP_PORTS = [554, 8554]  # many cams use 8554
 USERNAME = os.getenv("RTSP_USER", "admin")
 PASSWORD = os.getenv("RTSP_PASS", "admin")
@@ -98,7 +98,7 @@ class FrameBuffer:
 
 # ---------------- Helpers ----------------
 def infer_primary_cidr() -> Optional[str]:
-    """Return primary IPv4 CIDR (e.g. 'REDACTED_PRIVATE_IP/24') if possible."""
+    """Return primary IPv4 CIDR (e.g. 'PRIVATE_IP/24') if possible."""
     try:
         out = subprocess.run(["ip", "-j", "-4", "address"], capture_output=True, text=True, check=True).stdout
         data = json.loads(out)
@@ -272,7 +272,7 @@ def main():
     if not cams:
         print("[WARN] No cameras opened. They may be on another VLAN/subnet, use different creds/paths, or RTSP is disabled.", flush=True)
         print("      Try setting env vars, e.g.:", flush=True)
-        print("      CIDRS=REDACTED_PRIVATE_IP/24,REDACTED_PRIVATE_IP/24 PORTS=554,8554 RTSP_USER=admin RTSP_PASS=admin", flush=True)
+        print("      CIDRS=PRIVATE_IP/24,PRIVATE_IP/24 PORTS=554,8554 RTSP_USER=admin RTSP_PASS=admin", flush=True)
     else:
         print(f"[INFO] Streaming {len(cams)} cam(s) on http://0.0.0.0:{PORT}/", flush=True)
 

@@ -124,7 +124,7 @@ The Pi display node can relay its organized camera inventory to the main PC back
 Topology:
 
 ```text
-ESP32 nodes -> edge node -> display node -> main PC backend
+ESP32 Floaters -> tank Pi private AP -> tank Pi -> PoE Ethernet -> Sync/display node
 ```
 
 Roles:
@@ -140,8 +140,10 @@ Edge nodes
   Camera/servo collectors. Receive ESP32 images, expose USB streams, drive local hardware.
 
 ESP32 nodes
-  Low-power camera/sensor endpoints attached to an edge node over LAN Wi-Fi.
+  Low-power Floater camera endpoints attached only to their tank Pi's private Wi-Fi AP.
 ```
+
+The tank Pi does not need internet access for this path. Its `wlan0` hosts the Floater AP, while its wired PoE connection is the upstream data path to Sync. Floaters upload only to the tank Pi; Sync reads their inventory and latest-image URLs over Ethernet.
 
 Run the relay from the Pi display node:
 
@@ -257,12 +259,12 @@ The Pi edge receiver accepts ESP32 heartbeats and raw JPEG uploads on port `8080
 python edge_receiver.py --host 0.0.0.0 --port 8080
 ```
 
-ESP32 cameras should use the Pi LAN address:
+ESP32 Floaters should use their owning tank Pi's private AP address (`TANK_ONE_AP_IP` for Tank One or `TANK_TWO_AP_IP` for Tank Two):
 
 ```text
-POST http://PI_LAN_IP:8080/api/node/heartbeat
-POST http://PI_LAN_IP:8080/api/images/upload
-GET  http://PI_LAN_IP:8080/api/node/tank-cam-001/command
+POST http://TANK_AP_IP:8080/api/node/heartbeat
+POST http://TANK_AP_IP:8080/api/images/upload
+GET  http://TANK_AP_IP:8080/api/node/tank-cam-001/command
 ```
 
 The hub agent registers this edge node's browser-readable URLs with the display/PC hub.
@@ -277,7 +279,7 @@ If the Pi is temporarily acting as its own hub:
 HUB_BASE=http://127.0.0.1:8765 PUBLIC_BASE=http://PI_LAN_IP python scripts/tank_hub_agent.py
 ```
 
-Do not make ESP32 cameras upload directly to the PC hub. ESP32 devices upload to the edge receiver, and the edge receiver/agent advertises `/uploads/<camera_id>/latest.jpg` to the hub.
+Do not make ESP32 cameras upload directly to the PC hub. ESP32 devices upload to the edge receiver over the private tank AP, and the edge receiver/agent advertises `/uploads/<camera_id>/latest.jpg` to the hub over the wired link.
 
 ## Validation
 

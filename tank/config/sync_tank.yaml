@@ -55,8 +55,8 @@ cameras:
     preferred_fps: 10
   esp32:
     discovery_ranges:
-      - REDACTED_PRIVATE_IP/24
-      - REDACTED_PRIVATE_IP/24
+      - PRIVATE_IP/24
+      - PRIVATE_IP/24
     timeout_seconds: 1.5
     endpoints:
       - /stream
@@ -85,7 +85,6 @@ ingest:
   camera_service_url: http://TANK_ONE_WIRED_IP:5050
   usb_feed_allowed_cidrs:
     - 127.0.0.0/8
-    - REDACTED_PRIVATE_IP/24
   bind: 0.0.0.0
   port: 8080
   upload_dir: test_uploads

@@ -8,17 +8,17 @@ from flask import Flask, render_template_string, send_from_directory
 STREAMS = [
     {
         "name": "cam185_main_tcp",
-        "rtsp": "rtsp://admin:123456@REDACTED_PRIVATE_IP:554/h264Preview_01_main",
+        "rtsp": "rtsp://admin:123456@PRIVATE_IP:554/h264Preview_01_main",
         "transport": "tcp",  # tcp recommended for this one
     },
     {
         "name": "cam185_query_tcp",
-        "rtsp": "rtsp://REDACTED_PRIVATE_IP:554/user=admin_password=_channel=1_stream=0.sdp?real_stream",
+        "rtsp": "rtsp://PRIVATE_IP:554/user=admin_password=_channel=1_stream=0.sdp?real_stream",
         "transport": "tcp",
     },
     {
         "name": "cam108_main_udp",
-        "rtsp": "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/h264/ch1/main/av_stream",
+        "rtsp": "rtsp://admin:admin@PRIVATE_IP:554/h264/ch1/main/av_stream",
         "transport": "udp",  # this cam worked over UDP in probes
     },
 ]

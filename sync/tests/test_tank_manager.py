@@ -73,8 +73,8 @@ class TankManagerAppTests(unittest.TestCase):
                 "node_type": "raspberry_pi_tank_node",
                 "label": "EDGE NODE 1",
                 "tank_ids": ["tank-main"],
-                "lan_url": "http://REDACTED_PRIVATE_IP:8080",
-                "camera_service_url": "http://REDACTED_PRIVATE_IP:5050",
+                "lan_url": "http://PRIVATE_IP:8080",
+                "camera_service_url": "http://PRIVATE_IP:5050",
                 "status": "online",
                 "cameras": [
                     {
@@ -83,7 +83,7 @@ class TankManagerAppTests(unittest.TestCase):
                         "source_type": "esp32_upload",
                         "node_id": "tank-pi-001",
                         "tank_id": "tank-main",
-                        "latest_image_url": "http://REDACTED_PRIVATE_IP:8080/uploads/tank-cam-001/latest.jpg",
+                        "latest_image_url": "http://PRIVATE_IP:8080/uploads/tank-cam-001/latest.jpg",
                         "status": "online",
                     },
                     {
@@ -92,8 +92,8 @@ class TankManagerAppTests(unittest.TestCase):
                         "source_type": "usb_camera",
                         "node_id": "tank-pi-001",
                         "tank_id": "tank-main",
-                        "snapshot_url": "http://REDACTED_PRIVATE_IP:5050/api/cameras/usb_0/snapshot",
-                        "stream_url": "http://REDACTED_PRIVATE_IP:5050/api/cameras/usb_0/stream",
+                        "snapshot_url": "http://PRIVATE_IP:5050/api/cameras/usb_0/snapshot",
+                        "stream_url": "http://PRIVATE_IP:5050/api/cameras/usb_0/stream",
                         "status": "online",
                     },
                 ],
@@ -103,7 +103,7 @@ class TankManagerAppTests(unittest.TestCase):
         layout = self.app.get_layout()
         self.assertEqual(result["registered_cameras"], 2)
         self.assertEqual(layout["nodes"][0]["node_id"], "tank-pi-001")
-        self.assertEqual(layout["nodes"][0]["camera_service_url"], "http://REDACTED_PRIVATE_IP:5050")
+        self.assertEqual(layout["nodes"][0]["camera_service_url"], "http://PRIVATE_IP:5050")
         self.assertEqual(layout["cameras"][1]["camera_id"], "usb_0")
         self.assertIn("tank-main", {tank["tank_id"] for tank in layout["tanks"]})
 

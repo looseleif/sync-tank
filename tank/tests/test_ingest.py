@@ -29,7 +29,7 @@ ingest:
   state_path: {tmp_path / "state.json"}
   layout_path: {tmp_path / "layout.json"}
   node_config_path: {tmp_path / "node_config.json"}
-  camera_service_url: http://REDACTED_PRIVATE_IP:5050
+  camera_service_url: http://PRIVATE_IP:5050
   max_images_per_node: 5
   expected_nodes:
     - tank-cam-001
@@ -72,12 +72,12 @@ ingest:
     latest = client.get("/uploads/tank-cam-001/latest.jpg")
     assert latest.status_code == 200
 
-    pc_payload = client.get("/api/pc-hub/payload", headers={"host": "REDACTED_PRIVATE_IP:8080"})
+    pc_payload = client.get("/api/pc-hub/payload", headers={"host": "PRIVATE_IP:8080"})
     assert pc_payload.status_code == 200
     assert pc_payload.json["node"]["node_id"] == "tank-pi-001"
-    assert pc_payload.json["node"]["lan_url"] == "http://REDACTED_PRIVATE_IP:8080"
+    assert pc_payload.json["node"]["lan_url"] == "http://PRIVATE_IP:8080"
     assert pc_payload.json["camera_registration"]["node_id"] == "tank-pi-001"
-    assert pc_payload.json["camera_registration"]["cameras"][0]["latest_image_url"] == "http://REDACTED_PRIVATE_IP:8080/uploads/tank-cam-001/latest.jpg"
+    assert pc_payload.json["camera_registration"]["cameras"][0]["latest_image_url"] == "http://PRIVATE_IP:8080/uploads/tank-cam-001/latest.jpg"
     allowed_pc_camera_fields = {
         "camera_id",
         "camera_type",
@@ -97,8 +97,8 @@ ingest:
         assert camera["node_id"] == "tank-pi-001"
         assert camera["tank_id"] == "tank-main"
         if camera["source_type"] == "usb_camera":
-            assert camera["snapshot_url"].startswith("http://REDACTED_PRIVATE_IP:5050/api/cameras/")
-            assert camera["stream_url"].startswith("http://REDACTED_PRIVATE_IP:5050/api/cameras/")
+            assert camera["snapshot_url"].startswith("http://PRIVATE_IP:5050/api/cameras/")
+            assert camera["stream_url"].startswith("http://PRIVATE_IP:5050/api/cameras/")
 
     queued = client.post("/api/node/tank-cam-001/command", json={"command": "stream", "duration_seconds": 30})
     assert queued.status_code == 200

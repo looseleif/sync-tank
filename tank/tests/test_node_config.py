@@ -37,7 +37,7 @@ ingest:
 
             save = client.post("/api/node-config", json=node_config)
             payload = client.get("/api/hub-payload").json
-            pc_payload = client.get("/api/pc-hub/payload", headers={"host": "REDACTED_PRIVATE_IP:8080"}).json
+            pc_payload = client.get("/api/pc-hub/payload", headers={"host": "PRIVATE_IP:8080"}).json
 
             assert save.status_code == 200
             assert payload["inventory"]["robotic_arms"] == 2

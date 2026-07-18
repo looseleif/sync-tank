@@ -44,12 +44,12 @@ CSI_INDEXES = [i.strip() for i in os.environ.get("CSI_INDEXES", "0,1").split(","
 
 # Known RTSP URLs (edit these to your working trio)
 KNOWN_URLS = [
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/h264/ch1/main/av_stream",
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/Streaming/Channels/101",
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/h264/ch1/main/av_stream",
+    "rtsp://admin:admin@PRIVATE_IP:554/h264/ch1/main/av_stream",
+    "rtsp://admin:admin@PRIVATE_IP:554/Streaming/Channels/101",
+    "rtsp://admin:admin@PRIVATE_IP:554/h264/ch1/main/av_stream",
 ]
 
-# Optional hunter target: e.g. export HUNT_TARGET=REDACTED_PRIVATE_IP:554
+# Optional hunter target: e.g. export HUNT_TARGET=PRIVATE_IP:554
 HUNT_TARGET = os.environ.get("HUNT_TARGET", "").strip()
 
 # I2C / PWM

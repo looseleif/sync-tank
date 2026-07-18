@@ -9,9 +9,9 @@ from flask import Flask, Response, render_template_string, jsonify
 
 # ====== SELECT ONE CAMERA URL (H.264 substream preferred) ======
 # XMeye/Xiongmai-style (your 108 cam): use substream (usually H.264)
-CAM_URL = "rtsp://REDACTED_PRIVATE_IP:554/user=admin&password=admin&channel=1&stream=1.sdp?real_stream"
+CAM_URL = "rtsp://PRIVATE_IP:554/user=admin&password=admin&channel=1&stream=1.sdp?real_stream"
 # Hikvision-style (your 185 cam) H.264 substream example:
-# CAM_URL = "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/Streaming/Channels/102"
+# CAM_URL = "rtsp://admin:admin@PRIVATE_IP:554/Streaming/Channels/102"
 # ================================================================
 
 # --- Tuning (lower for smoother playback) ---

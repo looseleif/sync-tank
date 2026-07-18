@@ -7,6 +7,12 @@ __pycache__/
 .pytest_cache/
 logs/
 *.log
+.env
+.env.*
+!.env.example
+*.local
+*.local.*
+secrets/
 test_uploads/
 tank/config/ingest_state.json
 tank/config/cameras.json

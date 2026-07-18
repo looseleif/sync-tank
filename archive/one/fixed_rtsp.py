@@ -19,13 +19,13 @@ PORT = int(os.environ.get("PORT", "8002"))
 
 # Two known-good feeds you had working earlier:
 KNOWN_URLS = [
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/h264/ch1/main/av_stream",
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/Streaming/Channels/101",
-    "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/h264/ch1/main/av_stream",
+    "rtsp://admin:admin@PRIVATE_IP:554/h264/ch1/main/av_stream",
+    "rtsp://admin:admin@PRIVATE_IP:554/Streaming/Channels/101",
+    "rtsp://admin:admin@PRIVATE_IP:554/h264/ch1/main/av_stream",
 ]
 
 # Optional third-cam hunter target (non-blocking background probe)
-# Example: HUNT_TARGET=REDACTED_PRIVATE_IP:554
+# Example: HUNT_TARGET=PRIVATE_IP:554
 HUNT_TARGET = os.environ.get("HUNT_TARGET", "").strip()
 
 # For hunting, try these common paths (kept tight so we don’t waste time)

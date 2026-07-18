@@ -33,7 +33,7 @@ http://PI_LAN_IP:8080/api/node/heartbeat
 Current known Pi 5 edge node example:
 
 ```text
-http://REDACTED_PRIVATE_IP:8080
+http://PRIVATE_IP:8080
 ```
 
 ## Wi-Fi Details
@@ -320,7 +320,7 @@ Example:
       "source_type": "esp32_upload",
       "node_id": "tank-pi-001",
       "tank_id": "tank-main",
-      "latest_image_url": "http://REDACTED_PRIVATE_IP:8080/uploads/tank-cam-001/latest.jpg",
+      "latest_image_url": "http://PRIVATE_IP:8080/uploads/tank-cam-001/latest.jpg",
       "status": "online"
     }
   ]

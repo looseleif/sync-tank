@@ -16,8 +16,8 @@ os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = (
 )
 
 CAMERAS = {
-    "cam108": "rtsp://REDACTED_PRIVATE_IP:554/user=admin&password=admin&channel=1&stream=1.sdp?real_stream",
-    "cam185": "rtsp://admin:admin@REDACTED_PRIVATE_IP:554/Streaming/Channels/102",
+    "cam108": "rtsp://PRIVATE_IP:554/user=admin&password=admin&channel=1&stream=1.sdp?real_stream",
+    "cam185": "rtsp://admin:admin@PRIVATE_IP:554/Streaming/Channels/102",
 }
 
 app = Flask(__name__)

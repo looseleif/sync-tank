@@ -185,12 +185,18 @@ GET /
 GET /uploads/<node_id>/<filename>.jpg
 ```
 
-Configure the ESP32 firmware to target the Pi's normal Wi-Fi/LAN IP, for example:
+In the deployed offline topology, configure each ESP32 Floater to target the private AP address hosted by its owning tank Pi:
 
 ```text
-http://192.168.x.x:8080/api/images/upload
-http://192.168.x.x:8080/api/node/heartbeat
+Tank One: http://TANK_ONE_AP_IP:8080
+Tank Two: http://TANK_TWO_AP_IP:8080
+
+POST /api/images/upload
+POST /api/node/heartbeat
+GET  /api/node/<camera-id>/command
 ```
+
+The Floaters do not join the household LAN or contact Sync directly. The tank Pi receives their JPEGs on its `wlan0` AP, then advertises the latest-image URLs to Sync through its Ethernet/PoE connection. See [`../docs/FLOATER_NETWORK.md`](../docs/FLOATER_NETWORK.md) for the complete assignments and addresses.
 
 Images are stored under `test_uploads/<node_id>/`. Receiver state is stored in `config/ingest_state.json`. The dashboard auto-refreshes every 10 seconds at `http://<pi-ip>:8080/`.
 

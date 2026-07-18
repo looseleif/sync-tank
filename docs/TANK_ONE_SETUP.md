@@ -2,16 +2,16 @@
 
 This note captures the Tank One configuration used during the July 2026 wired/offline setup work.
 
-Tank One is a Raspberry Pi tank node that owns local USB camera feeds, the REEFLEX servo arm, and the Tank 1 ESP32 floater cameras. The display/main node should reach Tank One over wired Ethernet. The ESP32 floater cameras may reach Tank One over a Pi-hosted Wi-Fi access point.
+Tank One is a Raspberry Pi tank node that owns local USB camera feeds, the REEFLEX servo arm, and the Tank 1 ESP32 floater cameras. Its Floaters reach it through the Pi-hosted `TANK_ONE_AP_SSID` access point. Its only deployed upstream path is the local PoE Ethernet connection to the display/main Sync node; internet access is not required.
 
 ## Network Roles
 
 Tank One uses two separate local paths:
 
-- Wired Ethernet for the display/main node.
+- PoE-backed wired Ethernet for the display/main Sync node.
 - Wi-Fi access point mode for ESP32 floater camera uploads.
 
-The display/main node should not depend on Tank One's normal Wi-Fi or internet access.
+The display/main node should not depend on Tank One's normal Wi-Fi or internet access. `wlan0` belongs to the private Floater AP during deployment.
 
 ```text
 Display/main node -> Tank One:
@@ -325,7 +325,7 @@ Display/main node:
 
 Do not make the display node use TANK_ONE_AP_IP.
 Do not make ESP32 cameras depend on TANK_ONE_WIRED_IP.
-Do not depend on REDACTED_PRIVATE_IP for production display traffic.
+Do not depend on PRIVATE_IP for production display traffic.
 ```
 
-`REDACTED_PRIVATE_IP` was the normal Wi-Fi address during development. It disappears when `auto` is disabled, so it must not be used by the main display path.
+`PRIVATE_IP` was the normal Wi-Fi address during development. It disappears when `auto` is disabled, so it must not be used by the main display path.

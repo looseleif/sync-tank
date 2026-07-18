@@ -14,7 +14,6 @@ network:
   camera_service_url: http://TANK_ONE_WIRED_IP:5050
   usb_feed_allowed_cidrs:
     - 127.0.0.0/8
-    - REDACTED_PRIVATE_IP/24
 
 esp32:
   expected_nodes:
