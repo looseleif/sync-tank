@@ -3,6 +3,8 @@ import { OrbitControls } from './vendor/OrbitControls.js';
 
 const DEFAULT_TANK_DIMENSIONS = { x: 25, y: 25, z: 25, unit: 'in' };
 const screenshotMode = new URLSearchParams(window.location.search).has('screenshot');
+const TANK_DISPLAY_SCALE = 0.62;
+const TANK_DISPLAY_OFFSET = 2.15;
 
 let tankSize = { x: 4.0, y: 2.2, z: 2.6 };
 const calmColor = 0xd7dde3;
@@ -46,9 +48,11 @@ const state = {
     maxTilt: 125,
     step: 3,
     driver: '',
+    deviceId: '',
+    ready: false,
     status: 'checking',
     holdTimer: null,
-    panelClosed: false,
+    panelClosed: true,
     contextId: '',
   },
   reeflex: {
@@ -63,9 +67,10 @@ const state = {
     maxElbow: 145,
     step: 3,
     driver: '',
+    deviceId: '',
     status: 'checking',
     holdTimer: null,
-    panelClosed: false,
+    panelClosed: true,
     contextId: '',
     ready: false,
   },
@@ -188,9 +193,11 @@ const edgeMesh = new THREE.LineSegments(
   new THREE.EdgesGeometry(new THREE.BoxGeometry(tankSize.x, tankSize.y, tankSize.z)),
   new THREE.LineBasicMaterial({ color: 0xf2f4f6, transparent: true, opacity: 0.68 })
 );
+edgeMesh.name = 'tank-edges';
 tankGroup.add(edgeMesh);
 
 const floorGrid = new THREE.GridHelper(5.2, 18, 0xb8bec5, 0x30343a);
+floorGrid.name = 'tank-floor-grid';
 floorGrid.position.y = -tankSize.y / 2 - 0.02;
 floorGrid.material.transparent = true;
 floorGrid.material.opacity = 0.18;
@@ -201,33 +208,37 @@ const waterPlane = new THREE.Mesh(
   new THREE.MeshBasicMaterial({ color: 0xe8ecef, transparent: true, opacity: 0.075, side: THREE.DoubleSide })
 );
 waterPlane.rotation.x = Math.PI / 2;
+waterPlane.name = 'tank-water-plane';
 waterPlane.position.y = tankSize.y * 0.22;
 tankGroup.add(waterPlane);
 
 const tableGroup = new THREE.Group();
+tableGroup.name = 'tank-table';
 const tableTop = new THREE.Mesh(
   new THREE.BoxGeometry(1, 0.12, 1),
   new THREE.MeshStandardMaterial({ color: 0x181a1d, roughness: 0.72, metalness: 0.08 })
 );
 tableTop.position.y = -tankSize.y / 2 - 0.18;
+tableTop.name = 'tank-table-top';
 tableGroup.add(tableTop);
-const tableLegs = [];
 for (const x of [-1, 1]) {
   for (const z of [-1, 1]) {
     const leg = new THREE.Mesh(
       new THREE.BoxGeometry(0.08, 0.74, 0.08),
       new THREE.MeshStandardMaterial({ color: 0x0d0f12, roughness: 0.66, metalness: 0.16 })
     );
+    leg.name = 'tank-table-leg';
+    leg.userData.cornerX = x;
+    leg.userData.cornerZ = z;
     tableGroup.add(leg);
-    tableLegs.push({ leg, x, z });
   }
 }
 tankGroup.add(tableGroup);
 
-tankGroup.scale.setScalar(0.72);
-tankGroup.position.x = -1.65;
+tankGroup.scale.setScalar(TANK_DISPLAY_SCALE);
+tankGroup.position.x = -TANK_DISPLAY_OFFSET;
 const companionTankGroup = tankGroup.clone(true);
-companionTankGroup.position.x = 1.65;
+companionTankGroup.position.x = TANK_DISPLAY_OFFSET;
 scene.add(companionTankGroup);
 
 const raycaster = new THREE.Raycaster();
@@ -273,6 +284,12 @@ function setActiveTank(tankId) {
   state.manualTankUntil = Date.now() + 60000;
   state.selectedId = null;
   state.pendingId = null;
+  state.lighthouse.ready = false;
+  state.lighthouse.driver = '';
+  state.lighthouse.deviceId = '';
+  state.reeflex.ready = false;
+  state.reeflex.driver = '';
+  state.reeflex.deviceId = '';
   applyTankDimensions();
   renderHud();
   renderFeedMarquee();
@@ -280,6 +297,9 @@ function setActiveTank(tankId) {
   renderSelection();
   updateAllMeshes();
   updateStageFeed();
+  refreshLighthouseStatus().catch(() => {});
+  refreshReeflexStatus().catch(() => {});
+  refreshVisionStatus().catch(() => {});
 }
 
 function cameraId(item) {
@@ -422,7 +442,7 @@ function normToWorld(position) {
 
 function tankSceneOffset(tankId = activeTank().tank_id) {
   const tanks = state.layout.tanks || [];
-  return Math.max(0, tanks.findIndex(tank => tank.tank_id === tankId)) % 2 === 1 ? 1.65 : -1.65;
+  return Math.max(0, tanks.findIndex(tank => tank.tank_id === tankId)) % 2 === 1 ? TANK_DISPLAY_OFFSET : -TANK_DISPLAY_OFFSET;
 }
 
 function worldToNorm(vector) {
@@ -445,13 +465,43 @@ function dimensionsToWorld(dimensions = {}) {
   };
 }
 
-function updateTableForTank() {
-  tableTop.scale.set(tankSize.x + 0.55, 1, tankSize.z + 0.55);
-  tableTop.position.y = -tankSize.y / 2 - 0.2;
-  tableLegs.forEach(({ leg, x, z }) => {
+function updateTableForGroup(group) {
+  const top = group.getObjectByName('tank-table-top');
+  if (top) {
+    top.scale.set(tankSize.x + 0.55, 1, tankSize.z + 0.55);
+    top.position.y = -tankSize.y / 2 - 0.2;
+  }
+  group.getObjectsByProperty('name', 'tank-table-leg').forEach(leg => {
+    const x = Number(leg.userData.cornerX || 0);
+    const z = Number(leg.userData.cornerZ || 0);
     leg.position.set(x * (tankSize.x / 2 + 0.18), -tankSize.y / 2 - 0.6, z * (tankSize.z / 2 + 0.18));
     leg.scale.y = 1;
   });
+}
+
+function updateTableForTank() {
+  updateTableForGroup(tankGroup);
+  updateTableForGroup(companionTankGroup);
+}
+
+function updateCompanionTankGeometry() {
+  const volume = companionTankGroup.getObjectByName('tank-volume');
+  const edges = companionTankGroup.getObjectByName('tank-edges');
+  const grid = companionTankGroup.getObjectByName('tank-floor-grid');
+  const water = companionTankGroup.getObjectByName('tank-water-plane');
+  if (volume) {
+    volume.geometry.dispose();
+    volume.geometry = new THREE.BoxGeometry(tankSize.x, tankSize.y, tankSize.z);
+  }
+  if (edges) {
+    edges.geometry.dispose();
+    edges.geometry = new THREE.EdgesGeometry(new THREE.BoxGeometry(tankSize.x, tankSize.y, tankSize.z));
+  }
+  if (grid) grid.position.y = -tankSize.y / 2 - 0.02;
+  if (water) {
+    water.position.y = tankSize.y * 0.22;
+    water.scale.set(tankSize.x / 4.2, tankSize.z / 4.2, 1);
+  }
 }
 
 function applyTankDimensions() {
@@ -472,6 +522,7 @@ function applyTankDimensions() {
   floorGrid.position.y = -tankSize.y / 2 - 0.02;
   waterPlane.position.y = tankSize.y * 0.22;
   waterPlane.scale.set(tankSize.x / 4.2, tankSize.z / 4.2, 1);
+  updateCompanionTankGeometry();
   controls.minDistance = Math.max(2.8, Math.max(tankSize.x, tankSize.y, tankSize.z) * 0.9);
   controls.maxDistance = Math.max(8, Math.max(tankSize.x, tankSize.y, tankSize.z) * 2.2);
   updateTableForTank();
@@ -734,8 +785,8 @@ function updateFrustum(item) {
     return;
   }
   if (!frustum) frustum = createFrustum(id);
-  const origin = normToWorld(placement.position).multiplyScalar(0.72);
-  const target = normToWorld(placement.target || { x: 0.5, y: 0.5, z: 0.5 }).multiplyScalar(0.72);
+  const origin = normToWorld(placement.position).multiplyScalar(TANK_DISPLAY_SCALE);
+  const target = normToWorld(placement.target || { x: 0.5, y: 0.5, z: 0.5 }).multiplyScalar(TANK_DISPLAY_SCALE);
   origin.x += tankSceneOffset(item.tank_id);
   target.x += tankSceneOffset(item.tank_id);
   const direction = target.sub(origin);
@@ -832,10 +883,10 @@ function updateMesh(item) {
   }
   mesh.visible = true;
   mesh.position.copy(normToWorld(placement.position));
-  mesh.position.multiplyScalar(0.72);
+  mesh.position.multiplyScalar(TANK_DISPLAY_SCALE);
   mesh.position.x += tankSceneOffset(item.tank_id);
   if (item.item_type !== 'structure_shape') setObjectColor(mesh, displayColorForItem(id));
-  const baseScale = Number(item.scale || 1) * 0.72;
+  const baseScale = Number(item.scale || 1) * TANK_DISPLAY_SCALE;
   const scale = id === state.stageCameraId && id !== state.selectedId ? baseScale * 1.12 : baseScale;
   mesh.scale.setScalar(scale);
   if (item.item_type === 'structure_shape') mesh.rotation.y = Number(item.rotation || 0) * Math.PI / 180;
@@ -1350,14 +1401,15 @@ function renderLiveView() {
 function lighthouseAvailableInTank() {
   const node = activeNode();
   const controlUrls = (node && node.control_urls) || {};
-  return Boolean(controlUrls.lighthouse_pose) || allItems().some(item => isLighthouse(item));
+  const ownsRaydar = Number(manifestCounts().lighthouse || 0) > 0 || allItems().some(item => isLighthouse(item));
+  return ownsRaydar && Boolean(controlUrls.lighthouse_pose);
 }
 
 function reeflexAvailableInTank() {
   const node = activeNode();
   const controlUrls = (node && node.control_urls) || {};
-  return Boolean(controlUrls.reeflex_pose || controlUrls.reeflex_servo || controlUrls.reeflex_stop)
-    || allItems().some(item => isReeflex(item));
+  const ownsReeflex = Number(manifestCounts().reeflex || 0) > 0 || allItems().some(item => isReeflex(item));
+  return ownsReeflex && Boolean(controlUrls.reeflex_pose || controlUrls.reeflex_servo || controlUrls.reeflex_stop);
 }
 
 function currentLighthouseContextId() {
@@ -1381,31 +1433,41 @@ function currentReeflexContextId() {
 function readServoState(payload) {
   const arm = payload && (payload.arm || payload);
   const servos = (arm && arm.servos) || {};
+  const devices = (arm && arm.devices) || {};
   const pan = servos.lighthouse_pan || {};
   const tilt = servos.lighthouse_tilt || {};
-  if (pan.angle !== undefined) state.lighthouse.pan = Number(pan.angle);
-  if (tilt.angle !== undefined) state.lighthouse.tilt = Number(tilt.angle);
+  const hasPan = Number.isFinite(Number(pan.angle));
+  const hasTilt = Number.isFinite(Number(tilt.angle));
+  const device = Object.entries(devices).find(([, value]) => value && value.type === 'lighthouse');
+  if (hasPan) state.lighthouse.pan = Number(pan.angle);
+  if (hasTilt) state.lighthouse.tilt = Number(tilt.angle);
   if (pan.min_angle !== undefined) state.lighthouse.minPan = Number(pan.min_angle);
   if (pan.max_angle !== undefined) state.lighthouse.maxPan = Number(pan.max_angle);
   if (tilt.min_angle !== undefined) state.lighthouse.minTilt = Number(tilt.min_angle);
   if (tilt.max_angle !== undefined) state.lighthouse.maxTilt = Number(tilt.max_angle);
   state.lighthouse.driver = text((arm && arm.driver) || payload?.driver, '');
-  state.lighthouse.status = state.lighthouse.driver === 'pca9685'
+  state.lighthouse.deviceId = device ? device[0] : '';
+  state.lighthouse.ready = state.lighthouse.driver === 'pca9685' && hasPan && hasTilt && Boolean(state.lighthouse.deviceId);
+  state.lighthouse.status = state.lighthouse.ready
     ? 'ready'
     : state.lighthouse.driver.startsWith('mock_')
       ? 'mock'
-      : text(state.lighthouse.driver, 'unavailable');
+      : state.lighthouse.driver === 'pca9685'
+        ? 'missing Raydar axes or device'
+        : text(state.lighthouse.driver, 'unavailable');
 }
 
 function readReeflexState(payload) {
   const arm = payload && (payload.arm || payload);
   const servos = (arm && arm.servos) || {};
+  const devices = (arm && arm.devices) || {};
   const base = servos.reeflex_base || servos.base || {};
   const shoulder = servos.reeflex_shoulder || servos.shoulder || {};
   const elbow = servos.reeflex_elbow || servos.elbow || {};
   const hasBase = Number.isFinite(Number(base.angle));
   const hasShoulder = Number.isFinite(Number(shoulder.angle));
   const hasElbow = Number.isFinite(Number(elbow.angle));
+  const device = Object.entries(devices).find(([, value]) => value && value.type === 'reeflex');
   if (hasBase) state.reeflex.base = Number(base.angle);
   if (hasShoulder) state.reeflex.shoulder = Number(shoulder.angle);
   if (hasElbow) state.reeflex.elbow = Number(elbow.angle);
@@ -1416,7 +1478,8 @@ function readReeflexState(payload) {
   if (elbow.min_angle !== undefined) state.reeflex.minElbow = Number(elbow.min_angle);
   if (elbow.max_angle !== undefined) state.reeflex.maxElbow = Number(elbow.max_angle);
   state.reeflex.driver = text((arm && arm.driver) || payload?.driver, '');
-  state.reeflex.ready = state.reeflex.driver === 'pca9685' && hasBase && hasShoulder && hasElbow;
+  state.reeflex.deviceId = device ? device[0] : '';
+  state.reeflex.ready = state.reeflex.driver === 'pca9685' && hasBase && hasShoulder && hasElbow && Boolean(state.reeflex.deviceId);
   state.reeflex.status = state.reeflex.ready
     ? 'ready'
     : state.reeflex.driver.startsWith('mock_')
@@ -1427,7 +1490,7 @@ function readReeflexState(payload) {
 }
 
 function lighthouseEnabled() {
-  return state.lighthouse.driver === 'pca9685';
+  return Boolean(state.lighthouse.ready);
 }
 
 function reeflexEnabled() {
@@ -1439,7 +1502,9 @@ function renderLighthouseControls() {
   const available = lighthouseAvailableInTank();
   const contextId = currentLighthouseContextId();
   if (contextId && contextId !== state.lighthouse.contextId) {
-    state.lighthouse.panelClosed = false;
+    const selected = selectedItem();
+    const stageItem = allItems().find(item => (cameraId(item) || item.item_id) === state.stageCameraId);
+    state.lighthouse.panelClosed = !((selected && isLighthouse(selected)) || (stageItem && isLighthouse(stageItem)));
     state.lighthouse.contextId = contextId;
   }
   const visible = Boolean(available && contextId && !state.lighthouse.panelClosed);
@@ -1472,7 +1537,9 @@ function renderReeflexControls() {
   const available = reeflexAvailableInTank();
   const contextId = currentReeflexContextId();
   if (contextId && contextId !== state.reeflex.contextId) {
-    state.reeflex.panelClosed = false;
+    const selected = selectedItem();
+    const stageItem = allItems().find(item => (cameraId(item) || item.item_id) === state.stageCameraId);
+    state.reeflex.panelClosed = !((selected && isReeflex(selected)) || (stageItem && isReeflex(stageItem)));
     state.reeflex.contextId = contextId;
   }
   const visible = Boolean(available && contextId && !state.reeflex.panelClosed);
@@ -1507,32 +1574,49 @@ function renderReeflexControls() {
 
 async function refreshLighthouseStatus() {
   if (!lighthouseAvailableInTank()) {
+    state.lighthouse.ready = false;
+    state.lighthouse.driver = '';
+    state.lighthouse.deviceId = '';
     renderLighthouseControls();
     return;
   }
+  const tankId = activeTank().tank_id;
   try {
-    const response = await fetch(`/api/controls/arm?tank_id=${encodeURIComponent(activeTank().tank_id)}`, { cache: 'no-store' });
+    const response = await fetch(`/api/controls/arm?tank_id=${encodeURIComponent(tankId)}`, { cache: 'no-store' });
     if (!response.ok) throw new Error(`status ${response.status}`);
-    readServoState(await response.json());
+    const payload = await response.json();
+    if (activeTank().tank_id !== tankId) return;
+    readServoState(payload);
   } catch {
+    if (activeTank().tank_id !== tankId) return;
     state.lighthouse.status = 'unavailable';
     state.lighthouse.driver = '';
+    state.lighthouse.deviceId = '';
+    state.lighthouse.ready = false;
   }
   renderLighthouseControls();
 }
 
 async function refreshReeflexStatus() {
   if (!reeflexAvailableInTank()) {
+    state.reeflex.ready = false;
+    state.reeflex.driver = '';
+    state.reeflex.deviceId = '';
     renderReeflexControls();
     return;
   }
+  const tankId = activeTank().tank_id;
   try {
-    const response = await fetch(`/api/controls/arm?tank_id=${encodeURIComponent(activeTank().tank_id)}`, { cache: 'no-store' });
+    const response = await fetch(`/api/controls/arm?tank_id=${encodeURIComponent(tankId)}`, { cache: 'no-store' });
     if (!response.ok) throw new Error(`status ${response.status}`);
-    readReeflexState(await response.json());
+    const payload = await response.json();
+    if (activeTank().tank_id !== tankId) return;
+    readReeflexState(payload);
   } catch {
+    if (activeTank().tank_id !== tankId) return;
     state.reeflex.status = 'unavailable';
     state.reeflex.driver = '';
+    state.reeflex.deviceId = '';
     state.reeflex.ready = false;
   }
   renderReeflexControls();
@@ -1568,9 +1652,10 @@ function stopReeflexHold() {
 
 async function sendLighthousePose(pan, tilt) {
   if (!lighthouseEnabled()) return;
+  const tankId = activeTank().tank_id;
   const payload = {
-    device_id: 'lighthouse-001',
-    tank_id: activeTank().tank_id,
+    device_id: state.lighthouse.deviceId,
+    tank_id: tankId,
     pan: Math.round(clamp(pan, state.lighthouse.minPan, state.lighthouse.maxPan)),
     tilt: Math.round(clamp(tilt, state.lighthouse.minTilt, state.lighthouse.maxTilt)),
   };
@@ -1586,6 +1671,7 @@ async function sendLighthousePose(pan, tilt) {
       lighthouseStatus.textContent = text(body.error || body.message, `Command rejected ${response.status}`);
       return;
     }
+    if (activeTank().tank_id !== tankId) return;
     readServoState(body);
     renderLighthouseControls();
   } catch {
@@ -1614,9 +1700,10 @@ function reeflexPoseForMove(move) {
 
 async function sendReeflexPose(base, shoulder, elbow) {
   if (!reeflexEnabled()) return;
+  const tankId = activeTank().tank_id;
   const payload = {
-    device_id: 'reeflex-001',
-    tank_id: activeTank().tank_id,
+    device_id: state.reeflex.deviceId,
+    tank_id: tankId,
     base: Math.round(clamp(base, state.reeflex.minBase, state.reeflex.maxBase)),
     shoulder: Math.round(clamp(shoulder, state.reeflex.minShoulder, state.reeflex.maxShoulder)),
     elbow: Math.round(clamp(elbow, state.reeflex.minElbow, state.reeflex.maxElbow)),
@@ -1633,6 +1720,7 @@ async function sendReeflexPose(base, shoulder, elbow) {
       reeflexStatus.textContent = text(body.error || body.message, `Command rejected ${response.status}`);
       return;
     }
+    if (activeTank().tank_id !== tankId) return;
     readReeflexState(body);
     renderReeflexControls();
   } catch {
@@ -1658,7 +1746,7 @@ async function stopReeflexMotion() {
     await fetch('/api/controls/reeflex/stop', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ device_id: 'reeflex-001', tank_id: activeTank().tank_id }),
+      body: JSON.stringify({ device_id: state.reeflex.deviceId, tank_id: activeTank().tank_id }),
     });
   } catch {
     if (reeflexStatus) reeflexStatus.textContent = 'Stop command unavailable';
@@ -1826,6 +1914,14 @@ async function refreshVisionStatus() {
   const status = await response.json();
   const raydarMode = document.getElementById('raydar-mode');
   const reeflexMode = document.getElementById('reeflex-mode');
+  const raydarAvailable = lighthouseAvailableInTank();
+  const reeflexAvailable = reeflexAvailableInTank();
+  [raydarMode, document.getElementById('raydar-survey'), document.getElementById('raydar-stop')]
+    .forEach(element => { if (element) element.hidden = !raydarAvailable; });
+  [reeflexMode, document.getElementById('reeflex-survey'), document.getElementById('reeflex-auto-stop')]
+    .forEach(element => { if (element) element.hidden = !reeflexAvailable; });
+  const toolbar = document.querySelector('.autonomy-toolbar');
+  if (toolbar) toolbar.hidden = !raydarAvailable && !reeflexAvailable;
   if (raydarMode) { raydarMode.textContent = `Raydar · ${status.raydar.state}`; raydarMode.title = status.raydar.detail; }
   if (reeflexMode) { reeflexMode.textContent = `Reeflex · ${status.reeflex.state}`; reeflexMode.title = status.reeflex.detail; }
   if (stageFeedBackdrop) {
@@ -3159,13 +3255,13 @@ function resize() {
 
 function updateSimulatorCamera() {
   if (selectedItem() || state.pendingId || Date.now() < state.controlsActiveUntil) return;
-  const radius = Math.max(tankSize.x, tankSize.z) * 1.65;
+  const radius = Math.max(tankSize.x, tankSize.z) * 2.15;
   state.orbitAngle += 0.002;
-  const target = new THREE.Vector3(0, 0.15, 0);
+  const target = new THREE.Vector3(Math.sin(state.orbitAngle) * 0.55, 0.15, 0);
   const desired = new THREE.Vector3(
-    Math.cos(state.orbitAngle) * radius,
-    Math.max(1.4, tankSize.y * 1.1),
-    Math.sin(state.orbitAngle) * radius
+    0,
+    Math.max(1.8, tankSize.y * 1.15),
+    radius
   );
   camera.position.lerp(desired, 0.018);
   controls.target.lerp(target, 0.025);

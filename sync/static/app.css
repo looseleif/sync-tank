@@ -2034,6 +2034,7 @@ button.active {
 .structure-toolbar { position: absolute; z-index: 9; left: 12px; bottom: 12px; display: flex; gap: 6px; }
 .structure-toolbar select { min-height: 38px; color: var(--text); background: #0a1421; border: 1px solid var(--line); border-radius: 7px; }
 .autonomy-toolbar { position: absolute; z-index: 9; right: 12px; bottom: 12px; display: flex; align-items: center; gap: 5px; padding: 5px; border: 1px solid var(--line); border-radius: 8px; background: rgba(2,8,17,.84); }
+.autonomy-toolbar[hidden] { display: none; }
 .autonomy-toolbar span { padding: 0 4px; color: var(--oxygen); font-size: 10px; font-weight: 900; }
 .autonomy-toolbar button { min-height: 32px; font-size: 10px; }
 .floater-marker-card { position: absolute; z-index: 11; width: 150px; padding: 4px; transform: translate(-50%, -105%); display: grid; grid-template-rows: 95px auto; }
