@@ -43,6 +43,95 @@ The original interface concentrated on getting useful pictures onto a screen. It
   </tr>
 </table>
 
+#### Camera and vision experiments
+
+The 2025 archive also preserves the messy middle of development: individual animal frames, alternate SSTV layouts, and object-detection trials that were often confidently wrong. Those false positives are part of the project history and helped establish why current Sync reports interesting motion without claiming that it has identified an animal.
+
+<table>
+  <tr>
+    <td width="33%"><img src="images/readme/2025/starfish-camera-view.webp" alt="Starfish seen through an early aquarium camera"></td>
+    <td width="33%"><img src="images/readme/2025/sstv-fish-dominant-feed.png" alt="Early SSTV dominant feed showing fish near the substrate"></td>
+    <td width="33%"><img src="images/readme/2025/sstv-six-camera-caption-experiment.png" alt="Six-camera SSTV experiment with detections and generated captions"></td>
+  </tr>
+  <tr>
+    <td><em>A starfish captured through one of the early aquarium views.</em></td>
+    <td><em>An alternate dominant-feed page focused on fish near the substrate.</em></td>
+    <td><em>A six-camera caption experiment combining tank and out-of-tank views.</em></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td width="33%"><img src="images/readme/2025/early-detection-misclassification.png" alt="Early camera test incorrectly labeling exhibit objects as a jellyfish and penguin"></td>
+    <td width="33%"><img src="images/readme/2025/deeplink-diver-detection.png" alt="Early DeepLink object-detection test using an image of a diver in a circular tank"></td>
+    <td width="33%"><img src="images/readme/2025/early-two-camera-detection-test.png" alt="Two-camera detection test with incorrect mouse and bed labels"></td>
+  </tr>
+  <tr>
+    <td><em>False-positive labels during an exhibit-floor camera test.</em></td>
+    <td><em>A DeepLink detection experiment using a diver photograph.</em></td>
+    <td><em>A two-camera test recording more useful failure cases.</em></td>
+  </tr>
+</table>
+
+#### Hardware and live display
+
+SSTV was developed alongside the physical tank. Camera mounts, a local screen, the Reeflex mechanism, and the exhibit monitor were tested as parts of one system rather than as separate demos.
+
+<table>
+  <tr>
+    <td width="33%"><img src="images/readme/2025/sstv-live-demo-monitor.jpg" alt="SSTV running on a monitor during a live exhibit"></td>
+    <td width="33%"><img src="images/readme/2025/tank-side-display.jpg" alt="Small local camera display positioned in front of the aquarium"></td>
+    <td width="33%"><img src="images/reeflex.jpg" alt="Full 2025 Reeflex and FPV hardware rig mounted on a tripod"></td>
+  </tr>
+  <tr>
+    <td><em>SSTV running as a live selectable camera display.</em></td>
+    <td><em>A small tank-side screen showing the camera perspective beside the real habitat.</em></td>
+    <td><em>The full-resolution 2025 Reeflex and FPV hardware assembly.</em></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="images/sync.jpg" alt="Original 2025 Sync Tank visual identity with aquarium animals" width="800">
+</p>
+
+*The original Sync Tank visual identity used around the 2025 prototype.*
+
+#### Building and exhibiting Sync Tank
+
+The public installation brought the aquarium, camera feeds, mechanisms, lighting, power, signage, and control surfaces together. The gallery below follows the exhibit from banner assembly and load-in through the completed booth.
+
+<p align="center">
+  <img src="images/synctankimg.jpg" alt="Completed 2025 Sync Tank exhibit with aquarium, mechanisms, local display, and illuminated signage" width="760">
+</p>
+
+*The completed 2025 exhibit: instrumented aquarium, local display, moving hardware, power equipment, and the original illuminated backdrop.*
+
+<table>
+  <tr>
+    <td width="33%"><img src="images/readme/2025/exhibit-banner-assembly.jpg" alt="Original Sync Tank exhibit banner being assembled on the floor"></td>
+    <td width="33%"><img src="images/readme/2025/exhibit-load-in-cart.jpg" alt="Aquarium and water containers being moved into the exhibit on a cart"></td>
+    <td width="33%"><img src="images/readme/2025/exhibit-neon-signage.png" alt="Completed illuminated aquatic signage around the Sync Tank banner"></td>
+  </tr>
+  <tr>
+    <td><em>Preparing the original banner before installation.</em></td>
+    <td><em>Moving the aquarium and water into the venue.</em></td>
+    <td><em>The illuminated aquatic backdrop after assembly.</em></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td width="33%"><img src="images/readme/2025/exhibit-table-close.jpg" alt="Close portrait view of the 2025 Sync Tank exhibit table"></td>
+    <td width="33%"><img src="images/readme/2025/exhibit-table-wide.jpg" alt="Wide view of the 2025 Sync Tank aquarium and exhibit backdrop"></td>
+    <td width="33%"><img src="images/readme/2025/exhibit-team-at-booth.png" alt="Sync Tank team member standing behind the completed 2025 exhibit"></td>
+  </tr>
+  <tr>
+    <td><em>A close view of the working exhibit table.</em></td>
+    <td><em>The aquarium and hardware against the completed backdrop.</em></td>
+    <td><em>A team member with the finished 2025 installation.</em></td>
+  </tr>
+</table>
+
 ### First SEE SEA TV prototypes — 2026
 
 The first 2026 prototypes move beyond a flat camera page. They introduce a portrait operations display and an early digital copy of the installation: tank boundaries, cameras, viewing frustums, nearby hardware, and newly placed interior objects share one spatial view. Device inventory, motion focus, camera state, and a live feed area are brought into the same interface.
