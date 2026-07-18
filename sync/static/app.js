@@ -2,6 +2,7 @@ import * as THREE from './vendor/three.module.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
 
 const DEFAULT_TANK_DIMENSIONS = { x: 25, y: 25, z: 25, unit: 'in' };
+const screenshotMode = new URLSearchParams(window.location.search).has('screenshot');
 
 let tankSize = { x: 4.0, y: 2.2, z: 2.6 };
 const calmColor = 0xd7dde3;
@@ -3170,34 +3171,47 @@ function updateSimulatorCamera() {
   controls.target.lerp(target, 0.025);
 }
 
-function animate() {
+function renderFrame() {
   resize();
   updateSimulatorCamera();
   controls.update();
   updateWorldControls();
   positionFloaterCards();
   renderer.render(scene, camera);
+}
+
+function animate() {
+  renderFrame();
   requestAnimationFrame(animate);
 }
 
 bindControls();
-ensureLiveRotation();
-refreshLayout().catch(() => {});
-refreshLighthouseStatus().catch(() => {});
-refreshReeflexStatus().catch(() => {});
-window.setInterval(() => refreshLayout().catch(() => {}), 2000);
-window.setInterval(() => refreshLighthouseStatus().catch(() => {}), 3000);
-window.setInterval(() => refreshReeflexStatus().catch(() => {}), 3000);
-window.setInterval(() => refreshVisionStatus().catch(() => {}), 2000);
-window.setInterval(() => pollFloaterFrames().catch(() => {}), 5000);
-window.setInterval(() => {
-  const item = selectedItem();
-  const src = sourceForPreview(item);
-  if (src && !item.stream_url) {
-    preview.src = src;
-    pipPreview.src = src;
-  }
-}, 10000);
+if (screenshotMode) {
+  refreshLayout().then(() => {
+    renderFrame();
+    document.documentElement.dataset.screenshotReady = 'true';
+  }).catch(error => {
+    document.documentElement.dataset.screenshotError = error.message || 'layout unavailable';
+  });
+} else {
+  ensureLiveRotation();
+  refreshLayout().catch(() => {});
+  refreshLighthouseStatus().catch(() => {});
+  refreshReeflexStatus().catch(() => {});
+  window.setInterval(() => refreshLayout().catch(() => {}), 2000);
+  window.setInterval(() => refreshLighthouseStatus().catch(() => {}), 3000);
+  window.setInterval(() => refreshReeflexStatus().catch(() => {}), 3000);
+  window.setInterval(() => refreshVisionStatus().catch(() => {}), 2000);
+  window.setInterval(() => pollFloaterFrames().catch(() => {}), 5000);
+  window.setInterval(() => {
+    const item = selectedItem();
+    const src = sourceForPreview(item);
+    if (src && !item.stream_url) {
+      preview.src = src;
+      pipPreview.src = src;
+    }
+  }, 10000);
+}
 window.addEventListener('resize', resize);
 feedPrevious?.addEventListener('click', () => {
   state.manualViewId = null; state.liveIndex -= 1; setLiveCamera(state.liveIndex); updateStageFeed();

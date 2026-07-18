@@ -37,7 +37,7 @@ jobs:
           python-version: '3.12'
       - uses: browser-actions/setup-chrome@v2
       - name: Install vision dependencies
-        run: pip install -r sync/requirements.txt
+        run: pip install -r sync/requirements.txt -r sync/requirements-browser.txt
       - name: Render 1080x1920 kiosk
         run: python sync/scripts/browser_smoke.py --output /tmp/see-sea-tv-1080x1920.png
       - uses: actions/upload-artifact@v4
