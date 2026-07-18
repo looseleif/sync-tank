@@ -1,4 +1,4 @@
-![Sync Tank — Open-Source Aquaristics](images/sync-tank-banner.png)
+![Sync Tank](images/sync-tank-banner.png)
 
 # Sync Tank
 
@@ -324,6 +324,12 @@ Tank nodes own local camera discovery, ESP32 JPEG ingest, servo endpoints, and m
 | [`docs/`](docs/) | Deployment and tank-specific handoff notes |
 | [`archive/`](archive/) | Historical prototypes retained for reference |
 | [`images/`](images/) | Project artwork, historical interface images, and README photography |
+
+<p align="center">
+  <img src="images/sync-tank-banner-qr.png" alt="Sync Tank open-source aquaristics banner with a QR code for the GitHub repository" width="900">
+</p>
+
+*The repository banner with a scannable link, retained here with the project resources.*
 
 ## Try it without hardware
 
