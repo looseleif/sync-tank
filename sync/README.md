@@ -9,7 +9,7 @@ This directory contains the Sync dashboard and connector processes that coordina
 - Proxy snapshots and streams from tank nodes to the dashboard.
 - Organize observations and device state across tanks.
 - Receive ESP32 heartbeats and JPEG uploads when deployed as an edge receiver.
-- Run SEE SEA TV, the two-tank simulator, local motion analysis, safe Raydar/Reeflex autonomy, and the Sightings album.
+- Run SEE SEA TV, the two-tank simulator, local motion analysis, safe Raydar seeking, bounded Reeflex control, and the Sightings album.
 
 ## Main entry points
 
@@ -61,6 +61,14 @@ Install `sync/requirements.txt` on the Sync Pi to enable OpenCV background subtr
 
 Internal `lighthouse_*` URLs and IDs remain compatible with deployed nodes, but the dashboard calls the device Raydar. Endoscopic views are Reels, and Reeflex uses normal casing.
 
+## Inspection camera instances
+
+Reels, Reeflex, and Raydar are all inspection-camera instances from Sync's point of view. They differ in placement and motion:
+
+- **Reels** are positioned by hand. A light attached at the camera end lets them inspect small, dark, or obstructed spaces.
+- **Reeflex** is a motorized articulated platform with bounded direct controls. Greater autonomy is future work.
+- **Raydar** is a motorized pan-and-tilt platform with automated survey and seeking behavior.
+
 ## Ask the Deep
 
 `✦ Ask the Deep` is only available on an already-captured Sighting. The confirmation dialog shows the exact image and permanently says: `Sends this captured image to OpenAI for analysis`. Detection, rotation, startup, automatic capture, and background tasks never invoke OpenAI.
@@ -80,7 +88,7 @@ Automated tests inject a fake transport and cannot spend credits or transmit ima
 2. Verify one camera at a time before enabling eight-second rotation.
 3. Calibrate Raydar center and safe pan/tilt limits; exercise STOP first.
 4. Run the 12 Raydar survey waypoints slowly under supervision.
-5. Verify Reeflex start, dwell, stop, and manual preemption.
+5. Verify Reeflex manual poses, limits, stop, and control preemption.
 6. Compare simulator frustums to physical directions and adjust placement.
 7. Tune reflections, bubbles, plant motion, and target-size thresholds with aquarium footage.
 8. Test tracking at the minimum command speed before increasing responsiveness.

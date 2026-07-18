@@ -49,12 +49,12 @@ The 2025 archive also preserves the messy middle of development: individual anim
 
 <table>
   <tr>
-    <td width="33%"><img src="images/readme/2025/starfish-camera-view.webp" alt="Starfish seen through an early aquarium camera"></td>
+    <td width="33%"><img src="images/readme/2025/starfish-camera-view.webp" alt="A humorous 2025 aquarium camera frame"></td>
     <td width="33%"><img src="images/readme/2025/sstv-fish-dominant-feed.png" alt="Early SSTV dominant feed showing fish near the substrate"></td>
     <td width="33%"><img src="images/readme/2025/sstv-six-camera-caption-experiment.png" alt="Six-camera SSTV experiment with detections and generated captions"></td>
   </tr>
   <tr>
-    <td><em>A starfish captured through one of the early aquarium views.</em></td>
+    <td><em>...</em></td>
     <td><em>An alternate dominant-feed page focused on fish near the substrate.</em></td>
     <td><em>A six-camera caption experiment combining tank and out-of-tank views.</em></td>
   </tr>
@@ -62,12 +62,12 @@ The 2025 archive also preserves the messy middle of development: individual anim
 
 <table>
   <tr>
-    <td width="33%"><img src="images/readme/2025/early-detection-misclassification.png" alt="Early camera test incorrectly labeling exhibit objects as a jellyfish and penguin"></td>
+    <td width="33%"><img src="images/readme/2025/early-detection-misclassification.png" alt="Apartment camera test incorrectly labeling objects as a jellyfish and penguin"></td>
     <td width="33%"><img src="images/readme/2025/deeplink-diver-detection.png" alt="Early DeepLink object-detection test using an image of a diver in a circular tank"></td>
     <td width="33%"><img src="images/readme/2025/early-two-camera-detection-test.png" alt="Two-camera detection test with incorrect mouse and bed labels"></td>
   </tr>
   <tr>
-    <td><em>False-positive labels during an exhibit-floor camera test.</em></td>
+    <td><em>False-positive jellyfish and penguin labels during a test in the apartment.</em></td>
     <td><em>A DeepLink detection experiment using a diver photograph.</em></td>
     <td><em>A two-camera test recording more useful failure cases.</em></td>
   </tr>
@@ -177,13 +177,23 @@ No finished current-interface photograph is in the repository yet. The images ab
 | Earlier project language | Current user-visible name | What it means now |
 | --- | --- | --- |
 | SSTV | **SEE SEA TV** | The rotating, camera-first multi-tank display |
-| Lighthouse | **Raydar** | The pan-and-tilt survey camera; legacy IDs and URLs remain compatible |
-| ReefScope / endoscope | **Reel / Reels** | Compact fixed aquarium camera views |
-| REEFLEX | **Reeflex** | The motorized inspection rig, written as a normal name |
+| Lighthouse | **Raydar** | A motorized camera instance with seeking automation; legacy IDs and URLs remain compatible |
+| ReefScope / endoscope | **Reel / Reels** | A manually placed, lighted camera instance for inspecting tight spaces |
+| REEFLEX | **Reeflex** | A motorized camera instance being developed toward future autonomy |
 | Saved frame | **Sighting** | A captured observation with image, source, scores, label, and notes |
 | Remote captioning experiments | **Ask the Deep** | A manual-only AI field note for an already captured Sighting |
 
 Floater cameras remain available as spatial markers. Their still images appear only when a frame changes or a marker is opened, so they no longer cover the primary camera view.
+
+### Three ways to place an inspection camera
+
+Reels, Reeflex, and Raydar are equivalent at the system level: each is an inspection-camera instance that can be assigned to a tank, shown in SEE SEA TV, and placed in the simulator. Their difference is how the camera reaches and holds a useful perspective.
+
+| Instance | Placement and purpose | Motion today |
+| --- | --- | --- |
+| **Reel** | Placed by hand wherever a close view is needed. Its light is attached at the camera end so it can reach into small, dark spaces, look behind structures, and inspect areas a normal exterior camera cannot see. | Manually positioned |
+| **Reeflex** | Mounted on an articulated motorized platform for repeatable inspection angles. It is the platform intended to become more autonomous over time. | Direct motor control with safety limits; autonomy is still a goal |
+| **Raydar** | Mounted on a pan-and-tilt base to search across a wider area of the tank. | Automated survey and seeking behavior |
 
 ## A digital copy of the tanks
 
@@ -232,7 +242,7 @@ The software grows alongside ordinary aquarium care and physical prototyping. Wa
 
 ### Inside Reeflex
 
-Reeflex is a motorized inspection platform built around printed mechanical parts, servos, and a PCA9685 controller. The base uses a ring of bearings to support rotation while a geared servo provides motion. Its control board separates multi-channel servo signaling from the Sync controller's higher-level safety and survey logic.
+Reeflex is a motorized inspection platform built around printed mechanical parts, servos, and a PCA9685 controller. The base uses a ring of bearings to support rotation while a geared servo provides motion. Its control board separates multi-channel servo signaling from the Sync controller's higher-level motion-control and safety logic. Increasingly autonomous inspection remains a development goal rather than a current claim.
 
 <table>
   <tr>
@@ -257,18 +267,19 @@ Reeflex is a motorized inspection platform built around printed mechanical parts
 
 ### Local wildlife observation
 
-- Performs low-resolution, low-rate OpenCV motion analysis on assigned Raydar and Reeflex feeds.
+- Performs low-resolution, low-rate OpenCV motion analysis on assigned camera feeds.
 - Reports persistent interesting motion rather than claiming confirmed animal identification.
 - Smooths target positions, ignores small contours, and pauses analysis while a rig moves.
 - Scores short capture bursts for sharpness and target centering.
 - Stores manual and eligible automatic captures in the Sightings album.
 - Supports Fish, Shrimp, Snail, Coral, and Unknown labels without requiring AI.
 
-### Raydar and Reeflex autonomy
+### Inspection cameras and motion control
 
+- **Reels** are positioned directly by the user. Their end-mounted light and narrow form make them the close-inspection option for small, obstructed, or dark spaces.
 - **Raydar** surveys a calibrated 12-point circular path, can center persistent motion with bounded movements, and returns to surveying after target loss.
-- **Reeflex** uses only its advertised start, stop, idle, and pose controls for a conservative small-arc survey. It does not perform closed-loop pursuit.
-- Manual controls always preempt autonomous motion.
+- **Reeflex** exposes bounded motor controls and STOP behavior, but autonomous inspection is still future work.
+- Manual controls always preempt Raydar's automated seeking.
 - Missing streams or controls produce `Unavailable`, not repeated commands.
 - Stale frames, rejected commands, network loss, and watchdog expiry stop further motion.
 - Explicit states expose `Survey`, `Track`, `Manual`, `Unavailable`, and `STOP`.
@@ -289,9 +300,9 @@ No detection, feed rotation, startup task, or background job sends an image to O
 ## Architecture
 
 ```text
-ESP32-S3 still cameras ─┐
-USB / MJPEG cameras ───┼─> Raspberry Pi tank node(s)
-Raydar / Reeflex ──────┘          │
+ESP32-S3 still cameras ─────┐
+Reels / USB cameras ────────┼─> Raspberry Pi tank node(s)
+Raydar / Reeflex ───────────┘          │
                                   │ existing payload, camera, and control URLs
                                   ▼
                          Raspberry Pi Sync controller
@@ -391,12 +402,12 @@ The test environment uses virtual servos and a completely mocked OpenAI transpor
 
 ## Hardware acceptance
 
-Simulation is intentionally not treated as proof that a physical rig is safe. Before autonomous operation on site:
+Simulation is intentionally not treated as proof that a physical rig is safe. Before motorized or automated operation on site:
 
 1. Verify every camera, tank assignment, stream, snapshot, and control URL independently.
 2. Calibrate the Raydar center and conservative pan/tilt limits.
 3. Exercise STOP before moving through survey waypoints at minimum speed.
-4. Verify Reeflex start, dwell, stop, and manual preemption under supervision.
+4. Verify Reeflex manual poses, limits, STOP, and control preemption under supervision.
 5. Compare simulated camera frustums with physical viewing directions.
 6. Tune motion thresholds using real reflections, bubbles, plants, and animals.
 7. Validate manual and automatic captures without enabling AI analysis.
