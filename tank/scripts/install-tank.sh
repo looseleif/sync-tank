@@ -11,13 +11,13 @@ Configures this checkout for a Sync Tank Raspberry Pi tank node.
 Common options:
   --node-id ID                 Default: tank-pi-001
   --label TEXT                 Default: TANK NODE
-  --profile ID                 Default: tank1-lighthouse
+  --profile ID                 Default: tank1-raydar
   --tank-id ID                 Default: tank-main
   --tank-label TEXT            Default: tank ID
   --expected-nodes LIST        Default: tank-cam-001,tank-cam-002
   --reefscope-count N          Default: 2
   --lighthouse-count N         Default: 1
-  --reeflex-count N            Default: 1
+  --reeflex-count N            Default: 0
   --solid-feeders N            Default: 1
   --liquid-feeders N           Default: 0
   --misc-feeders N             Default: 0
@@ -50,7 +50,7 @@ require_value() {
 
 node_id="${SYNC_TANK_NODE_ID:-tank-pi-001}"
 node_label="${SYNC_TANK_NODE_LABEL:-TANK NODE}"
-profile_id="${SYNC_TANK_PROFILE_ID:-tank1-lighthouse}"
+profile_id="${SYNC_TANK_PROFILE_ID:-tank1-raydar}"
 tank_id="${SYNC_TANK_TANK_ID:-tank-main}"
 tank_label="${SYNC_TANK_TANK_LABEL:-}"
 public_url="${SYNC_TANK_PUBLIC_URL:-}"
@@ -58,7 +58,7 @@ camera_service_url="${SYNC_TANK_CAMERA_SERVICE_URL:-}"
 expected_nodes="${SYNC_TANK_EXPECTED_NODES:-tank-cam-001,tank-cam-002}"
 reefscope_count="${SYNC_TANK_REEFSCOPE_COUNT:-2}"
 lighthouse_count="${SYNC_TANK_LIGHTHOUSE_COUNT:-1}"
-reeflex_count="${SYNC_TANK_REEFLEX_COUNT:-1}"
+reeflex_count="${SYNC_TANK_REEFLEX_COUNT:-0}"
 solid_feeders="${SYNC_TANK_SOLID_FEEDERS:-1}"
 liquid_feeders="${SYNC_TANK_LIQUID_FEEDERS:-0}"
 misc_feeders="${SYNC_TANK_MISC_FEEDERS:-0}"
@@ -270,6 +270,67 @@ role_split = {
 config_path = root / "config" / "sync_tank.yaml"
 config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
 config["tank_id"] = tank_id
+
+
+def rig_arm_config(lighthouse_count: int, reeflex_count: int, existing: dict) -> dict:
+    if lighthouse_count and reeflex_count:
+        raise SystemExit("One PCA node cannot own both Raydar and Reeflex profiles")
+
+    arm = {
+        "backend": existing.get("backend", "pca9685"),
+        "pca9685": existing.get("pca9685") or {
+            "address": "0x40", "bus": 1, "frequency_hz": 50, "min_tick": 150, "max_tick": 600,
+        },
+        "disable_pwm_after_move": bool(existing.get("disable_pwm_after_move", False)),
+        "movement_delay_seconds": float(existing.get("movement_delay_seconds", 0.35)),
+    }
+    if lighthouse_count:
+        arm["servos"] = {
+            "lighthouse_pan": {
+                "name": "Raydar Pan", "channel": 1, "min_angle": 20, "max_angle": 160,
+                "neutral_angle": 90, "min_pulse_width": 0.0005, "max_pulse_width": 0.0025,
+            },
+            "lighthouse_tilt": {
+                "name": "Raydar Tilt", "channel": 0, "min_angle": 45, "max_angle": 125,
+                "neutral_angle": 90, "min_pulse_width": 0.0005, "max_pulse_width": 0.0025,
+            },
+        }
+        arm["devices"] = {
+            "lighthouse-001": {
+                "type": "lighthouse",
+                "joints": {"pan": "lighthouse_pan", "tilt": "lighthouse_tilt"},
+            }
+        }
+    elif reeflex_count:
+        arm["servos"] = {
+            "reeflex_base": {
+                "name": "Reeflex Base", "channel": 0, "min_angle": 20, "max_angle": 160,
+                "neutral_angle": 90, "min_pulse_width": 0.0005, "max_pulse_width": 0.0025,
+            },
+            "reeflex_shoulder": {
+                "name": "Reeflex Shoulder", "channel": 1, "min_angle": 45, "max_angle": 135,
+                "neutral_angle": 90, "min_pulse_width": 0.0005, "max_pulse_width": 0.0025,
+            },
+            "reeflex_elbow": {
+                "name": "Reeflex Elbow", "channel": 2, "min_angle": 35, "max_angle": 145,
+                "neutral_angle": 90, "min_pulse_width": 0.0005, "max_pulse_width": 0.0025,
+            },
+        }
+        arm["devices"] = {
+            "reeflex-001": {
+                "type": "reeflex",
+                "joints": {
+                    "base": "reeflex_base", "shoulder": "reeflex_shoulder", "elbow": "reeflex_elbow",
+                },
+            }
+        }
+    else:
+        arm["servos"] = {}
+        arm["devices"] = {}
+    return arm
+
+
+config["arm"] = rig_arm_config(lighthouse_count, reeflex_count, config.get("arm") or {})
 
 ingest = config.setdefault("ingest", {})
 ingest["hub_id"] = node_id

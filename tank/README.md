@@ -22,7 +22,7 @@ config/tank_profiles.yaml
 Recommended split:
 
 ```text
-tank1-lighthouse:
+tank1-raydar:
   1 feeder, 2 ReefScopes, 2 floaters, 1 Lighthouse, 0 REEFLEX
 
 tank2-reeflex:
@@ -110,15 +110,22 @@ POST http://TANK_ONE_WIRED_IP:5050/api/reeflex/pose
 POST http://TANK_ONE_WIRED_IP:5050/api/arm/stop
 ```
 
-Default PCA9685 channel map:
+Dedicated PCA9685 channel maps:
 
 ```text
-lighthouse_pan      channel 0
-lighthouse_tilt     channel 1
-reeflex_base        channel 2
-reeflex_shoulder    channel 3
-reeflex_elbow       channel 4
+Tank 1 / Raydar
+  lighthouse_pan      channel 1
+  lighthouse_tilt     channel 0
+
+Tank 2 / Reeflex
+  reeflex_base        channel 0
+  reeflex_shoulder    channel 1
+  reeflex_elbow       channel 2
 ```
+
+The checked-in runtime configuration is the Tank 1 Raydar profile. After Tank 1 pulls an update and restarts both services (or reboots), the ingest service migrates a stale Tank 1 Reeflex inventory to Raydar while preserving local camera assignments and Floater state. The camera/control service then advertises `lighthouse-001` for Sync-side surveying.
+
+Tank 2 should be configured through `install-tank.sh` with `--profile tank2-reeflex`, `--lighthouse-count 0`, and `--reeflex-count 1`; the installer writes the three-axis Reeflex PCA map shown above.
 
 For real servo movement, enable I2C on the Pi and confirm the configured bus exists:
 

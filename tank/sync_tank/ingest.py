@@ -70,6 +70,7 @@ class IngestSettings:
     public_url: str
     camera_service_url: str
     usb_feed_allowed_cidrs: list[str]
+    rig_profile: dict[str, Any]
 
 
 class NodeStore:
@@ -87,6 +88,27 @@ class NodeStore:
             self._write_layout(self._default_layout())
         if not self.settings.node_config_path.exists():
             self._write_node_config(self._default_node_config())
+        self._reconcile_rig_profile()
+
+    def _reconcile_rig_profile(self) -> None:
+        """Apply a new checked-in rig profile without replacing local camera setup."""
+        identity = self.settings.rig_profile or {}
+        desired_profile = identity.get("profile") or {}
+        profile_id = str(desired_profile.get("id") or "")
+        if not profile_id:
+            return
+
+        config = self.node_config()
+        current_profile = config.get("profile") or {}
+        if str(current_profile.get("id") or "") == profile_id:
+            return
+
+        inventory = identity.get("inventory") or {}
+        node_inventory = config.setdefault("inventory", {})
+        node_inventory["lighthouses"] = int(inventory.get("lighthouse_cameras", 0))
+        node_inventory["robotic_arms"] = int(inventory.get("reeflex_arms", 0))
+        config["profile"] = desired_profile
+        self._write_node_config(config)
 
     def heartbeat(self, payload: dict[str, Any]) -> dict[str, Any]:
         node_id = _clean_node_id(str(payload.get("node_id", "")))
@@ -1086,7 +1108,7 @@ class NodeStore:
 
 def create_ingest_app(config_path: str | Path | None = None) -> Flask:
     config = load_config(config_path or os.environ.get("SYNC_TANK_CONFIG"))
-    settings = _settings_from_config(config.raw.get("ingest", {}))
+    settings = _settings_from_config(config.raw.get("ingest", {}), config.raw.get("tank_identity", {}))
     store = NodeStore(settings)
     hub_client = HubClient(config.tank_id, config.hub)
     app = Flask(__name__, template_folder=str(PROJECT_ROOT / "templates"), static_folder=str(PROJECT_ROOT / "static"))
@@ -1370,7 +1392,7 @@ def create_ingest_app(config_path: str | Path | None = None) -> Flask:
     return app
 
 
-def _settings_from_config(raw: dict[str, Any]) -> IngestSettings:
+def _settings_from_config(raw: dict[str, Any], rig_profile: dict[str, Any] | None = None) -> IngestSettings:
     upload_dir = Path(raw.get("upload_dir", "test_uploads"))
     if not upload_dir.is_absolute():
         upload_dir = PROJECT_ROOT / upload_dir
@@ -1401,6 +1423,7 @@ def _settings_from_config(raw: dict[str, Any]) -> IngestSettings:
         public_url=str(raw.get("public_url", "")),
         camera_service_url=str(raw.get("camera_service_url", "")),
         usb_feed_allowed_cidrs=list(raw.get("usb_feed_allowed_cidrs") or ["127.0.0.0/8"]),
+        rig_profile=dict(rig_profile or {}),
     )
 
 

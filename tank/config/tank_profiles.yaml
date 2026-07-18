@@ -1,5 +1,5 @@
 profiles:
-  tank1-reeflex:
+  tank1-raydar:
     tank:
       id: tank-1
       label: Tank 1
@@ -7,9 +7,9 @@ profiles:
       id: tank-pi-001
       label: TANK NODE 1
     role_split:
-      lighthouse: false
-      reeflex: true
-      note: Tank 1 owns the REEFLEX arm and REEFLEX camera view.
+      lighthouse: true
+      reeflex: false
+      note: Tank 1 owns the Raydar pan/tilt rig and Raydar camera view.
     esp32:
       expected_nodes:
         - tank-cam-001
@@ -19,8 +19,8 @@ profiles:
         tank-cam-002: 90
     inventory:
       reefscope_cameras: 2
-      lighthouse_cameras: 0
-      reeflex_arms: 1
+      lighthouse_cameras: 1
+      reeflex_arms: 0
       feeders:
         solid: 1
         liquid: 0
@@ -36,7 +36,7 @@ profiles:
     role_split:
       lighthouse: false
       reeflex: true
-      note: Tank 2 owns its own REEFLEX arm when installed; Tank 1 is also REEFLEX-only.
+      note: Tank 2 owns the Reeflex arm and Reeflex camera view.
     esp32:
       expected_nodes:
         - tank-cam-003

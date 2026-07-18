@@ -47,6 +47,7 @@ class DashboardContractTests(unittest.TestCase):
     def test_eight_second_cross_tank_rotation_and_states(self):
         self.assertIn("}, 8000);", self.js)
         self.assertIn("state.layout.cameras || []", self.js)
+        self.assertGreaterEqual(self.js.count("driver.startsWith('pca9685')"), 2)
         for state_name in ("Survey", "Track", "Manual", "Unavailable", "STOP"):
             self.assertIn(state_name, Path(__file__).resolve().parents[1].joinpath("wildlife_system.py").read_text())
 

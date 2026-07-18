@@ -1447,12 +1447,13 @@ function readServoState(payload) {
   if (tilt.max_angle !== undefined) state.lighthouse.maxTilt = Number(tilt.max_angle);
   state.lighthouse.driver = text((arm && arm.driver) || payload?.driver, '');
   state.lighthouse.deviceId = device ? device[0] : '';
-  state.lighthouse.ready = state.lighthouse.driver === 'pca9685' && hasPan && hasTilt && Boolean(state.lighthouse.deviceId);
+  const hasPcaDriver = state.lighthouse.driver.startsWith('pca9685');
+  state.lighthouse.ready = hasPcaDriver && hasPan && hasTilt && Boolean(state.lighthouse.deviceId);
   state.lighthouse.status = state.lighthouse.ready
     ? 'ready'
     : state.lighthouse.driver.startsWith('mock_')
       ? 'mock'
-      : state.lighthouse.driver === 'pca9685'
+      : hasPcaDriver
         ? 'missing Raydar axes or device'
         : text(state.lighthouse.driver, 'unavailable');
 }
@@ -1479,12 +1480,13 @@ function readReeflexState(payload) {
   if (elbow.max_angle !== undefined) state.reeflex.maxElbow = Number(elbow.max_angle);
   state.reeflex.driver = text((arm && arm.driver) || payload?.driver, '');
   state.reeflex.deviceId = device ? device[0] : '';
-  state.reeflex.ready = state.reeflex.driver === 'pca9685' && hasBase && hasShoulder && hasElbow && Boolean(state.reeflex.deviceId);
+  const hasPcaDriver = state.reeflex.driver.startsWith('pca9685');
+  state.reeflex.ready = hasPcaDriver && hasBase && hasShoulder && hasElbow && Boolean(state.reeflex.deviceId);
   state.reeflex.status = state.reeflex.ready
     ? 'ready'
     : state.reeflex.driver.startsWith('mock_')
       ? 'mock'
-      : state.reeflex.driver === 'pca9685'
+      : hasPcaDriver
         ? 'missing reeflex axes'
         : text(state.reeflex.driver, 'unavailable');
 }

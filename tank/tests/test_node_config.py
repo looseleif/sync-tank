@@ -6,6 +6,51 @@ from sync_tank.ingest import create_ingest_app
 
 
 class TestNodeConfig(unittest.TestCase):
+    def test_checked_in_identity_migrates_stale_rig_inventory(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            config_dir = root / "config"
+            config_dir.mkdir()
+            node_config_path = config_dir / "node_config.json"
+            node_config_path.write_text(
+                '{"inventory":{"robotic_arms":1,"lighthouses":0},"cameras":{},"profile":{"id":"tank1-reeflex"}}',
+                encoding="utf-8",
+            )
+            (config_dir / "tank_identity.yaml").write_text(
+                """
+tank:
+  id: tank-1
+inventory:
+  lighthouse_cameras: 1
+  reeflex_arms: 0
+profile:
+  id: tank1-raydar
+  role_split:
+    lighthouse: true
+    reeflex: false
+""",
+                encoding="utf-8",
+            )
+            config = config_dir / "sync_tank.yaml"
+            config.write_text(
+                f"""
+tank_id: tank-1
+ingest:
+  node_config_path: {node_config_path}
+  state_path: {root / 'state.json'}
+  layout_path: {root / 'layout.json'}
+  upload_dir: {root / 'uploads'}
+""",
+                encoding="utf-8",
+            )
+
+            client = create_ingest_app(config).test_client()
+            migrated = client.get("/api/node-config").json
+
+            assert migrated["profile"]["id"] == "tank1-raydar"
+            assert migrated["inventory"]["lighthouses"] == 1
+            assert migrated["inventory"]["robotic_arms"] == 0
+
     def test_node_config_and_hub_payload(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

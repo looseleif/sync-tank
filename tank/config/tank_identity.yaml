@@ -28,16 +28,16 @@ esp32:
 
 inventory:
   reefscope_cameras: 2
-  lighthouse_cameras: 0
-  reeflex_arms: 1
+  lighthouse_cameras: 1
+  reeflex_arms: 0
   feeders:
     solid: 1
     liquid: 0
     misc: 0
 
 profile:
-  id: tank1-reeflex
+  id: tank1-raydar
   role_split:
-    lighthouse: false
-    reeflex: true
-    note: Tank 1 owns the REEFLEX arm and REEFLEX camera view.
+    lighthouse: true
+    reeflex: false
+    note: Tank 1 owns the Raydar pan/tilt rig and Raydar camera view.
