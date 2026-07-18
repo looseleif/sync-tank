@@ -18,34 +18,51 @@ Sync Tank returned to active development around Open Sauce 2026 with a multi-tan
 
 *Chase and Kara outside one of the main exhibit halls at Open Sauce 2026 in San Mateo, California.*
 
-## SSTV then / SEE SEA TV now
+## From SSTV to SEE SEA TV
 
-The original SSTV experiments proved that several inexpensive cameras could provide useful views into an aquarium. SEE SEA TV turns those feeds into a portrait operations display with two-tank awareness, spatial context, camera rotation, local motion events, and captured Sightings.
+The project began with SSTV: direct aquarium camera pages built to prove that several inexpensive video devices could be viewed, selected, and analyzed together. The 2026 SEE SEA TV prototypes build on that foundation by connecting the footage to tanks, physical camera positions, interior landmarks, device state, and wildlife observations.
 
-### Blue interface prototype
+### Original SSTV — 2025
 
-The blue interface established the portrait layout and the first attempt at a useful digital copy of the installation. Tank boundaries, nearby hardware, cameras, viewing frustums, and newly placed interior objects were mapped into the same spatial view. It also introduced motion focus, a device manifest, and feed controls. It was an important working prototype, but the dense blue treatment competed with the camera imagery.
+The original interface concentrated on getting useful pictures onto a screen. It offered a manually selected dominant feed and multi-camera grids identified by their Linux `/dev/video*` sources. Early experiments also drew object-detection boxes and placed generated descriptions or facts directly beneath individual feeds.
+
+<p align="center">
+  <img src="images/sstv2.png" alt="Original SSTV single-camera page with manual source-selection controls" width="680">
+</p>
+
+*The original dominant-feed view, with direct buttons for switching between local video devices.*
 
 <table>
   <tr>
-    <td width="50%"><img src="images/readme/see-sea-tv-blue-ui-overview.jpg" alt="Full portrait view of the earlier blue SEE SEA TV interface"></td>
-    <td width="50%"><img src="images/readme/see-sea-tv-blue-simulator-detail.jpg" alt="Close view of the blue tank simulator and camera field-of-view guides"></td>
+    <td width="50%"><img src="images/sstv1.png" alt="Original SSTV four-camera grid with an early detected-fish overlay and generated text"></td>
+    <td width="50%"><img src="images/sstv3.png" alt="Original SSTV six-camera grid with raw device labels and fish detections"></td>
   </tr>
   <tr>
-    <td><em>The complete blue portrait interface with simulator, feeds, device status, and motion focus.</em></td>
-    <td><em>An early close view of the spatial simulator and camera geometry.</em></td>
+    <td><em>An early four-camera page combining raw feeds, detection boxes, and generated text.</em></td>
+    <td><em>A later six-camera grid showing the range—and inconsistency—of the connected views.</em></td>
   </tr>
 </table>
 
-### Current black interface
+### First SEE SEA TV prototypes — 2026
 
-The current interface uses a restrained black presentation with a clearer hierarchy. The simulator remains large enough to explain where each view originates, while SEE SEA TV and the dominant live camera output receive most of the display.
+The first 2026 prototypes move beyond a flat camera page. They introduce a portrait operations display and an early digital copy of the installation: tank boundaries, cameras, viewing frustums, nearby hardware, and newly placed interior objects share one spatial view. Device inventory, motion focus, camera state, and a live feed area are brought into the same interface.
+
+<table>
+  <tr>
+    <td width="50%"><img src="images/readme/see-sea-tv-2026-interface-overview.jpg" alt="Full portrait view of a first 2026 SEE SEA TV interface prototype"></td>
+    <td width="50%"><img src="images/readme/see-sea-tv-2026-simulator-detail.jpg" alt="Close view of the 2026 tank simulator and camera field-of-view guides"></td>
+  </tr>
+  <tr>
+    <td><em>A complete early portrait prototype with simulator, feeds, device status, and motion focus.</em></td>
+    <td><em>A close look at the first spatial tank model and camera geometry.</em></td>
+  </tr>
+</table>
 
 <p align="center">
-  <img src="images/readme/see-sea-tv-dry-bench-demo.jpg" alt="In-progress SEE SEA TV dry-bench demo showing the tank simulation above a live camera feed" width="560">
+  <img src="images/readme/see-sea-tv-dry-bench-demo.jpg" alt="First 2026 SEE SEA TV dry-bench demo showing the tank simulation above a live camera feed" width="560">
 </p>
 
-*An in-progress dry-bench demo. The simulated tank and camera geometry appear above a live feed while the system is tested outside the water.*
+*A first-generation 2026 dry-bench demo, with the simulated tank and camera geometry above a live feed while the system is tested outside the water.*
 
 <p align="center">
   <img src="images/readme/see-sea-tv-in-water-test-setup.jpg" alt="Two aquarium test setups with cameras and control hardware being tested in water before the display was installed" width="760">
@@ -53,7 +70,20 @@ The current interface uses a restrained black presentation with a clearer hierar
 
 *The in-water test setup taking shape across both tanks, with camera and motion hardware connected before the portrait display was added.*
 
-### What changed
+### The functional progression
+
+| Original SSTV | 2026 SEE SEA TV development |
+| --- | --- |
+| Flat single-feed and camera-grid pages | Portrait multi-tank operations display |
+| Raw local video-device names | Tank and camera identities with live state |
+| Manual source buttons | Timed rotation, thumbnails, navigation, and pinning |
+| Detection boxes and text attached directly to feeds | Local motion events and durable Sightings |
+| Camera images without physical context | Tank simulation, camera placement, and field-of-view guides |
+| One display host's attached cameras | Multiple tank nodes coordinated by Sync |
+
+No finished current-interface photograph is in the repository yet. The images above document the first 2026 prototype generation; the sections below describe the software that has been developed from it.
+
+### Names and additions
 
 | Earlier project language | Current user-visible name | What it means now |
 | --- | --- | --- |
