@@ -2,11 +2,31 @@
 
 # Sync Tank
 
-Sync Tank is an open-source, local-first hub for aquaristics. It connects aquarium cameras, inspection tools, device nodes, and Raspberry Pis so multiple tanks can be observed and coordinated as one system without giving up local ownership or offline operation.
+**Open-source aquaristics: connected tanks, shared perspectives, local control.**
 
-The current installation proves the model with two independent tank nodes: `n=2` is the starting point, not the limit. Additional tanks, cameras, people, and software blocks should be able to join through the same open interfaces. **SEE SEA TV is one block within Sync Tank**—the visual display—not the project as a whole.
+Sync Tank brings aquarium cameras, inspection tools, habitat models, and observations into one local system. It connects what a camera sees with the tank it belongs to, where it is looking, and the equipment around it, so an aquarium can be explored and understood from more than one perspective.
 
-> Water and low voltage have never made this much sense.
+Each tank has a Raspberry Pi node that collects its camera feeds and manages its devices. A shared Sync hub brings those tanks together for viewing, spatial mapping, captured observations, and inspection controls. Everyday operation stays on the local network, with footage and controls under the aquarium owner's control.
+
+The current installation connects two independent tank nodes. That is the reference setup, with open interfaces intended to let more tanks, cameras, and tools join over time.
+
+[Explore the system](#how-the-pieces-fit-together) · [Try it without hardware](#try-it-without-hardware) · [Install a tank node](#install-a-tank-node) · [Project history](#project-history)
+
+## How the pieces fit together
+
+Sync Tank is the whole project. Its hardware and software components each serve a different part of aquarium work:
+
+| Component | Role in Sync Tank |
+| --- | --- |
+| **Tank nodes and Sync hub** | Collect cameras and devices locally, preserve tank ownership, and coordinate the installation. |
+| **Floaters, Reels, Reeflex, and Raydar** | Provide fixed, manually placed, and motorized camera perspectives. |
+| **Spatial tank model** | Place cameras, viewing directions, and habitat landmarks in an interactive 3D map. |
+| **SEE SEA TV** | Display the connected camera feeds, with navigation, rotation, and a link to their physical locations. |
+| **Local observation and Sightings** | Notice persistent motion and save images with their tank, camera, time, and notes. |
+| **Ask the Deep** | Add an optional AI field note to a captured Sighting when explicitly requested. |
+| **Shrimp City and habitat hardware** | Give aquarium residents cover and observers recognizable places to study. |
+
+A camera supplies a view; its tank node establishes where it belongs; the spatial model describes its position and direction. SEE SEA TV presents that view, and Sightings preserves selected moments with their context. These connections are the foundation for future observation tools and voluntary community sharing.
 
 ## The Sync Tank mission
 
@@ -17,7 +37,7 @@ Sync Tank exists to make aquarium work easier to connect, understand, share, and
 - Prove that separate Raspberry Pi tank nodes can report into one local Sync hub.
 - Keep tank identity, camera identity, layout, and control boundaries intact as the network grows.
 - Allow each node to keep working when another tank, the internet, a camera, or an optional analysis service is unavailable.
-- Add capabilities as interoperable blocks: SEE SEA TV, the spatial tank model, Reels, Reeflex, Raydar, local motion observation, Sightings, alerts, and future tools.
+- Let viewing, mapping, inspection, and observation tools use the same tank and camera identities.
 - Treat the two-tank deployment as a real reference implementation for larger personal, classroom, research, and community installations.
 
 ### More eyes on aquatic life
@@ -37,271 +57,6 @@ Sync Tank should help turn those signals into understandable notifications for t
 Community participation must not require sending every feed to a central service. Raw footage and controls stay local by default. Sharing should be explicit and selective—such as a chosen clip, a captured Sighting, an anonymized failure case, or an open-source fix. The same model lets contributors improve camera support, tests, safety limits, visual analysis, documentation, and hardware designs without needing identical tanks.
 
 Success means that someone can add a new node or observation tool for their own aquarium, keep control of it locally, and still contribute knowledge that makes other aquariums safer and easier to understand.
-
-## The project in 2026
-
-Sync Tank returned to active development around Open Sauce 2026 with a two-tank local controller, a shared device and camera model, offline simulation, local motion observation, stricter motion-control safety, and a rebuilt display block.
-
-<p align="center">
-  <img src="images/readme/open-sauce-2026-chase-and-kara.jpg" alt="Chase and Kara standing outside an Open Sauce 2026 exhibit hall in San Mateo" width="560">
-</p>
-
-*Chase and Kara outside one of the main exhibit halls at Open Sauce 2026 in San Mateo, California.*
-
-## One block: from SSTV to SEE SEA TV
-
-The display block began as SSTV: direct aquarium camera pages built to prove that several inexpensive video devices could be viewed, selected, and analyzed together. The 2026 SEE SEA TV prototypes build on that foundation by connecting footage to tank nodes, physical camera positions, interior landmarks, device state, and wildlife observations. This is the visible interface for Sync Tank, but only one consumer of the local hub.
-
-### Original SSTV — 2025
-
-The original interface concentrated on getting useful pictures onto a screen. It offered a manually selected dominant feed and multi-camera grids identified by their Linux `/dev/video*` sources. Early experiments also drew object-detection boxes and placed generated descriptions or facts directly beneath individual feeds.
-
-<p align="center">
-  <img src="images/sstv2.png" alt="Original SSTV single-camera page with manual source-selection controls" width="680">
-</p>
-
-*The original dominant-feed view, with direct buttons for switching between local video devices.*
-
-<table>
-  <tr>
-    <td width="50%"><img src="images/sstv1.png" alt="Original SSTV four-camera grid with an early detected-fish overlay and generated text"></td>
-    <td width="50%"><img src="images/sstv3.png" alt="Original SSTV six-camera grid with raw device labels and fish detections"></td>
-  </tr>
-  <tr>
-    <td><em>An early four-camera page combining raw feeds, detection boxes, and generated text.</em></td>
-    <td><em>A later six-camera grid showing the range—and inconsistency—of the connected views.</em></td>
-  </tr>
-</table>
-
-#### Camera and vision experiments
-
-The 2025 archive also preserves the messy middle of development: individual animal frames, alternate SSTV layouts, and object-detection trials that were often confidently wrong. Those false positives are part of the project history and helped establish why current Sync reports interesting motion without claiming that it has identified an animal.
-
-<table>
-  <tr>
-    <td width="33%"><img src="images/readme/2025/starfish-camera-view.webp" alt="A humorous 2025 aquarium camera frame"></td>
-    <td width="33%"><img src="images/readme/2025/sstv-fish-dominant-feed.png" alt="Early SSTV dominant feed showing fish near the substrate"></td>
-    <td width="33%"><img src="images/readme/2025/sstv-six-camera-caption-experiment.png" alt="Six-camera SSTV experiment with detections and generated captions"></td>
-  </tr>
-  <tr>
-    <td><em>...</em></td>
-    <td><em>An alternate dominant-feed page focused on fish near the substrate.</em></td>
-    <td><em>A six-camera caption experiment combining tank and out-of-tank views.</em></td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <td width="33%"><img src="images/readme/2025/early-detection-misclassification.png" alt="Apartment camera test incorrectly labeling objects as a jellyfish and penguin"></td>
-    <td width="33%"><img src="images/readme/2025/deeplink-diver-detection.png" alt="Early DeepLink object-detection test using an image of a diver in a circular tank"></td>
-    <td width="33%"><img src="images/readme/2025/early-two-camera-detection-test.png" alt="Two-camera detection test with incorrect mouse and bed labels"></td>
-  </tr>
-  <tr>
-    <td><em>False-positive jellyfish and penguin labels during a test in the apartment.</em></td>
-    <td><em>A DeepLink detection experiment using a diver photograph.</em></td>
-    <td><em>A two-camera test recording more useful failure cases.</em></td>
-  </tr>
-</table>
-
-#### Hardware and live display
-
-SSTV was developed alongside the physical tank. Camera mounts, a local screen, the Reeflex mechanism, and the exhibit monitor were tested as parts of one system rather than as separate demos.
-
-<table>
-  <tr>
-    <td width="33%"><img src="images/readme/2025/sstv-live-demo-monitor.jpg" alt="SSTV running on a monitor during a live exhibit"></td>
-    <td width="33%"><img src="images/readme/2025/tank-side-display.jpg" alt="Small local camera display positioned in front of the aquarium"></td>
-    <td width="33%"><img src="images/reeflex.jpg" alt="Full 2025 Reeflex and FPV hardware rig mounted on a tripod"></td>
-  </tr>
-  <tr>
-    <td><em>SSTV running as a live selectable camera display.</em></td>
-    <td><em>A small tank-side screen showing the camera perspective beside the real habitat.</em></td>
-    <td><em>The full-resolution 2025 Reeflex and FPV hardware assembly.</em></td>
-  </tr>
-</table>
-
-<p align="center">
-  <img src="images/sync.jpg" alt="Original 2025 Sync Tank visual identity with aquarium animals" width="800">
-</p>
-
-*The original Sync Tank visual identity used around the 2025 prototype.*
-
-#### Building and exhibiting Sync Tank
-
-The public installation brought the aquarium, camera feeds, mechanisms, lighting, power, signage, and control surfaces together. The gallery below follows the exhibit from banner assembly and load-in through the completed booth.
-
-<p align="center">
-  <img src="images/synctankimg.jpg" alt="Completed 2025 Sync Tank exhibit with aquarium, mechanisms, local display, and illuminated signage" width="760">
-</p>
-
-*The completed 2025 exhibit: instrumented aquarium, local display, moving hardware, power equipment, and the original illuminated backdrop.*
-
-<table>
-  <tr>
-    <td width="33%"><img src="images/readme/2025/exhibit-banner-assembly.jpg" alt="Original Sync Tank exhibit banner being assembled on the floor"></td>
-    <td width="33%"><img src="images/readme/2025/exhibit-load-in-cart.jpg" alt="Aquarium and water containers being moved into the exhibit on a cart"></td>
-    <td width="33%"><img src="images/readme/2025/exhibit-neon-signage.png" alt="Completed illuminated aquatic signage around the Sync Tank banner"></td>
-  </tr>
-  <tr>
-    <td><em>Preparing the original banner before installation.</em></td>
-    <td><em>Moving the aquarium and water into the venue.</em></td>
-    <td><em>The illuminated aquatic backdrop after assembly.</em></td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <td width="33%"><img src="images/readme/2025/exhibit-table-close.jpg" alt="Close portrait view of the 2025 Sync Tank exhibit table"></td>
-    <td width="33%"><img src="images/readme/2025/exhibit-table-wide.jpg" alt="Wide view of the 2025 Sync Tank aquarium and exhibit backdrop"></td>
-    <td width="33%"><img src="images/readme/2025/exhibit-team-at-booth.png" alt="Sync Tank team member standing behind the completed 2025 exhibit"></td>
-  </tr>
-  <tr>
-    <td><em>A close view of the working exhibit table.</em></td>
-    <td><em>The aquarium and hardware against the completed backdrop.</em></td>
-    <td><em>A team member with the finished 2025 installation.</em></td>
-  </tr>
-</table>
-
-### First SEE SEA TV prototypes — 2026
-
-The first 2026 prototypes move beyond a flat camera page. They introduce a portrait operations display and an early digital copy of the installation: tank boundaries, cameras, viewing frustums, nearby hardware, and newly placed interior objects share one spatial view. Device inventory, motion focus, camera state, and a live feed area are brought into the same interface.
-
-<table>
-  <tr>
-    <td width="50%"><img src="images/readme/see-sea-tv-2026-interface-overview.jpg" alt="Full portrait view of a first 2026 SEE SEA TV interface prototype"></td>
-    <td width="50%"><img src="images/readme/see-sea-tv-2026-simulator-detail.jpg" alt="Close view of the 2026 tank simulator and camera field-of-view guides"></td>
-  </tr>
-  <tr>
-    <td><em>A complete early portrait prototype with simulator, feeds, device status, and motion focus.</em></td>
-    <td><em>A close look at the first spatial tank model and camera geometry.</em></td>
-  </tr>
-</table>
-
-<p align="center">
-  <img src="images/readme/see-sea-tv-dry-bench-demo.jpg" alt="First 2026 SEE SEA TV dry-bench demo showing the tank simulation above a live camera feed" width="560">
-</p>
-
-*A first-generation 2026 dry-bench demo, with the simulated tank and camera geometry above a live feed while the system is tested outside the water.*
-
-<p align="center">
-  <img src="images/readme/see-sea-tv-in-water-test-setup.jpg" alt="Two aquarium test setups with cameras and control hardware being tested in water before the display was installed" width="760">
-</p>
-
-*The in-water test setup taking shape across both tanks, with camera and motion hardware connected before the portrait display was added.*
-
-### The functional progression
-
-| Original SSTV | 2026 SEE SEA TV development |
-| --- | --- |
-| Flat single-feed and camera-grid pages | Portrait multi-tank operations display |
-| Raw local video-device names | Tank and camera identities with live state |
-| Manual source buttons | Timed rotation, thumbnails, navigation, and pinning |
-| Detection boxes and text attached directly to feeds | Local motion events and durable Sightings |
-| Camera images without physical context | Tank simulation, camera placement, and field-of-view guides |
-| One display host's attached cameras | Multiple tank nodes coordinated by Sync |
-
-No finished current-interface photograph is in the repository yet. The images above document the first 2026 prototype generation; the sections below describe the software that has been developed from it.
-
-### Names and additions
-
-| Earlier project language | Current user-visible name | What it means now |
-| --- | --- | --- |
-| SSTV | **SEE SEA TV** | The rotating, camera-first multi-tank display |
-| Lighthouse | **Raydar** | A motorized camera instance with seeking automation; legacy IDs and URLs remain compatible |
-| ReefScope / endoscope | **Reel / Reels** | A manually placed, lighted camera instance for inspecting tight spaces |
-| REEFLEX | **Reeflex** | A motorized camera instance being developed toward future autonomy |
-| Saved frame | **Sighting** | A captured observation with image, source, scores, label, and notes |
-| Remote captioning experiments | **Ask the Deep** | A manual-only AI field note for an already captured Sighting |
-
-### Floaters: isolated wireless camera nodes
-
-Floaters are ESP32-S3 Sense still-camera nodes assigned to a specific tank Pi. They do not join the household network, need internet access, or connect directly to the Sync hub. Each Floater joins the private Wi-Fi access point hosted by its owning tank Pi, checks for a command, sends a heartbeat, and uploads a raw JPEG to that Pi on port `8080`.
-
-| Tank | Floater IDs | Private AP | AP address | Tank Pi wired address |
-| --- | --- | --- | --- | --- |
-| Tank One | `tank-cam-001`, `tank-cam-002` | `TANK_ONE_AP_SSID` | `TANK_ONE_AP_IP/24` | `TANK_ONE_WIRED_IP` |
-| Tank Two | `tank-cam-003`, `tank-cam-004` | `TANK_TWO_AP_SSID` | `TANK_TWO_AP_IP/24` | `TANK_TWO_WIRED_IP` |
-
-The deployed AP password is `TANK_AP_PASSWORD`. These AP addresses are stable NetworkManager shared-mode gateway addresses, while individual Floater client addresses may change. The tank Pi stores the latest JPEG and exposes its inventory and image URL to Sync over the isolated wired link.
-
-The tank Pis do not require a normal Wi-Fi or internet connection in deployment. Their `wlan0` interface serves the Floaters; their Ethernet/PoE connection is the only upstream path to the main Sync node at `SYNC_WIRED_IP`. This keeps camera collection working as a fully local chain:
-
-```text
-Floater ESP32 ──private tank AP──> tank Pi ──PoE Ethernet──> Sync hub
-       JPEG + heartbeat              ingest + ownership       display + storage + analysis
-```
-
-In the interface, Floaters remain available as spatial markers. Their still images appear only when a frame changes or a marker is opened, so they do not cover the primary camera view. See [`docs/FLOATER_NETWORK.md`](docs/FLOATER_NETWORK.md) for the endpoint and network handoff.
-
-### Three ways to place an inspection camera
-
-Reels, Reeflex, and Raydar are equivalent at the system level: each is an inspection-camera instance that can be assigned to a tank, shown in SEE SEA TV, and placed in the simulator. Their difference is how the camera reaches and holds a useful perspective.
-
-| Instance | Placement and purpose | Motion today |
-| --- | --- | --- |
-| **Reel** | Placed by hand wherever a close view is needed. Its light is attached at the camera end so it can reach into small, dark spaces, look behind structures, and inspect areas a normal exterior camera cannot see. | Manually positioned |
-| **Reeflex** | Mounted on an articulated motorized platform for repeatable inspection angles. It is the platform intended to become more autonomous over time. | Direct motor control with safety limits; autonomy is still a goal |
-| **Raydar** | Mounted on a pan-and-tilt base to search across a wider area of the tank. | Automated survey and seeking behavior |
-
-## A digital copy of the tanks
-
-The simulator is not just decoration. It gives the live system a shared spatial vocabulary:
-
-- Two separately labeled tanks can be viewed together or individually.
-- `FRONT`, `BACK`, `LEFT`, and `RIGHT` establish orientation.
-- Every camera can be represented at its physical location with a field-of-view frustum.
-- The active SEE SEA TV source is highlighted so the viewer can connect footage to its real direction.
-- Block, slab, rock, pillar, arch, and mound landmarks can be placed on a normalized grid.
-- Interior objects can be moved, rotated, scaled, labeled, colored, duplicated, or scattered for quick layout planning.
-- Orbit, pan, drag, zoom, overview, and tank-focus controls keep the model navigable on the portrait display.
-
-This creates a practical digital copy of each tank and its surroundings: cameras describe how the habitat is being seen, while structures and landmarks describe what is being seen and where.
-
-## Shrimp City
-
-Shrimp City turns the aquarium interior into a recognizable habitat rather than an empty camera box. Its structures provide cover for the residents while giving cameras, the simulator, and human observers meaningful landmarks for describing where an animal was seen.
-
-<p align="center">
-  <img src="images/readme/shrimp-in-transit.jpg" alt="Shrimp being transported in a small clear container before acclimation" width="760">
-</p>
-
-*Some of Shrimp City's residents in transit, held safely in a small container before arriving at the tank and beginning acclimation.*
-
-<table>
-  <tr>
-    <td width="40%"><img src="images/readme/shrimp-city-caridina-culls-street-level.jpg" alt="Caridina culls moving between the lower structures of Shrimp City"></td>
-    <td width="60%"><img src="images/readme/shrimp-city-caridina-culls-wide.jpg" alt="Wide interior view of Shrimp City with Caridina culls throughout the habitat"></td>
-  </tr>
-  <tr>
-    <td><em>Street-level activity between the structures.</em></td>
-    <td><em>A wider view of the Caridina culls exploring Shrimp City.</em></td>
-  </tr>
-</table>
-
-## Hardware development
-
-The software grows alongside ordinary aquarium care and physical prototyping. Water chemistry is checked directly, while servo hardware, controller boards, wiring, and printed parts are evaluated on the bench before they approach a live tank.
-
-<p align="center">
-  <img src="images/readme/water-testing-and-hardware-prototypes.jpg" alt="Freshwater test kit beside servo hardware, a controller board, wiring, and an untested 3D-printed dispensing concept" width="760">
-</p>
-
-*Freshwater testing and early hardware laid out on the bench. The black 3D-printed dispensing concept shown here was untested and was never installed as a supported system feature.*
-
-### Inside Reeflex
-
-Reeflex is a motorized inspection platform built around printed mechanical parts, servos, and a PCA9685 controller. The base uses a ring of bearings to support rotation while a geared servo provides motion. Its control board separates multi-channel servo signaling from the Sync controller's higher-level motion-control and safety logic. Increasingly autonomous inspection remains a development goal rather than a current claim.
-
-<table>
-  <tr>
-    <td width="50%"><img src="images/readme/reeflex-base-bearings-and-drive.jpg" alt="Open Reeflex base showing its circular bearing track, printed gear, and drive servo"></td>
-    <td width="50%"><img src="images/readme/reeflex-servo-control-board.jpg" alt="PCA9685 servo control board and wiring mounted on Reeflex"></td>
-  </tr>
-  <tr>
-    <td><em>The bearing track, printed drive gear, and servo inside the Reeflex base.</em></td>
-    <td><em>The Reeflex PCA9685 servo controller and field wiring during assembly.</em></td>
-  </tr>
-</table>
 
 ## What works today
 
@@ -353,6 +108,103 @@ A Sighting preserves the original image and its tank, camera, timestamp, trigger
 
 No detection, feed rotation, startup task, or background job sends an image to OpenAI. The API key remains in the Sync server environment, automated tests use a fake transport, and all local functions continue without a key or internet connection.
 
+## Inspection cameras
+
+Reels, Reeflex, and Raydar are equivalent at the system level: each is an inspection-camera instance that can be assigned to a tank, shown in SEE SEA TV, and placed in the simulator. Their difference is how the camera reaches and holds a useful perspective.
+
+| Instance | Placement and purpose | Motion today |
+| --- | --- | --- |
+| **Reel** | Placed by hand wherever a close view is needed. Its light is attached at the camera end so it can reach into small, dark spaces, look behind structures, and inspect areas a normal exterior camera cannot see. | Manually positioned |
+| **Reeflex** | Mounted on an articulated motorized platform for repeatable inspection angles. It is the platform intended to become more autonomous over time. | Direct motor control with safety limits; autonomy is still a goal |
+| **Raydar** | Mounted on a pan-and-tilt base to search across a wider area of the tank. | Automated survey and seeking behavior |
+
+## A digital copy of the tanks
+
+The interactive 3D tank model connects camera footage to physical locations and habitat landmarks:
+
+- Two separately labeled tanks can be viewed together or individually.
+- `FRONT`, `BACK`, `LEFT`, and `RIGHT` establish orientation.
+- Every camera can be represented at its physical location with a field-of-view frustum.
+- The active SEE SEA TV source is highlighted so the viewer can connect footage to its real direction.
+- Block, slab, rock, pillar, arch, and mound landmarks can be placed on a normalized grid.
+- Interior objects can be moved, rotated, scaled, labeled, colored, duplicated, or scattered for quick layout planning.
+- Orbit, pan, drag, zoom, overview, and tank-focus controls keep the model navigable on the portrait display.
+
+This creates a practical digital copy of each tank and its surroundings: cameras describe how the habitat is being seen, while structures and landmarks describe what is being seen and where.
+
+### From model to installation
+
+These early 2026 prototypes show the spatial model beside camera feeds and device state, followed by bench and in-water testing. They document an earlier interface generation, rather than a finished view of the current software.
+
+<table>
+  <tr>
+    <td width="50%"><img src="images/readme/see-sea-tv-2026-interface-overview.jpg" alt="Full portrait view of a first 2026 SEE SEA TV interface prototype"></td>
+    <td width="50%"><img src="images/readme/see-sea-tv-2026-simulator-detail.jpg" alt="Close view of the 2026 tank simulator and camera field-of-view guides"></td>
+  </tr>
+  <tr>
+    <td><em>A complete early portrait prototype with simulator, feeds, device status, and motion focus.</em></td>
+    <td><em>A close look at the first spatial tank model and camera geometry.</em></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="images/readme/see-sea-tv-dry-bench-demo.jpg" alt="First 2026 SEE SEA TV dry-bench demo showing the tank simulation above a live camera feed" width="560">
+</p>
+
+*A first-generation 2026 dry-bench demo, with the simulated tank and camera geometry above a live feed while the system is tested outside the water.*
+
+<p align="center">
+  <img src="images/readme/see-sea-tv-in-water-test-setup.jpg" alt="Two aquarium test setups with cameras and control hardware being tested in water before the display was installed" width="760">
+</p>
+
+*The in-water test setup taking shape across both tanks, with camera and motion hardware connected before the portrait display was added.*
+
+## Shrimp City
+
+Shrimp City turns the aquarium interior into a recognizable habitat rather than an empty camera box. Its structures provide cover for the residents while giving cameras, the simulator, and human observers meaningful landmarks for describing where an animal was seen.
+
+<p align="center">
+  <img src="images/readme/shrimp-in-transit.jpg" alt="Shrimp being transported in a small clear container before acclimation" width="760">
+</p>
+
+*Some of Shrimp City's residents in transit, held safely in a small container before arriving at the tank and beginning acclimation.*
+
+<table>
+  <tr>
+    <td width="40%"><img src="images/readme/shrimp-city-caridina-culls-street-level.jpg" alt="Caridina culls moving between the lower structures of Shrimp City"></td>
+    <td width="60%"><img src="images/readme/shrimp-city-caridina-culls-wide.jpg" alt="Wide interior view of Shrimp City with Caridina culls throughout the habitat"></td>
+  </tr>
+  <tr>
+    <td><em>Street-level activity between the structures.</em></td>
+    <td><em>A wider view of the Caridina culls exploring Shrimp City.</em></td>
+  </tr>
+</table>
+
+## Hardware development
+
+The software grows alongside ordinary aquarium care and physical prototyping. Water chemistry is checked directly, while servo hardware, controller boards, wiring, and printed parts are evaluated on the bench before they approach a live tank.
+
+<p align="center">
+  <img src="images/readme/water-testing-and-hardware-prototypes.jpg" alt="Freshwater test kit beside servo hardware, a controller board, wiring, and an untested 3D-printed dispensing concept" width="760">
+</p>
+
+*Freshwater testing and early hardware laid out on the bench. The black 3D-printed dispensing concept shown here was untested and was never installed as a supported system feature.*
+
+### Inside Reeflex
+
+Reeflex is a motorized inspection platform built around printed mechanical parts, servos, and a PCA9685 controller. The base uses a ring of bearings to support rotation while a geared servo provides motion. Its control board separates multi-channel servo signaling from the Sync controller's higher-level motion-control and safety logic. Increasingly autonomous inspection remains a development goal rather than a current claim.
+
+<table>
+  <tr>
+    <td width="50%"><img src="images/readme/reeflex-base-bearings-and-drive.jpg" alt="Open Reeflex base showing its circular bearing track, printed gear, and drive servo"></td>
+    <td width="50%"><img src="images/readme/reeflex-servo-control-board.jpg" alt="PCA9685 servo control board and wiring mounted on Reeflex"></td>
+  </tr>
+  <tr>
+    <td><em>The bearing track, printed drive gear, and servo inside the Reeflex base.</em></td>
+    <td><em>The Reeflex PCA9685 servo controller and field wiring during assembly.</em></td>
+  </tr>
+</table>
+
 ## Architecture
 
 ```text
@@ -372,6 +224,26 @@ Chosen clips, Sightings, tests, and fixes ───> Optional community exchange
 Tank nodes own their private Floater AP, ESP32 JPEG ingest, local camera discovery, servo endpoints, and machine-readable inventory. The Sync hub reaches those nodes through the local PoE Ethernet segment, proxies camera media, maintains combined but separately owned tank layouts, runs optional local analysis, and serves its software blocks. Neither Floaters nor tank Pis require an internet route for normal operation. The current `n=2` deployment validates the pattern while configuration leaves room for more tank nodes. Deployed tank URLs and internal Lighthouse identifiers do not need to change.
 
 Community exchange sits outside the local control path. Nothing in the aquarium should depend on public sharing, and no footage should leave the local hub without an explicit choice.
+
+## Floater network
+
+Floaters are ESP32-S3 Sense still-camera nodes assigned to a specific tank Pi. They do not join the household network, need internet access, or connect directly to the Sync hub. Each Floater joins the private Wi-Fi access point hosted by its owning tank Pi, checks for a command, sends a heartbeat, and uploads a raw JPEG to that Pi on port `8080`.
+
+| Tank | Floater IDs | Private AP | AP address | Tank Pi wired address |
+| --- | --- | --- | --- | --- |
+| Tank One | `tank-cam-001`, `tank-cam-002` | `TANK_ONE_AP_SSID` | `TANK_ONE_AP_IP/24` | `TANK_ONE_WIRED_IP` |
+| Tank Two | `tank-cam-003`, `tank-cam-004` | `TANK_TWO_AP_SSID` | `TANK_TWO_AP_IP/24` | `TANK_TWO_WIRED_IP` |
+
+The deployed AP password is `TANK_AP_PASSWORD`. These AP addresses are stable NetworkManager shared-mode gateway addresses, while individual Floater client addresses may change. The tank Pi stores the latest JPEG and exposes its inventory and image URL to Sync over the isolated wired link.
+
+The tank Pis do not require a normal Wi-Fi or internet connection in deployment. Their `wlan0` interface serves the Floaters; their Ethernet/PoE connection is the only upstream path to the main Sync node at `SYNC_WIRED_IP`. This keeps camera collection working as a fully local chain:
+
+```text
+Floater ESP32 ──private tank AP──> tank Pi ──PoE Ethernet──> Sync hub
+       JPEG + heartbeat              ingest + ownership       display + storage + analysis
+```
+
+In the interface, Floaters remain available as spatial markers. Their still images appear only when a frame changes or a marker is opened, so they do not cover the primary camera view. See [`docs/FLOATER_NETWORK.md`](docs/FLOATER_NETWORK.md) for the endpoint and network handoff.
 
 ## Repository map
 
@@ -478,8 +350,148 @@ Simulation is intentionally not treated as proof that a physical rig is safe. Be
 8. Complete a supervised multi-hour soak before unattended surveying.
 9. Make one deliberate Ask the Deep request with a non-sensitive test image and verify the disclosure and stored result.
 
+## Project history
+
+Sync Tank grew through aquarium builds, camera experiments, printed mechanisms, and public exhibits. The 2025 installation brought those pieces together; development around Open Sauce 2026 expanded the work into a shared local controller for two tanks, spatial layouts, and observation tools.
+
+The galleries below preserve that development history, including useful failures. SSTV was the early camera-display component. Its successor, SEE SEA TV, carries that work forward within the wider Sync Tank system.
+
+### Original SSTV — 2025
+
+The original interface concentrated on getting useful pictures onto a screen. It offered a manually selected dominant feed and multi-camera grids identified by their Linux `/dev/video*` sources. Early experiments also drew object-detection boxes and placed generated descriptions or facts directly beneath individual feeds.
+
+<p align="center">
+  <img src="images/sstv2.png" alt="Original SSTV single-camera page with manual source-selection controls" width="680">
+</p>
+
+*The original dominant-feed view, with direct buttons for switching between local video devices.*
+
+<table>
+  <tr>
+    <td width="50%"><img src="images/sstv1.png" alt="Original SSTV four-camera grid with an early detected-fish overlay and generated text"></td>
+    <td width="50%"><img src="images/sstv3.png" alt="Original SSTV six-camera grid with raw device labels and fish detections"></td>
+  </tr>
+  <tr>
+    <td><em>An early four-camera page combining raw feeds, detection boxes, and generated text.</em></td>
+    <td><em>A later six-camera grid showing the range—and inconsistency—of the connected views.</em></td>
+  </tr>
+</table>
+
+#### Camera and vision experiments
+
+The 2025 archive also preserves the messy middle of development: individual animal frames, alternate SSTV layouts, and object-detection trials that were often confidently wrong. Those false positives are part of the project history and helped establish why current Sync reports interesting motion without claiming that it has identified an animal.
+
+<table>
+  <tr>
+    <td width="33%"><img src="images/readme/2025/starfish-camera-view.webp" alt="A humorous 2025 aquarium camera frame"></td>
+    <td width="33%"><img src="images/readme/2025/sstv-fish-dominant-feed.png" alt="Early SSTV dominant feed showing fish near the substrate"></td>
+    <td width="33%"><img src="images/readme/2025/sstv-six-camera-caption-experiment.png" alt="Six-camera SSTV experiment with detections and generated captions"></td>
+  </tr>
+  <tr>
+    <td><em>An early aquarium camera frame from the 2025 experiments.</em></td>
+    <td><em>An alternate dominant-feed page focused on fish near the substrate.</em></td>
+    <td><em>A six-camera caption experiment combining tank and out-of-tank views.</em></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td width="33%"><img src="images/readme/2025/early-detection-misclassification.png" alt="Apartment camera test incorrectly labeling objects as a jellyfish and penguin"></td>
+    <td width="33%"><img src="images/readme/2025/deeplink-diver-detection.png" alt="Early DeepLink object-detection test using an image of a diver in a circular tank"></td>
+    <td width="33%"><img src="images/readme/2025/early-two-camera-detection-test.png" alt="Two-camera detection test with incorrect mouse and bed labels"></td>
+  </tr>
+  <tr>
+    <td><em>False-positive jellyfish and penguin labels during a test in the apartment.</em></td>
+    <td><em>A DeepLink detection experiment using a diver photograph.</em></td>
+    <td><em>A two-camera test recording more useful failure cases.</em></td>
+  </tr>
+</table>
+
+#### Hardware and live display
+
+SSTV was developed alongside the physical tank. Camera mounts, a local screen, the Reeflex mechanism, and the exhibit monitor were tested as parts of one system rather than as separate demos.
+
+<table>
+  <tr>
+    <td width="33%"><img src="images/readme/2025/sstv-live-demo-monitor.jpg" alt="SSTV running on a monitor during a live exhibit"></td>
+    <td width="33%"><img src="images/readme/2025/tank-side-display.jpg" alt="Small local camera display positioned in front of the aquarium"></td>
+    <td width="33%"><img src="images/reeflex.jpg" alt="Full 2025 Reeflex and FPV hardware rig mounted on a tripod"></td>
+  </tr>
+  <tr>
+    <td><em>SSTV running as a live selectable camera display.</em></td>
+    <td><em>A small tank-side screen showing the camera perspective beside the real habitat.</em></td>
+    <td><em>The full-resolution 2025 Reeflex and FPV hardware assembly.</em></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="images/sync.jpg" alt="Original 2025 Sync Tank visual identity with aquarium animals" width="800">
+</p>
+
+*The original Sync Tank visual identity used around the 2025 prototype.*
+
+### Building and exhibiting Sync Tank
+
+The public installation brought the aquarium, camera feeds, mechanisms, lighting, power, signage, and control surfaces together. The gallery below follows the exhibit from banner assembly and load-in through the completed booth.
+
+<p align="center">
+  <img src="images/synctankimg.jpg" alt="Completed 2025 Sync Tank exhibit with aquarium, mechanisms, local display, and illuminated signage" width="760">
+</p>
+
+*The completed 2025 exhibit: instrumented aquarium, local display, moving hardware, power equipment, and the original illuminated backdrop.*
+
+<table>
+  <tr>
+    <td width="33%"><img src="images/readme/2025/exhibit-banner-assembly.jpg" alt="Original Sync Tank exhibit banner being assembled on the floor"></td>
+    <td width="33%"><img src="images/readme/2025/exhibit-load-in-cart.jpg" alt="Aquarium and water containers being moved into the exhibit on a cart"></td>
+    <td width="33%"><img src="images/readme/2025/exhibit-neon-signage.png" alt="Completed illuminated aquatic signage around the Sync Tank banner"></td>
+  </tr>
+  <tr>
+    <td><em>Preparing the original banner before installation.</em></td>
+    <td><em>Moving the aquarium and water into the venue.</em></td>
+    <td><em>The illuminated aquatic backdrop after assembly.</em></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td width="33%"><img src="images/readme/2025/exhibit-table-close.jpg" alt="Close portrait view of the 2025 Sync Tank exhibit table"></td>
+    <td width="33%"><img src="images/readme/2025/exhibit-table-wide.jpg" alt="Wide view of the 2025 Sync Tank aquarium and exhibit backdrop"></td>
+    <td width="33%"><img src="images/readme/2025/exhibit-team-at-booth.png" alt="Sync Tank team member standing behind the completed 2025 exhibit"></td>
+  </tr>
+  <tr>
+    <td><em>A close view of the working exhibit table.</em></td>
+    <td><em>The aquarium and hardware against the completed backdrop.</em></td>
+    <td><em>A team member with the finished 2025 installation.</em></td>
+  </tr>
+</table>
+
+### From SSTV to SEE SEA TV
+
+| Original SSTV | 2026 SEE SEA TV development |
+| --- | --- |
+| Flat single-feed and camera-grid pages | Portrait multi-tank operations display |
+| Raw local video-device names | Tank and camera identities with live state |
+| Manual source buttons | Timed rotation, thumbnails, navigation, and pinning |
+| Detection boxes and text attached directly to feeds | Local motion events and durable Sightings |
+| Camera images without physical context | Tank simulation, camera placement, and field-of-view guides |
+| One display host's attached cameras | Multiple tank nodes coordinated by Sync |
+
+The [2026 prototype gallery](#from-model-to-installation) shows the first spatial interfaces. The [current capabilities](#what-works-today) describe the software developed from those experiments.
+
+### Names and additions
+
+| Earlier project language | Current user-visible name | What it means now |
+| --- | --- | --- |
+| SSTV | **SEE SEA TV** | The rotating, camera-first multi-tank display |
+| Lighthouse | **Raydar** | A motorized camera instance with seeking automation; legacy IDs and URLs remain compatible |
+| ReefScope / endoscope | **Reel / Reels** | A manually placed, lighted camera instance for inspecting tight spaces |
+| REEFLEX | **Reeflex** | A motorized camera instance being developed toward future autonomy |
+| Saved frame | **Sighting** | A captured observation with image, source, scores, label, and notes |
+| Remote captioning experiments | **Ask the Deep** | A manual-only AI field note for an already captured Sighting |
+
 ## License and acknowledgments
 
 Sync Tank is released under the [MIT License](LICENSE). The project is built in the spirit of open science, open hardware, and open curiosity.
 
-Thanks to the robotics, maker, aquarist, and open-source communities whose tools and experiments made this work possible—and to Kara, who kicks ass.
+Thanks to the robotics, maker, aquarist, and open-source communities whose tools, experiments, and contributions help the project grow.
