@@ -11,20 +11,17 @@ echo "  $PWD"
 echo
 
 echo "Identity:"
-if [ -f config/tank_identity.yaml ]; then
-  python3 - <<'PY'
-from pathlib import Path
-import yaml
-identity = yaml.safe_load(Path("config/tank_identity.yaml").read_text()) or {}
-print(f"  tank: {identity.get('tank', {}).get('label')} ({identity.get('tank', {}).get('id')})")
-print(f"  node: {identity.get('node', {}).get('label')} ({identity.get('node', {}).get('id')})")
-print(f"  public_url: {identity.get('network', {}).get('public_url')}")
-print(f"  camera_service_url: {identity.get('network', {}).get('camera_service_url')}")
-print(f"  esp32: {', '.join(identity.get('esp32', {}).get('expected_nodes') or []) or 'none'}")
+PYTHONPATH="$PWD" python3 - <<'PY'
+from sync_tank.config import load_config
+
+config = load_config()
+identity = config.raw.get("tank_identity") or {}
+print(f"  profile: {config.raw.get('selected_profile') or identity.get('profile', {}).get('id') or 'custom'}")
+print(f"  tank: {identity.get('tank', {}).get('label')} ({config.tank_id})")
+print(f"  node: {identity.get('node', {}).get('label')} ({config.raw.get('ingest', {}).get('host_id')})")
+print(f"  esp32: {', '.join(config.raw.get('ingest', {}).get('expected_nodes') or []) or 'none'}")
+print(f"  rig devices: {', '.join(config.arm.get('devices', {})) or 'none'}")
 PY
-else
-  echo "  missing config/tank_identity.yaml"
-fi
 echo
 
 echo "Required commands:"

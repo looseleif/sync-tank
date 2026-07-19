@@ -1,4 +1,5 @@
 import unittest
+from time import sleep
 
 from sync_tank.arm.servo import ArmController
 
@@ -129,3 +130,39 @@ def test_channel_command_maps_to_configured_servo():
     assert result["servo_id"] == "reeflex_base"
     assert result["channel"] == 2
     assert result["angle"] == 95
+
+
+def test_raydar_survey_uses_safe_step_and_dwell_waypoints():
+    arm = ArmController(
+        {
+            "backend": "mock",
+            "servos": {
+                "lighthouse_pan": {"channel": 1, "min_angle": 20, "max_angle": 160, "neutral_angle": 90},
+                "lighthouse_tilt": {"channel": 0, "min_angle": 45, "max_angle": 125, "neutral_angle": 90},
+            },
+            "devices": {
+                "lighthouse-001": {
+                    "type": "lighthouse",
+                    "joints": {"pan": "lighthouse_pan", "tilt": "lighthouse_tilt"},
+                }
+            },
+        }
+    )
+
+    result = arm.start_lighthouse_survey(
+        pan_amplitude=99,
+        tilt_amplitude=99,
+        dwell_seconds=0.5,
+        waypoint_count=99,
+    )
+    sleep(0.02)
+    status = arm.status()
+    arm.stop_idle(reason="test_complete")
+
+    assert result["status"] == "survey_started"
+    assert status["idle"]["mode"] == "raydar_step_dwell"
+    assert status["idle"]["pan_amplitude"] == 25
+    assert status["idle"]["tilt_amplitude"] == 10
+    assert status["idle"]["waypoint_count"] == 24
+    assert 20 <= status["servos"]["lighthouse_pan"]["angle"] <= 160
+    assert 45 <= status["servos"]["lighthouse_tilt"]["angle"] <= 125

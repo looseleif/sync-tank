@@ -362,6 +362,55 @@ class ArmController:
         self._idle_thread.start()
         return {"status": "idle_started", "idle": dict(self._idle_state), "arm": self.status()}
 
+    def start_lighthouse_survey(
+        self,
+        device_id: str = "lighthouse-001",
+        *,
+        center: dict[str, float] | None = None,
+        pan_amplitude: float = 12.0,
+        tilt_amplitude: float = 5.0,
+        dwell_seconds: float = 2.0,
+        waypoint_count: int = 12,
+    ) -> dict[str, Any]:
+        device = self.devices.get(device_id)
+        if not device:
+            raise KeyError(f"Unknown device: {device_id}")
+        joints = device.get("joints") or {}
+        if "pan" not in joints or "tilt" not in joints:
+            raise KeyError(f"{device_id} does not expose pan and tilt")
+
+        center = center or {}
+        neutral = {
+            joint: float(center.get(joint, self.servos[str(joints[joint])].neutral_angle))
+            for joint in ("pan", "tilt")
+        }
+        pan_amplitude = max(1.0, min(float(pan_amplitude), 25.0))
+        tilt_amplitude = max(1.0, min(float(tilt_amplitude), 10.0))
+        dwell_seconds = max(0.5, float(dwell_seconds))
+        waypoint_count = max(4, min(int(waypoint_count), 24))
+
+        self.stop_idle(reason="restart_survey")
+        self._idle_stop = Event()
+        self._idle_state = {
+            "active": True,
+            "device_id": device_id,
+            "mode": "raydar_step_dwell",
+            "center": neutral,
+            "pan_amplitude": pan_amplitude,
+            "tilt_amplitude": tilt_amplitude,
+            "dwell_seconds": dwell_seconds,
+            "waypoint_count": waypoint_count,
+            "started_at_monotonic": monotonic(),
+            "last_reason": "started",
+        }
+        self._idle_thread = Thread(
+            target=self._lighthouse_survey_loop,
+            args=(device_id, neutral, pan_amplitude, tilt_amplitude, dwell_seconds, waypoint_count),
+            daemon=True,
+        )
+        self._idle_thread.start()
+        return {"status": "survey_started", "idle": dict(self._idle_state), "arm": self.status()}
+
     def stop_idle(self, reason: str = "stopped") -> dict[str, Any]:
         with self._idle_lock:
             thread = self._idle_thread
@@ -393,6 +442,39 @@ class ArmController:
                     break
             self._idle_state = {**self._idle_state, "active": not self._idle_stop.is_set(), "last_pose": pose}
             self._idle_stop.wait(step_seconds)
+
+    def _lighthouse_survey_loop(
+        self,
+        device_id: str,
+        center: dict[str, float],
+        pan_amplitude: float,
+        tilt_amplitude: float,
+        dwell_seconds: float,
+        waypoint_count: int,
+    ) -> None:
+        joints = self.devices[device_id].get("joints") or {}
+        waypoint = 0
+        while not self._idle_stop.is_set():
+            phase = (waypoint / waypoint_count) * 2 * pi
+            pose = {
+                "pan": center["pan"] + pan_amplitude * sin(phase),
+                "tilt": center["tilt"] + tilt_amplitude * cos(phase),
+            }
+            try:
+                for joint, angle in pose.items():
+                    self.set_angle(str(joints[joint]), angle, reject_out_of_range=False, stop_idle=False)
+            except Exception as exc:
+                self._idle_stop.set()
+                self._idle_state = {**self._idle_state, "active": False, "last_reason": f"survey_error: {exc}"}
+                break
+            self._idle_state = {
+                **self._idle_state,
+                "active": True,
+                "waypoint": waypoint,
+                "last_pose": pose,
+            }
+            waypoint = (waypoint + 1) % waypoint_count
+            self._idle_stop.wait(dwell_seconds)
 
     def stop(self) -> dict[str, str]:
         self.stop_idle(reason="arm_stop")

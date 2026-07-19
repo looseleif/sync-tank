@@ -160,6 +160,26 @@ class VisionAndFakeNodeTests(unittest.TestCase):
         self.assertEqual(controller.start_raydar({})["state"], "Unavailable")
         self.assertEqual(controller.start_reeflex({})["state"], "Unavailable")
 
+    def test_raydar_start_and_stop_use_advertised_tank_survey_urls(self):
+        calls = []
+
+        def urls(*keys, **kwargs):
+            if "lighthouse_pose" in keys:
+                return self.base + "/pose"
+            if "lighthouse_survey_start" in keys:
+                return self.base + "/survey/start"
+            if "lighthouse_survey_stop" in keys:
+                return self.base + "/survey/stop"
+            return None
+
+        controller = VisionController(urls, lambda url, payload: calls.append((url, payload)) or {"ok": True})
+        payload = {"tank_id": "tank-1", "node_id": "tank-pi-001", "camera_id": "raydar-cam"}
+
+        self.assertEqual(controller.start_raydar(payload)["state"], "Survey")
+        self.assertEqual(controller.stop_raydar(payload)["state"], "STOP")
+        self.assertTrue(calls[0][0].endswith("/survey/start"))
+        self.assertTrue(calls[1][0].endswith("/survey/stop"))
+
     def test_one_second_centered_target_triggers_single_auto_capture(self):
         captures = []
         controller = VisionController(lambda *keys, **kwargs: self.base + "/pose", lambda *_: {}, capture_callback=captures.append)

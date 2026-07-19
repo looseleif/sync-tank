@@ -1,11 +1,47 @@
 import tempfile
 import unittest
 from pathlib import Path
+import shutil
 
 from sync_tank.ingest import _is_placeholder_url, _reachable_service_url, create_ingest_app
 
 
 class TestNodeConfig(unittest.TestCase):
+    def test_tank_profiles_advertise_only_their_owned_rig_controls(self):
+        source_profiles = Path(__file__).resolve().parents[1] / "config" / "tank_profiles.yaml"
+        expectations = {
+            "tank1-raydar": ("lighthouse_survey_start", "reeflex_idle_start", "tank-1"),
+            "tank2-reeflex": ("reeflex_idle_start", "lighthouse_survey_start", "tank-2"),
+        }
+        for profile, (present, absent, tank_id) in expectations.items():
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                config_dir = root / "config"
+                config_dir.mkdir()
+                shutil.copyfile(source_profiles, config_dir / "tank_profiles.yaml")
+                (config_dir / "node_role").write_text(profile + "\n", encoding="utf-8")
+                config = config_dir / "sync_tank.yaml"
+                config.write_text(
+                    f"""
+host:
+  port: 5050
+ingest:
+  state_path: {root / 'state.json'}
+  layout_path: {root / 'layout.json'}
+  upload_dir: {root / 'uploads'}
+  node_config_path: {config_dir / 'node_config.json'}
+""",
+                    encoding="utf-8",
+                )
+
+                payload = create_ingest_app(config).test_client().get(
+                    "/api/pc-hub/payload", headers={"host": "tank-node.test:8080"}
+                ).json
+
+                self.assertIn(present, payload["node"]["control_urls"])
+                self.assertNotIn(absent, payload["node"]["control_urls"])
+                self.assertEqual(payload["node"]["tank_ids"], [tank_id])
+
     def test_checked_in_identity_migrates_stale_rig_inventory(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

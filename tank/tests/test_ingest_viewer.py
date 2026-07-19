@@ -20,7 +20,7 @@ def _assert_dashboard_contains_node_config_ui():
     html = response.data.decode("utf-8")
 
     assert response.status_code == 200
-    assert "Node Inventory" in html
+    assert "Initialization Devices" in html
     assert "Camera Sources" in html
     assert "USB Baseline Capture" in html
     assert "node-config.js" in html

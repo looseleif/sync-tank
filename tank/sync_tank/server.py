@@ -15,7 +15,7 @@ except ImportError:  # Keep the Pi app runnable before optional deps are install
 from sync_tank.arm import ArmController
 from sync_tank.cameras.esp32 import discover_esp32_cameras, fetch_http_snapshot
 from sync_tank.cameras.registry import CameraRegistry
-from sync_tank.cameras.usb import capture_usb_snapshot_with_repair, list_video_devices, usb_camera_self_test, usb_mjpeg_command_candidates
+from sync_tank.cameras.usb import capture_usb_snapshot, list_video_devices, usb_camera_self_test, usb_mjpeg_command_candidates
 from sync_tank.config import PROJECT_ROOT, AppConfig, load_config
 from sync_tank.uplink import HubClient
 
@@ -37,6 +37,7 @@ def create_app(config_path: str | Path | None = None) -> Flask:
         "arm": arm,
         "hub": hub,
     }
+    _start_configured_autonomy(arm, config.raw.get("autonomy") or {})
 
     @app.before_request
     def restrict_usb_feeds_to_wired_link() -> tuple[Response, int] | None:
@@ -119,6 +120,33 @@ def create_app(config_path: str | Path | None = None) -> Flask:
             return jsonify({"error": str(exc)}), 404
         except ValueError as exc:
             return jsonify({"error": str(exc)}), 400
+
+    @app.route("/api/lighthouse/survey", methods=["GET"])
+    def lighthouse_survey_status() -> Response:
+        return jsonify({"arm": arm.status(), "survey": arm.status().get("idle", {})})
+
+    @app.route("/api/lighthouse/survey/start", methods=["POST"])
+    def start_lighthouse_survey() -> Response:
+        payload = request.get_json(silent=True) or {}
+        try:
+            return jsonify(
+                arm.start_lighthouse_survey(
+                    str(payload.get("device_id") or "lighthouse-001"),
+                    center=payload.get("center") if isinstance(payload.get("center"), dict) else None,
+                    pan_amplitude=float(payload.get("pan_amplitude", 12.0)),
+                    tilt_amplitude=float(payload.get("tilt_amplitude", 5.0)),
+                    dwell_seconds=float(payload.get("dwell_seconds", 2.0)),
+                    waypoint_count=int(payload.get("waypoint_count", 12)),
+                )
+            )
+        except KeyError as exc:
+            return jsonify({"error": str(exc)}), 404
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+
+    @app.route("/api/lighthouse/survey/stop", methods=["POST"])
+    def stop_lighthouse_survey() -> Response:
+        return jsonify(arm.stop_idle(reason="operator_stop"))
 
     @app.route("/api/reeflex/pose", methods=["POST"])
     def set_reeflex_pose() -> Response:
@@ -262,6 +290,8 @@ def _remote_allowed(remote_addr: str, allowed_cidrs: list[str]) -> bool:
         remote = ipaddress.ip_address(remote_addr)
     except ValueError:
         return False
+    if remote.is_loopback or remote.is_private or remote.is_link_local:
+        return True
     for cidr in allowed_cidrs:
         try:
             if remote in ipaddress.ip_network(str(cidr), strict=False):
@@ -274,7 +304,7 @@ def _remote_allowed(remote_addr: str, allowed_cidrs: list[str]) -> bool:
 def _capture_snapshot(camera: dict[str, Any], config: AppConfig) -> bytes:
     if camera.get("source_type") == "usb":
         timeout = int(config.cameras.get("usb", {}).get("snapshot_timeout_seconds", 5))
-        return capture_usb_snapshot_with_repair(str(camera["device"]), timeout=timeout)
+        return capture_usb_snapshot(str(camera["device"]), timeout=timeout)
     snapshot_url = camera.get("snapshot_url") or camera.get("discovered_url")
     if snapshot_url and str(snapshot_url).startswith("http"):
         return fetch_http_snapshot(str(snapshot_url), timeout=int(config.hub.get("timeout_seconds", 5)))
@@ -314,6 +344,32 @@ def _usb_mjpeg_response(camera: dict[str, Any], config: AppConfig) -> Response:
             sleep(0.5 if yielded_any else 1.5)
 
     return Response(generate(), mimetype="multipart/x-mixed-replace; boundary=frame")
+
+
+def _start_configured_autonomy(arm: ArmController, autonomy: dict[str, Any]) -> None:
+    # Never move physical hardware when the PCA9685 could not be opened.
+    if not arm.driver_status.startswith("pca9685"):
+        return
+    raydar = dict(autonomy.get("raydar") or {})
+    reeflex = dict(autonomy.get("reeflex") or {})
+    try:
+        if raydar.get("autostart"):
+            arm.start_lighthouse_survey(
+                str(raydar.get("device_id") or "lighthouse-001"),
+                pan_amplitude=float(raydar.get("pan_amplitude", 12)),
+                tilt_amplitude=float(raydar.get("tilt_amplitude", 5)),
+                dwell_seconds=float(raydar.get("dwell_seconds", 2)),
+                waypoint_count=int(raydar.get("waypoint_count", 12)),
+            )
+        elif reeflex.get("autostart"):
+            arm.start_idle_scan(
+                str(reeflex.get("device_id") or "reeflex-001"),
+                amplitude=float(reeflex.get("amplitude", 6)),
+                period_seconds=float(reeflex.get("period_seconds", 12)),
+                step_seconds=float(reeflex.get("step_seconds", 0.5)),
+            )
+    except (KeyError, ValueError, RuntimeError) as exc:
+        arm._idle_state = {"active": False, "last_reason": f"autostart_unavailable: {exc}"}
 
 
 if __name__ == "__main__":

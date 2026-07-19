@@ -2,6 +2,32 @@
 
 Raspberry Pi tank-node software for Sync Tank. The Pi controls local servos, exposes USB camera feeds, receives ESP32-S3 floater images, and forwards selected frames or stream metadata to a separate organizer/main hub computer for VLM/visual processing.
 
+## Pull-safe Tank 1 / Tank 2 deployment
+
+Both Pis run the same `main` branch. A local, ignored role selector keeps their identities and hardware maps separate across pulls:
+
+```bash
+# Tank 1 only:
+./scripts/select-node-role.sh tank1-raydar
+
+# Tank 2 only:
+./scripts/select-node-role.sh tank2-reeflex
+
+# Install boot services using the current checkout path and current user.
+./scripts/install-systemd.sh
+sudo systemctl restart sync-tank.service sync-tank-ingest.service
+```
+
+After that, routine updates are identical on both Pis:
+
+```bash
+git pull --ff-only
+sudo systemctl restart sync-tank.service sync-tank-ingest.service
+sudo reboot
+```
+
+The role selector is stored in `config/node_role`, which Git ignores. If it is absent, the service recovers the role from the existing ignored `config/node_config.json` node ID. Tank 1 loads only the Raydar PCA channels and starts a safe 12-point step-and-dwell survey. Tank 2 loads only the Reeflex PCA channels and starts its conservative small-angle scan. Autonomy starts only when a real PCA9685 driver opens successfully; a missing controller remains in mock/unavailable mode without generating movement commands.
+
 ## New Tank / New Raspberry Pi
 
 Recommended fresh Pi setup after cloning this repository:
@@ -123,9 +149,7 @@ Tank 2 / Reeflex
   reeflex_elbow       channel 2
 ```
 
-The checked-in runtime configuration is the Tank 1 Raydar profile. After Tank 1 pulls an update and restarts both services (or reboots), the ingest service migrates a stale Tank 1 Reeflex inventory to Raydar while preserving local camera assignments and Floater state. The camera/control service then advertises `lighthouse-001` for Sync-side surveying.
-
-Tank 2 should be configured through `install-tank.sh` with `--profile tank2-reeflex`, `--lighthouse-count 0`, and `--reeflex-count 1`; the installer writes the three-axis Reeflex PCA map shown above.
+The checked-in service defaults are shared. `config/tank_profiles.yaml` owns both identities, inventories, PCA channel maps, and safe autonomy settings. Pulling code does not replace local camera assignments or Floater state.
 
 For real servo movement, enable I2C on the Pi and confirm the configured bus exists:
 

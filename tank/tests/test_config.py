@@ -1,4 +1,6 @@
 import unittest
+import json
+import tempfile
 from pathlib import Path
 
 import yaml
@@ -35,6 +37,31 @@ class TestConfig(unittest.TestCase):
         assert tank_two["role_split"]["reeflex"] is True
         assert tank_two["inventory"]["lighthouse_cameras"] == 0
         assert tank_two["inventory"]["reeflex_arms"] == 1
+
+    def test_runtime_node_identity_selects_tank_two_without_changing_tracked_config(self):
+        project_config = Path(__file__).resolve().parents[1] / "config"
+        with tempfile.TemporaryDirectory() as temp_dir:
+            config_dir = Path(temp_dir)
+            (config_dir / "sync_tank.yaml").write_text(
+                "tank_id: shared\nhost:\n  port: 5050\ningest:\n  node_config_path: config/node_config.json\n",
+                encoding="utf-8",
+            )
+            (config_dir / "tank_profiles.yaml").write_text(
+                (project_config / "tank_profiles.yaml").read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            (config_dir / "node_config.json").write_text(
+                json.dumps({"node": {"id": "tank-pi-002"}}),
+                encoding="utf-8",
+            )
+
+            config = load_config(config_dir / "sync_tank.yaml")
+
+        assert config.tank_id == "tank-2"
+        assert config.raw["selected_profile"] == "tank2-reeflex"
+        assert "reeflex-001" in config.arm["devices"]
+        assert "lighthouse-001" not in config.arm["devices"]
+        assert config.raw["autonomy"]["reeflex"]["autostart"] is True
 
 
 def test_load_default_config():

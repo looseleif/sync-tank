@@ -10,6 +10,14 @@ profiles:
       lighthouse: true
       reeflex: false
       note: Tank 1 owns the Raydar pan/tilt rig and Raydar camera view.
+    autonomy:
+      raydar:
+        autostart: true
+        device_id: lighthouse-001
+        pan_amplitude: 12
+        tilt_amplitude: 5
+        dwell_seconds: 2
+        waypoint_count: 12
     esp32:
       expected_nodes:
         - tank-cam-001
@@ -37,6 +45,13 @@ profiles:
       lighthouse: false
       reeflex: true
       note: Tank 2 owns the Reeflex arm and Reeflex camera view.
+    autonomy:
+      reeflex:
+        autostart: true
+        device_id: reeflex-001
+        amplitude: 6
+        period_seconds: 12
+        step_seconds: 0.5
     esp32:
       expected_nodes:
         - tank-cam-003

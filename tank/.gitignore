@@ -8,3 +8,4 @@ test_uploads/
 config/ingest_state.json
 config/tank_layout.json
 config/node_config.json
+config/node_role

@@ -68,13 +68,13 @@ echo "It can also install dependencies, enable I2C, configure the wired link, an
 echo
 
 echo "Available recommended profiles:"
-echo "  tank1-lighthouse  -> 1 feeder, 2 ReefScopes, 2 floaters, 1 Lighthouse, no REEFLEX"
-echo "  tank2-reeflex     -> 1 feeder, 2 ReefScopes, 2 floaters, 1 REEFLEX, no Lighthouse"
+echo "  tank1-raydar  -> 2 Reels, 2 floaters, 1 Raydar, no Reeflex"
+echo "  tank2-reeflex -> 2 Reels, 2 floaters, 1 Reeflex, no Raydar"
 echo
-profile_id="$(ask "Tank profile" "tank1-lighthouse")"
+profile_id="$(ask "Tank profile" "tank1-raydar")"
 
 case "$profile_id" in
-  tank1-lighthouse)
+  tank1-raydar)
     default_node_id="tank-pi-001"
     default_node_label="TANK NODE 1"
     default_tank_id="tank-1"

@@ -16,7 +16,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 from flask import Flask, Response, jsonify, render_template, request, send_file, send_from_directory
 
-from sync_tank.cameras.usb import capture_usb_snapshot_with_repair, list_video_devices, usb_camera_self_test, usb_mjpeg_command_candidates
+from sync_tank.cameras.usb import capture_usb_snapshot, list_video_devices, usb_camera_self_test, usb_mjpeg_command_candidates
 from sync_tank.config import PROJECT_ROOT, load_config
 from sync_tank.uplink import HubClient
 
@@ -100,6 +100,13 @@ class NodeStore:
             return
 
         config = self.node_config()
+        tank_id = str((identity.get("tank") or {}).get("id") or "")
+        node = identity.get("node") or {}
+        config["node"] = {
+            **dict(config.get("node") or {}),
+            "id": str(node.get("id") or self.settings.host_id),
+            "label": str(node.get("label") or self.settings.host_label),
+        }
         inventory = identity.get("inventory") or {}
         node_inventory = config.setdefault("inventory", {})
         node_inventory["lighthouses"] = int(inventory.get("lighthouse_cameras", 0))
@@ -107,6 +114,10 @@ class NodeStore:
         config["profile"] = desired_profile
         role_split = desired_profile.get("role_split") or {}
         cameras = config.get("cameras") or {}
+        for camera in cameras.values():
+            camera["node_id"] = self.settings.host_id
+            if tank_id:
+                camera["tank_id"] = tank_id
         if role_split.get("lighthouse") and not role_split.get("reeflex"):
             for camera in cameras.values():
                 if camera.get("camera_type") == "reeflex_cam":
@@ -569,16 +580,23 @@ class NodeStore:
         urls = {
             "arm_status": f"{control_base_url}/api/arm",
             "servo_channel": f"{control_base_url}/api/servo/channel",
-            "reeflex_status": f"{control_base_url}/api/arm",
-            "reeflex_stop": f"{control_base_url}/api/arm/stop",
-            "reeflex_pose": f"{control_base_url}/api/reeflex/pose",
-            "reeflex_servo": f"{control_base_url}/api/arm/servo/{{servo_id}}",
-            "reeflex_idle": f"{control_base_url}/api/reeflex/idle",
-            "reeflex_idle_start": f"{control_base_url}/api/reeflex/idle/start",
-            "reeflex_idle_stop": f"{control_base_url}/api/reeflex/idle/stop",
         }
-        if self.device_inventory()["counts"].get("lighthouse", 0):
+        counts = self.device_inventory()["counts"]
+        if counts.get("reeflex", 0):
+            urls.update({
+                "reeflex_status": f"{control_base_url}/api/arm",
+                "reeflex_stop": f"{control_base_url}/api/arm/stop",
+                "reeflex_pose": f"{control_base_url}/api/reeflex/pose",
+                "reeflex_servo": f"{control_base_url}/api/arm/servo/{{servo_id}}",
+                "reeflex_idle": f"{control_base_url}/api/reeflex/idle",
+                "reeflex_idle_start": f"{control_base_url}/api/reeflex/idle/start",
+                "reeflex_idle_stop": f"{control_base_url}/api/reeflex/idle/stop",
+            })
+        if counts.get("lighthouse", 0):
             urls["lighthouse_pose"] = f"{control_base_url}/api/lighthouse/pose"
+            urls["lighthouse_survey"] = f"{control_base_url}/api/lighthouse/survey"
+            urls["lighthouse_survey_start"] = f"{control_base_url}/api/lighthouse/survey/start"
+            urls["lighthouse_survey_stop"] = f"{control_base_url}/api/lighthouse/survey/stop"
         return urls
 
     def pc_camera_inventory(self, lan_url: str, include_relayed: bool = False) -> list[dict[str, Any]]:
@@ -1344,7 +1362,8 @@ def create_ingest_app(config_path: str | Path | None = None) -> Flask:
         if not camera:
             return jsonify({"error": "USB camera not found"}), 404
         try:
-            frame = capture_usb_snapshot_with_repair(camera["device"], timeout=5)
+            # A snapshot failure must not terminate the FFmpeg process serving a live view.
+            frame = capture_usb_snapshot(camera["device"], timeout=5)
             return send_file(BytesIO(frame), mimetype="image/jpeg")
         except Exception as exc:
             return jsonify({"error": str(exc)}), 503

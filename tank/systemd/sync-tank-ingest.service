@@ -2,14 +2,15 @@
 Description=Sync Tank ESP32 camera ingest receiver
 After=network-online.target
 Wants=network-online.target
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple
-User=one
-WorkingDirectory=/home/one/Projects/sync-tank/tank
-Environment=PYTHONPATH=/home/one/Projects/sync-tank/tank
-ExecStart=/home/one/Projects/sync-tank/tank/scripts/run-ingest.sh
-Restart=on-failure
+User=@SYNC_TANK_USER@
+WorkingDirectory=@SYNC_TANK_ROOT@
+Environment=PYTHONPATH=@SYNC_TANK_ROOT@
+ExecStart=@SYNC_TANK_ROOT@/scripts/run-ingest.sh
+Restart=always
 RestartSec=3
 
 [Install]

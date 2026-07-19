@@ -25,6 +25,10 @@ class DashboardContractTests(unittest.TestCase):
         self.assertIn('id="feed-next"', self.html)
         self.assertIn('id="feed-pin"', self.html)
         self.assertIn('id="sighting-shutter"', self.html)
+        self.assertIn('id="home-button"', self.html)
+        self.assertIn('id="decorate-toggle"', self.html)
+        self.assertIn("function returnHome()", self.js)
+        self.assertIn("image.dataset.streamSource", self.js)
         self.assertIn('tank-name-one', self.html)
         self.assertIn('tank-name-two', self.html)
         for direction in ("FRONT", "BACK", "LEFT", "RIGHT"):

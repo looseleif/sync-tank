@@ -261,7 +261,18 @@ class VisionController:
             self.centered_since = None
             self._auto_captured_for_track = False
             self._stop_event.clear()
-            if payload.get("background") and (not self._worker or not self._worker.is_alive()):
+            survey_url = self.control_url(
+                "lighthouse_survey_start",
+                node_id=payload.get("node_id"),
+                tank_id=payload.get("tank_id"),
+            )
+            if survey_url:
+                try:
+                    self.post_json(survey_url, payload)
+                    self.raydar.last_command_at = time.time()
+                except (urlerror.URLError, TimeoutError, OSError, ValueError):
+                    return self._unavailable(self.raydar, "Raydar rejected or lost the survey command")
+            elif self.frame_source and (not self._worker or not self._worker.is_alive()):
                 self._worker = threading.Thread(target=self._raydar_loop, name="sync-raydar", daemon=True)
                 self._worker.start()
             return self.raydar.payload()
@@ -274,6 +285,17 @@ class VisionController:
             self.raydar.detail = payload.get("reason", "Stopped by Sync")
             self.raydar.updated_at = time.time()
             self._stop_event.set()
+            url = self.control_url(
+                "lighthouse_survey_stop",
+                node_id=payload.get("node_id"),
+                tank_id=payload.get("tank_id"),
+            )
+            if url:
+                try:
+                    self.post_json(url, payload)
+                    self.raydar.last_command_at = time.time()
+                except (urlerror.URLError, TimeoutError, OSError, ValueError):
+                    self.raydar.detail = "Stopped locally; tank stop URL was unreachable"
             return self.raydar.payload()
 
     def _raydar_loop(self) -> None:

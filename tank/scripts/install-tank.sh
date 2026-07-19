@@ -254,6 +254,8 @@ root = Path.cwd()
     display_pi_ip,
 ) = sys.argv[1:]
 
+managed_profile = profile_id in {"tank1-raydar", "tank2-reeflex"}
+
 expected_nodes = [item.strip() for item in expected_nodes_raw.split(",") if item.strip()]
 reefscope_count = as_int(reefscope_count_raw, "reefscope-count")
 lighthouse_count = as_int(lighthouse_count_raw, "lighthouse-count")
@@ -343,7 +345,8 @@ ingest["allowed_nodes"] = expected_nodes
 ingest["node_angles"] = {camera_id: index * 90 for index, camera_id in enumerate(expected_nodes)}
 ingest.setdefault("usb_feed_allowed_cidrs", ["127.0.0.0/8"])
 
-config_path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+if not managed_profile:
+    config_path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
 
 identity_path = root / "config" / "tank_identity.yaml"
 identity = {
@@ -374,7 +377,10 @@ identity = {
         "poll_endpoint": "/api/pc-hub/payload",
     },
 }
-identity_path.write_text(yaml.safe_dump(identity, sort_keys=False), encoding="utf-8")
+if not managed_profile:
+    identity_path.write_text(yaml.safe_dump(identity, sort_keys=False), encoding="utf-8")
+
+(root / "config" / "node_role").write_text(f"{profile_id}\n", encoding="utf-8")
 
 for runtime_file in ("ingest_state.json", "cameras.json", "tank_layout.json"):
     path = root / "config" / runtime_file

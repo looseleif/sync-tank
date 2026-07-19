@@ -144,6 +144,9 @@ const sightingsDrawer = document.getElementById('sightings-drawer');
 const sightingsGrid = document.getElementById('sightings-grid');
 const deepDialog = document.getElementById('deep-dialog');
 const deepImage = document.getElementById('deep-image');
+const homeButton = document.getElementById('home-button');
+const decorateToggle = document.getElementById('decorate-toggle');
+const structureToolbar = document.getElementById('structure-toolbar');
 let pendingDeepSightingId = null;
 
 const scene = new THREE.Scene();
@@ -1205,6 +1208,32 @@ function updateStageFeed() {
   if (previousStageCameraId !== state.stageCameraId) updateAllMeshes();
 }
 
+function returnHome() {
+  stopLighthouseHold();
+  stopReeflexHold();
+  state.selectedId = null;
+  state.pendingId = null;
+  state.setupDraft = {};
+  state.initialSetupPrompted = true;
+  state.lighthouse.panelClosed = true;
+  state.reeflex.panelClosed = true;
+  if (setupOverlay) setupOverlay.hidden = true;
+  if (sightingsDrawer) sightingsDrawer.hidden = true;
+  if (deepDialog?.open) deepDialog.close();
+  if (sidePanel) sidePanel.classList.remove('open');
+  if (dockToggle) {
+    dockToggle.classList.remove('open');
+    dockToggle.setAttribute('aria-expanded', 'false');
+    dockToggle.setAttribute('aria-label', 'Open placement controls');
+  }
+  if (structureToolbar) structureToolbar.hidden = true;
+  if (decorateToggle) decorateToggle.hidden = false;
+  renderSelection();
+  renderLighthouseControls();
+  renderReeflexControls();
+  updateAllMeshes();
+}
+
 function updateLiveControlHighlights() {
   if (!liveControls) return;
   liveControls.querySelectorAll('button[data-camera-id]').forEach(button => {
@@ -1340,7 +1369,8 @@ function setLiveCamera(index) {
   state.liveIndex = ((index % cameras.length) + cameras.length) % cameras.length;
   const cameraItem = cameras[state.liveIndex];
   state.stageCameraId = cameraId(cameraItem);
-  const src = sourceForPreview(cameraItem);
+  // The side dock uses a still so it never opens a second reader on a USB camera.
+  const src = snapshotSource(cameraItem, 'side-dock');
   if (src && liveFeed.src !== src) liveFeed.src = src;
   liveTitle.textContent = displayName(cameraItem);
   liveDetail.textContent = cameraItem.stream_url
@@ -1903,7 +1933,12 @@ async function setAutonomy(rig, action) {
   const cameraItem = associatedRigCamera(rig);
   const response = await fetch(`/api/vision/${rig}/${action}`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ tank_id: activeTank().tank_id, camera_id: cameraId(cameraItem), reason: action === 'stop' ? 'Dashboard STOP' : undefined }),
+    body: JSON.stringify({
+      tank_id: activeTank().tank_id,
+      node_id: cameraItem?.node_id,
+      camera_id: cameraId(cameraItem),
+      reason: action === 'stop' ? 'Dashboard STOP' : undefined,
+    }),
   });
   const result = await response.json();
   if (!response.ok) cctvState.textContent = result.error || `${rig} unavailable`;
@@ -2831,9 +2866,16 @@ function placeItemOnTank(item, point, face) {
     placement.position = worldToNorm(point);
     placement.target = placement.target || { x: 0.5, y: 0.5, z: 0.5 };
   }
-  selectById(cameraId(item) || item.item_id);
+  state.selectedId = null;
+  state.pendingId = null;
   renderUnplaced();
   renderFeedMarquee();
+  renderSelection();
+  if (sidePanel) sidePanel.classList.remove('open');
+  if (dockToggle) {
+    dockToggle.classList.remove('open');
+    dockToggle.setAttribute('aria-expanded', 'false');
+  }
   queueSave();
 }
 
@@ -3232,7 +3274,7 @@ async function refreshLayout() {
   updateStageFeed();
   updateAllMeshes();
   if (!setupOverlay.hidden) renderSetup();
-  else {
+  else if (!screenshotMode) {
     const unidentified = unidentifiedConnectedCameras().find(item => !state.identifyPromptedFor.has(cameraId(item)));
     if (unidentified) {
       state.identifyPromptedFor.add(cameraId(unidentified));
@@ -3334,6 +3376,12 @@ document.getElementById('raydar-survey')?.addEventListener('click', () => setAut
 document.getElementById('raydar-stop')?.addEventListener('click', () => setAutonomy('raydar', 'stop'));
 document.getElementById('reeflex-survey')?.addEventListener('click', () => setAutonomy('reeflex', 'start'));
 document.getElementById('reeflex-auto-stop')?.addEventListener('click', () => setAutonomy('reeflex', 'stop'));
+homeButton?.addEventListener('click', returnHome);
+decorateToggle?.addEventListener('click', () => {
+  if (!structureToolbar) return;
+  structureToolbar.hidden = false;
+  decorateToggle.hidden = true;
+});
 setupButton.addEventListener('click', openSetup);
 dockToggle.addEventListener('click', () => {
   if (!sidePanel) return;
@@ -3367,4 +3415,19 @@ identifySelected?.addEventListener('click', () => {
 removeSelected?.addEventListener('click', () => {
   removeSelectedItem().catch(() => {});
 });
+window.addEventListener('keydown', event => {
+  if (event.key === 'Escape') returnHome();
+});
+document.addEventListener('error', event => {
+  const image = event.target;
+  if (!(image instanceof HTMLImageElement)) return;
+  const current = image.dataset.streamSource || image.getAttribute('src') || '';
+  if (!current.includes('/stream')) return;
+  image.dataset.streamSource = current.split(/[?&]reconnect=/)[0];
+  window.clearTimeout(image._reconnectTimer);
+  image._reconnectTimer = window.setTimeout(() => {
+    const separator = image.dataset.streamSource.includes('?') ? '&' : '?';
+    image.src = `${image.dataset.streamSource}${separator}reconnect=${Date.now()}`;
+  }, 1500);
+}, true);
 animate();

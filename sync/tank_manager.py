@@ -1034,6 +1034,7 @@ class TankManagerHandler(BaseHTTPRequestHandler):
           <div class=\"cctv-bar\">
             <div><strong>SEE SEA TV</strong><span id=\"cctv-state\">Rotating every 8 seconds</span></div>
             <div class=\"cctv-actions\">
+              <button id=\"home-button\">Home</button>
               <button id=\"feed-previous\">Previous</button><button id=\"feed-pin\">Pin</button>
               <button id=\"feed-next\">Next</button><button id=\"sighting-shutter\" class=\"shutter\">Capture</button>
               <button id=\"open-sightings\">Sightings</button>
@@ -1133,7 +1134,8 @@ class TankManagerHandler(BaseHTTPRequestHandler):
           <div class=\"tank-direction tank-direction-front\">FRONT</div><div class=\"tank-direction tank-direction-back\">BACK</div>
           <div class=\"tank-direction tank-direction-left\">LEFT</div><div class=\"tank-direction tank-direction-right\">RIGHT</div>
           <div class=\"tank-name tank-name-one\">TANK 1</div><div class=\"tank-name tank-name-two\">TANK 2</div>
-          <div class=\"structure-toolbar\" id=\"structure-toolbar\">
+          <button class=\"decorate-toggle\" id=\"decorate-toggle\">Decorate</button>
+          <div class=\"structure-toolbar\" id=\"structure-toolbar\" hidden>
             <select id=\"structure-type\"><option value=\"block\">Block</option><option value=\"slab\">Slab</option><option value=\"rounded-rock\">Rounded rock</option><option value=\"pillar\">Pillar</option><option value=\"arch\">Arch</option><option value=\"mound\">Mound</option></select>
             <button id=\"add-structure\">Add shape</button><button id=\"scatter-structures\">Scatter shapes</button>
           </div>
