@@ -2,6 +2,8 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
+source "$PWD/scripts/python-runtime.sh"
+python_bin="$(sync_tank_python "$PWD")"
 
 echo "Sync Tank preflight"
 echo
@@ -11,7 +13,7 @@ echo "  $PWD"
 echo
 
 echo "Identity:"
-PYTHONPATH="$PWD" python3 - <<'PY'
+PYTHONPATH="$PWD" "$python_bin" - <<'PY'
 from sync_tank.config import load_config
 
 config = load_config()
@@ -22,6 +24,15 @@ print(f"  node: {identity.get('node', {}).get('label')} ({config.raw.get('ingest
 print(f"  esp32: {', '.join(config.raw.get('ingest', {}).get('expected_nodes') or []) or 'none'}")
 print(f"  rig devices: {', '.join(config.arm.get('devices', {})) or 'none'}")
 PY
+echo
+
+echo "Python runtime:"
+echo "  $python_bin"
+if "$python_bin" -c 'import flask, flask_cors, requests, yaml, gpiozero, smbus2' 2>/dev/null; then
+  echo "  ok      required modules import successfully"
+else
+  echo "  missing one or more required modules; rerun ./scripts/install-systemd.sh"
+fi
 echo
 
 echo "Required commands:"

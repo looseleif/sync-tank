@@ -37,7 +37,8 @@ def create_app(config_path: str | Path | None = None) -> Flask:
         "arm": arm,
         "hub": hub,
     }
-    _start_configured_autonomy(arm, config.raw.get("autonomy") or {})
+    autonomy_startup = _start_configured_autonomy(arm, config.raw.get("autonomy") or {})
+    app.config["SYNC_TANK"]["autonomy_startup"] = autonomy_startup
 
     @app.before_request
     def restrict_usb_feeds_to_wired_link() -> tuple[Response, int] | None:
@@ -68,6 +69,7 @@ def create_app(config_path: str | Path | None = None) -> Flask:
             {
                 "tank_id": config.tank_id,
                 "arm": arm.status(),
+                "autonomy_startup": autonomy_startup,
                 "cameras": registry.list(),
                 "hub": hub.status(),
             }
@@ -346,30 +348,38 @@ def _usb_mjpeg_response(camera: dict[str, Any], config: AppConfig) -> Response:
     return Response(generate(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
-def _start_configured_autonomy(arm: ArmController, autonomy: dict[str, Any]) -> None:
+def _start_configured_autonomy(arm: ArmController, autonomy: dict[str, Any]) -> dict[str, Any]:
     # Never move physical hardware when the PCA9685 could not be opened.
     if not arm.driver_status.startswith("pca9685"):
-        return
+        result = {"status": "not_started", "reason": "pca9685_unavailable", "driver": arm.driver_status}
+        arm._idle_state = {"active": False, "last_reason": result["reason"]}
+        return result
     raydar = dict(autonomy.get("raydar") or {})
     reeflex = dict(autonomy.get("reeflex") or {})
     try:
         if raydar.get("autostart"):
-            arm.start_lighthouse_survey(
+            result = arm.start_lighthouse_survey(
                 str(raydar.get("device_id") or "lighthouse-001"),
                 pan_amplitude=float(raydar.get("pan_amplitude", 12)),
                 tilt_amplitude=float(raydar.get("tilt_amplitude", 5)),
                 dwell_seconds=float(raydar.get("dwell_seconds", 2)),
                 waypoint_count=int(raydar.get("waypoint_count", 12)),
             )
+            return {"status": "started", "mode": "raydar", "result": result["status"]}
         elif reeflex.get("autostart"):
-            arm.start_idle_scan(
+            result = arm.start_idle_scan(
                 str(reeflex.get("device_id") or "reeflex-001"),
                 amplitude=float(reeflex.get("amplitude", 6)),
                 period_seconds=float(reeflex.get("period_seconds", 12)),
                 step_seconds=float(reeflex.get("step_seconds", 0.5)),
             )
+            return {"status": "started", "mode": "reeflex", "result": result["status"]}
+        result = {"status": "not_started", "reason": "autostart_not_configured"}
+        arm._idle_state = {"active": False, "last_reason": result["reason"]}
+        return result
     except (KeyError, ValueError, RuntimeError) as exc:
         arm._idle_state = {"active": False, "last_reason": f"autostart_unavailable: {exc}"}
+        return {"status": "not_started", "reason": str(arm._idle_state["last_reason"])}
 
 
 if __name__ == "__main__":
