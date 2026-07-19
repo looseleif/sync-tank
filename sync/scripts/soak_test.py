@@ -13,7 +13,7 @@ from tank_manager import TankManagerApp  # noqa: E402
 from scripts.fake_tank_node import fixture_jpeg  # noqa: E402
 
 
-def run(duration, cycles_per_second=20):
+def run(duration, cycles_per_second=20, accelerated=True):
     tracemalloc.start()
     with tempfile.TemporaryDirectory(prefix="sync-soak-") as storage:
         app = TankManagerApp(storage)
@@ -21,14 +21,16 @@ def run(duration, cycles_per_second=20):
         cameras = [{"camera_id": f"cam-{index}", "tank_id": f"tank-{1 + index % 2}", "status": "online", "source_type": "usb_camera"} for index in range(8)]
         app.register_cameras(cameras)
         start = time.monotonic(); cycles = 0
-        while time.monotonic() - start < duration:
+        target_cycles = max(1, int(duration)) if accelerated else None
+        while (cycles < target_cycles) if accelerated else (time.monotonic() - start < duration):
             camera = cameras[cycles % len(cameras)]
             app.handle_frame_upload({"camera_id": camera["camera_id"], "image_bytes": fixture_jpeg("fish" if cycles % 7 == 0 else "empty", cycles)})
             app.get_layout()
             if cycles % 50 == 0:
                 app.capture_sighting({"camera_id": camera["camera_id"], "trigger": "manual"})
             cycles += 1
-            time.sleep(1 / cycles_per_second)
+            if not accelerated:
+                time.sleep(1 / cycles_per_second)
         current, peak = tracemalloc.get_traced_memory()
         sighting_bytes = sum(path.stat().st_size for path in app.sightings_dir.glob("*.jpg"))
         print({"cycles": cycles, "sightings": len(app.sightings), "sighting_bytes": sighting_bytes,
@@ -39,4 +41,4 @@ def run(duration, cycles_per_second=20):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(); parser.add_argument("--seconds", type=float, default=30); parser.add_argument("--overnight", action="store_true")
-    args = parser.parse_args(); run(8 * 60 * 60 if args.overnight else args.seconds)
+    args = parser.parse_args(); run(8 * 60 * 60 if args.overnight else args.seconds, accelerated=not args.overnight)
