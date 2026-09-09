@@ -254,6 +254,7 @@ In the interface, Floaters remain available as spatial markers. Their still imag
 | [`docs/`](docs/) | Deployment and tank-specific handoff notes |
 | [`archive/`](archive/) | Historical prototypes retained for reference |
 | [`images/`](images/) | Project artwork, historical interface images, and README photography |
+| [`index.html`](index.html) and [`site/`](site/) | Retro public aquarium website and GitHub Pages setup; live tank services stay local |
 
 <p align="center">
   <img src="images/sync-tank-banner-qr.png" alt="Sync Tank open-source aquaristics banner with a QR code for the GitHub repository" width="900">

@@ -1,0 +1,47 @@
+name: Publish aquarium website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - site/**
+      - images/**
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/configure-pages@v5
+      - name: Assemble the public site
+        run: |
+          mkdir -p _site/site _site/images/readme
+          cp index.html _site/
+          cp site/style.css site/aquarium.js _site/site/
+          cp images/sync-tank-banner.png _site/images/
+          cp images/readme/shrimp-city-caridina-culls-wide.jpg _site/images/readme/
+          cp images/readme/see-sea-tv-in-water-test-setup.jpg _site/images/readme/
+          cp images/readme/see-sea-tv-2026-simulator-detail.jpg _site/images/readme/
+          cp images/readme/reeflex-base-bearings-and-drive.jpg _site/images/readme/
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
