@@ -10,7 +10,22 @@ Each tank has a Raspberry Pi node that collects its camera feeds and manages its
 
 The current installation connects two independent tank nodes. That is the reference setup, with open interfaces intended to let more tanks, cameras, and tools join over time.
 
-[Explore the system](#how-the-pieces-fit-together) · [Try it without hardware](#try-it-without-hardware) · [Install a tank node](#install-a-tank-node) · [Project history](#project-history)
+[Visit the aquarium shop](https://looseleif.github.io/sync-tank/) · [Build a tank in your browser](https://looseleif.github.io/sync-tank/builder.html) · [Electronics counter](https://looseleif.github.io/sync-tank/hardware.html)
+
+## Start here
+
+| Start with... | Where to go |
+| --- | --- |
+| A photo and an idea | [Tank builder](https://looseleif.github.io/sync-tank/builder.html): an empty 3D tank, photo references, movable cameras and structures, local drafts and JSON export |
+| A parts list | [Electronics and wiring](docs/HARDWARE.md): Raspberry Pi, PCA9685, MG995 motors, PoE receivers and the NETGEAR switch, with product references and evidence status |
+| No hardware at all | [Getting started](docs/GETTING_STARTED.md), then the [local simulated-node demo](#try-it-without-hardware) |
+| A Pi and cameras | [Maintained tank-node setup](tank/README.md); identify the node role and leave motor power disconnected during initial installation |
+| A model or printed part | [Design origins](docs/DESIGN_ORIGINS.md): source links, licenses, local modifications and the information still needed |
+
+The browser builder is a photo-assisted planning sandbox, not automatic 3D
+reconstruction. Front, side and top references help refine different coordinates;
+one photograph cannot reveal hidden depth or physical scale. Read the
+[photo modeling guide](docs/TANK_MODELING.md). Draft files do not command live hardware.
 
 ## How the pieces fit together
 
@@ -184,6 +199,14 @@ Shrimp City turns the aquarium interior into a recognizable habitat rather than 
 
 The software grows alongside ordinary aquarium care and physical prototyping. Water chemistry is checked directly, while servo hardware, controller boards, wiring, and printed parts are evaluated on the bench before they approach a live tank.
 
+The [electronics guide](docs/HARDWARE.md) starts with the Pi nodes, PCA9685
+controller, MG995 servos and NETGEAR PoE network, including data-path and
+power-path diagrams. MG995 motors and the NETGEAR switch are reported used and
+tested by the project owner; exact variants, supply ratings and dated results
+remain to be recorded. Manufacturer product links are references rather than a
+fully verified shopping list. The [design-source register](docs/DESIGN_ORIGINS.md)
+tracks missing CAD sources and licenses for the printed assemblies.
+
 <p align="center">
   <img src="images/readme/water-testing-and-hardware-prototypes.jpg" alt="Freshwater test kit beside servo hardware, a controller board, wiring, and an untested 3D-printed dispensing concept" width="760">
 </p>
@@ -255,12 +278,6 @@ In the interface, Floaters remain available as spatial markers. Their still imag
 | [`archive/`](archive/) | Historical prototypes retained for reference |
 | [`images/`](images/) | Project artwork, historical interface images, and README photography |
 | [`index.html`](index.html) and [`site/`](site/) | Retro public aquarium website and GitHub Pages setup; live tank services stay local |
-
-<p align="center">
-  <img src="images/sync-tank-banner-qr.png" alt="Sync Tank open-source aquaristics banner with a QR code for the GitHub repository" width="900">
-</p>
-
-*The repository banner with a scannable link, retained here with the project resources.*
 
 ## Try it without hardware
 

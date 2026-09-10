@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#103d36"><title>Tank Builder | Sync Tank</title>
+  <link rel="stylesheet" href="site/style.css"><link rel="stylesheet" href="site/builder.css">
+  <script type="module" src="site/builder.js"></script>
+</head>
+<body class="builder-body">
+  <div class="page builder-page">
+    <header class="builder-header"><a href="index.html">&lt; Sync Tank shop</a><h1>Tank Builder</h1><a href="https://github.com/looseleif/sync-tank/blob/main/docs/TANK_MODELING.md">Photo modeling guide</a></header>
+    <div class="awning" aria-hidden="true"></div>
+    <div class="builder-toolbar">
+      <label>View <select id="view"><option value="orbit">Orbit</option><option value="front">Front</option><option value="right">Right</option><option value="top">Top</option></select></label>
+      <label>Action <select id="interaction"><option value="orbit">Orbit tank</option><option value="move">Move object</option></select></label>
+      <label>Move plane <select id="plane"><option value="xz">Floor / XZ</option><option value="xy">Front / XY</option><option value="zy">Side / ZY</option></select></label>
+      <button id="undo" title="Undo" aria-label="Undo" disabled>&#8630;</button><button id="redo" title="Redo" aria-label="Redo" disabled>&#8631;</button>
+      <button id="export" disabled>Export JSON</button><label class="file-command">Import JSON<input id="import" type="file" accept="application/json,.json" disabled></label>
+    </div>
+    <div class="workbench">
+      <aside class="builder-sidebar">
+        <details open><summary>Tank dimensions</summary>
+          <label>Tank name<input id="tank-name" maxlength="80" value="My tank"></label>
+          <div class="dimensions"><label>Width (cm)<input id="width" type="number" min="10" max="300" value="60"></label><label>Height (cm)<input id="height" type="number" min="10" max="300" value="40"></label><label>Depth (cm)<input id="depth" type="number" min="10" max="300" value="30"></label></div>
+          <button id="apply-tank" disabled>Apply dimensions</button>
+        </details>
+        <div class="inventory"><h2>Objects</h2><div class="add-row"><select id="kind" aria-label="Object type"><option value="hide">Cube hide</option><option value="rock">Rock</option><option value="endo">Endoscope</option><option value="floater">Floater disc</option></select><button id="add" disabled>Add</button></div><ul id="items" aria-label="Tank objects"></ul></div>
+        <div id="inspector" hidden><h2 id="selection-title">Selected object</h2>
+          <label>Label<input id="label" maxlength="80"></label>
+          <label id="mount-field" hidden>Mounting face<select id="mount"><option value="z+">Front</option><option value="z-">Back</option><option value="x-">Left</option><option value="x+">Right</option><option value="y+">Top</option></select></label>
+          <label>Left / right <output id="x-value"></output><input id="x" type="range" min="0" max="1" step="0.005"></label>
+          <label>Height <output id="y-value"></output><input id="y" type="range" min="0" max="1" step="0.005"></label>
+          <label>Back / front <output id="z-value"></output><input id="z" type="range" min="0" max="1" step="0.005"></label>
+          <label>Size <output id="size-value"></output><input id="size" type="range" min="1" max="25" step="0.5"></label>
+          <div id="aim-fields"><label>Turn <output id="yaw-value"></output><input id="yaw" type="range" min="-180" max="180" step="1"></label><label id="pitch-field">Tilt <output id="pitch-value"></output><input id="pitch" type="range" min="-80" max="80" step="1"></label></div>
+          <label id="fov-field">Field of view <output id="fov-value"></output><input id="fov" type="range" min="20" max="110" step="1"></label>
+          <label>Observation notes<textarea id="notes" rows="2" maxlength="1000" placeholder="Measured, observed, or estimated"></textarea></label>
+          <div class="object-actions"><button id="done">Done</button><button id="unplace">Unplace</button><button id="delete">Delete</button></div>
+        </div>
+      </aside>
+      <div class="stage-wrap"><div id="stage" aria-label="Interactive 3D tank"><p id="loading">Loading the tank...</p></div><div class="stage-footer"><span id="selection-status">No object selected</span><span>X: right &middot; Y: up &middot; Z: front</span></div></div>
+      <aside class="reference-panel">
+        <h2>Photo references</h2>
+        <label>Photo view<select id="photo-view"><option value="front">Front</option><option value="right">Right side</option><option value="top">Top</option></select></label>
+        <label class="file-command">Add photo<input id="photo-file" type="file" accept="image/jpeg,image/png,image/webp" disabled></label>
+        <p id="photo-name" class="small">No photo loaded</p>
+        <div id="photo-tools" hidden><label>Photo action<select id="photo-mode"><option value="inspect">Inspect</option><option value="crop">Crop tank</option><option value="place">Place from photo</option></select></label><canvas id="reference" width="600" height="450" aria-label="Photo reference with tank crop"></canvas><button id="clear-photo">Remove photo</button></div>
+        <p class="small">Photos stay in this browser session.</p>
+        <a href="https://github.com/looseleif/sync-tank/blob/main/docs/TANK_MODELING.md#photo-workflow">Photo alignment &amp; coordinates &gt;&gt;</a>
+      </aside>
+    </div>
+    <footer class="builder-status"><span id="save-status" role="status">Starting editor...</span><a href="hardware.html">Electronics &amp; wiring</a><a href="site/THIRD_PARTY.md">Third-party software</a></footer>
+  </div>
+  <noscript><p class="page">The 3D builder needs JavaScript. <a href="https://github.com/looseleif/sync-tank/blob/main/docs/TANK_MODELING.md">Read the tank modeling guide.</a></p></noscript>
+</body>
+</html>

@@ -1,0 +1,63 @@
+# Where the designs came from
+
+[Hardware](HARDWARE.md) | [Tank modeling](TANK_MODELING.md)
+
+This register separates software authorship, purchased hardware, assembly
+photographs, and the original source of mechanical designs. A project photo
+does not establish authorship or permission to redistribute a printed model.
+
+| Assembly or component | What is available | Origin / outstanding evidence |
+| --- | --- | --- |
+| Sync hub and tank-node software | Maintained `sync/` and `tank/`, historical `archive/`, repository history | Project implementation under the root MIT license; preserve third-party notices |
+| Browser tank builder | `builder.html`, `site/builder.js`; same normalized placement idea and vendored Three.js / OrbitControls as the local display | New photo-reference editor; exports a planning document, not a deployable hub configuration |
+| Three.js and OrbitControls | `sync/static/vendor/`, MIT header identifying Three.js authors | [Three.js project and license](https://github.com/mrdoob/three.js); retain its notices in deployment |
+| PCA9685 electronics | Driver, defaults, board photograph | Chip family confirmed; breakout brand, PCB revision and schematic source pending; Adafruit link is a reference implementation |
+| MG995 servos | Project owner's report of use and testing | Supplier, variant, label photos, power/current measurements and travel calibration pending |
+| Raspberry Pi / PoE / NETGEAR network | Deployment docs and owner's report | Pi models, HAT/splitter model, switch model/adapter, port budget and dated test log pending |
+| Reeflex base, bearing ring, gears and mounts | Assembly photographs and servo-control software | Original CAD/STL source, designer attribution, model version and license not recorded |
+| Raydar pan/tilt mechanics | Control implementation and deployment notes | Mount model, upstream design, local modifications and license not recorded |
+| Floater plates and camera housings | Camera-placement model and deployment notes | Mount geometry, fastening/sealing method, material and design source pending |
+| Shrimp City structures / hides | Aquarium photographs and simulator landmarks | Individual model sources, licenses, material, print settings and aquatic suitability evidence pending |
+
+No STL, STEP, OpenSCAD, Fusion or Blender design files were found in the tracked
+repository during this documentation pass. Do not describe these mechanical
+designs as original, licensed for reuse, waterproof, or ready to print until
+their individual records support it. The root software license does not relicense
+someone else's model.
+
+## Record each physical design
+
+For each part, add: component ID, source URL, upstream version, designer's
+required attribution, license, local changes, editable CAD path, export path,
+units, mating hardware, material, print settings and assembly photos. Keep the
+project narrative free of personal names; retain attribution where an upstream
+license requires it in a dedicated credits record.
+
+## Record a tested build
+
+Use an entry with these fields:
+
+```yaml
+build_id: pending
+date: pending
+node_id: pending
+pi_model: pending
+controller_board_revision: pending
+servo_supplier_and_variant: pending
+servo_supply_voltage_and_current_rating: pending
+poe_switch_model_and_adapter: pending
+poe_receiver_model_and_output: pending
+software_commit: pending
+test_duration: pending
+measured_voltage_under_load: pending
+camera_fps_and_age: pending
+stop_and_disconnect_result: pending
+mechanical_clearance_result: pending
+source_links: []
+photo_paths: []
+failures_and_limitations: []
+```
+
+The hardware families are reported used; entries remain pending until exact
+models and evidence are supplied. This keeps the gaps visible without inventing
+purchase history or test results.

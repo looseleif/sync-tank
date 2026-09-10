@@ -1,0 +1,19 @@
+.hardware-main { padding: 0 30px; }
+.hardware-main section { padding: 30px 0; }
+.parts-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 24px 0; }
+.parts-list article { border: 2px ridge #7b8f6d; padding: 18px; background: #20372e; min-width: 0; }
+.parts-list article:nth-child(even) { background: #302833; }
+.part-number { color: #efce8e; font: 11px "Courier New", monospace; }
+.parts-list h3 { margin-top: 10px; }
+.part-status, .small { color: #c2cdbb; font-size: 12px; margin-top: 12px; }
+.parts-list a { font-size: 14px; }
+.connection-diagram { margin: 20px 0 28px; padding: 18px 0; border-block: 1px dashed #7a8f6d; }
+.wire-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; }
+.wire-row span { flex: 1; border: 2px ridge #8da58a; background: #294938; color: #ecedcb; padding: 16px 10px; text-align: center; font: bold 14px/1.5 "Courier New", monospace; }
+.wire-row small { font: 11px/1.6 "Courier New", monospace; }
+.wire-row b { color: #e1c574; font-size: 24px; }
+.power .wire-row span, .wire-row.power span { background: #483540; }
+figcaption { color: #c7d4c6; font-size: 13px; line-height: 1.6; padding-top: 10px; }
+.bench-photo { margin: 25px auto; max-width: 540px; }
+.bench-photo img { width: 100%; height: auto; max-height: 420px; object-fit: contain; }
+@media (max-width: 700px) { .hardware-main { padding: 0 16px; } .parts-list { grid-template-columns: 1fr; } .wire-row { flex-direction: column; align-items: stretch; } .wire-row b { text-align: center; transform: rotate(90deg); } .hardware-main h2 { font-size: 24px; } .shop-sign h1 { font-size: 32px; } }

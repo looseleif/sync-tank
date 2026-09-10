@@ -5,8 +5,11 @@ on:
     branches: [main]
     paths:
       - index.html
+      - builder.html
+      - hardware.html
       - site/**
       - images/**
+      - sync/static/vendor/**
       - .github/workflows/pages.yml
   workflow_dispatch:
 
@@ -31,14 +34,22 @@ jobs:
       - uses: actions/configure-pages@v5
       - name: Assemble the public site
         run: |
-          mkdir -p _site/site _site/images/readme
-          cp index.html _site/
-          cp site/style.css site/aquarium.js site/catalog.js _site/site/
+          mkdir -p _site/site _site/images/readme _site/sync/static/vendor
+          cp index.html builder.html hardware.html _site/
+          cp site/style.css site/aquarium.js site/catalog.js site/builder.js site/builder.css site/hardware.css site/THIRD_PARTY.md _site/site/
+          cp sync/static/vendor/three.module.js sync/static/vendor/OrbitControls.js _site/sync/static/vendor/
           cp images/sync.jpg _site/images/
           cp images/readme/shrimp-city-caridina-culls-wide.jpg _site/images/readme/
           cp images/readme/see-sea-tv-in-water-test-setup.jpg _site/images/readme/
           cp images/readme/see-sea-tv-2026-simulator-detail.jpg _site/images/readme/
           cp images/readme/reeflex-base-bearings-and-drive.jpg _site/images/readme/
+          cp images/readme/reeflex-servo-control-board.jpg _site/images/readme/
+      - name: Check public page assets and scripts
+        run: |
+          python3 site/tests/check_assets.py _site
+          node --check site/builder.js
+          node --check site/catalog.js
+          node --check site/aquarium.js
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site

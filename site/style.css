@@ -49,6 +49,9 @@ h3 { font-size: 21px; line-height: 1.2; color: #efdf9e; margin: 0 0 10px; }
 .welcome-copy h2 { font-size: 25px; }
 .catalog-link { font-weight: bold; }
 .stock-note { display: inline-block; margin: 6px 0 0 8px; font: 11px "Courier New", monospace; color: #cfbeaf; }
+.start-links { border-top: 1px dashed #809075; margin-top: 18px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding-top: 16px; }
+.start-links a { font: bold 12px/1.5 "Courier New", monospace; }
+.start-links span { display: block; color: #c5cdb6; font: 12px/1.5 Georgia, serif; margin-top: 5px; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; }
 .section-heading h2 { margin: 0; }
 .stamp { flex-shrink: 0; padding: 5px 8px; border: 2px solid #e29ca4; color: #e29ca4; font: bold 10px/1.4 "Courier New", monospace; text-align: center; transform: rotate(-3deg); }
@@ -126,6 +129,7 @@ footer small { font-size: 12px; line-height: 1.6; color: #b3c7b3; }
   .sidebar-fish { display: none; }
   h2, .welcome-copy h2 { font-size: 23px; }
   .stock-note { margin-left: 0; }
+  .start-links { grid-template-columns: 1fr; }
   .products { grid-template-columns: 1fr; }
   .section-label { font-size: 8px; }
   .section-label span:last-child { display: none; }
