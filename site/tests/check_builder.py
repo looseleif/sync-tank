@@ -142,7 +142,11 @@ with sync_playwright() as p:
     page.goto(base + '/hardware.html')
     page.locator('.bench-photo img').scroll_into_view_if_needed()
     page.locator('.bench-photo img').evaluate('(image) => image.decode()')
-    assert page.locator('.connection-diagram').count() == 3
+    assert page.locator('.connection-diagram').count() == 5
+    for heading in ['Camera data takes the local route', 'Analog video needs a capture adapter',
+                    'IP cameras take a different path', 'PoE powers a compatible receiver',
+                    'The servo has signal and power']:
+        assert page.get_by_role('heading', name=heading, exact=True).count() == 1
     for width in [1440, 390, 320]:
         page.set_viewport_size({'width': width, 'height': 900})
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')

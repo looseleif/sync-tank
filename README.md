@@ -2,15 +2,13 @@
 
 # Sync Tank
 
-**Open-source aquaristics: connected tanks, shared perspectives, local control.**
+**Aquarium cameras, habitat models, and local control.**
 
-Sync Tank brings aquarium cameras, inspection tools, habitat models, and observations into one local system. It connects what a camera sees with the tank it belongs to, where it is looking, and the equipment around it, so an aquarium can be explored and understood from more than one perspective.
+Sync Tank is an open-source aquarium workshop. It connects camera views to the tanks, positions, and habitat landmarks they show, so observations have a place as well as an image.
 
-Each tank has a Raspberry Pi node that collects its camera feeds and manages its devices. A shared Sync hub brings those tanks together for viewing, spatial mapping, captured observations, and inspection controls. Everyday operation stays on the local network, with footage and controls under the aquarium owner's control.
+Each tank has a Raspberry Pi node for cameras and devices. A shared Sync hub brings their feeds, 3D maps, saved observations, and inspection controls together on the local network. The reference installation has two tank nodes; adding more should preserve each tank's identity and ownership.
 
-The current installation connects two independent tank nodes. That is the reference setup, with open interfaces intended to let more tanks, cameras, and tools join over time.
-
-[Visit the aquarium shop](https://looseleif.github.io/sync-tank/) · [Build a tank in your browser](https://looseleif.github.io/sync-tank/builder.html) · [Electronics counter](https://looseleif.github.io/sync-tank/hardware.html)
+[Project website](https://looseleif.github.io/sync-tank/) · [Tank builder](https://looseleif.github.io/sync-tank/builder.html) · [Electronics and cameras](https://looseleif.github.io/sync-tank/hardware.html)
 
 ## Start here
 
@@ -23,10 +21,13 @@ The current installation connects two independent tank nodes. That is the refere
 | A model or printed part | [Design origins](docs/DESIGN_ORIGINS.md): source links, licenses, local modifications and the information still needed |
 | Cameras to mount or troubleshoot | [Camera inventory and feed paths](docs/HARDWARE.md#camera-inventory-and-feed-paths), [underwater mounting workflow](docs/CAMERA_MOUNTING.md), and [tank development TODOs](docs/TANK_TODO.md) |
 
-The browser builder is a photo-assisted planning sandbox, not automatic 3D
-reconstruction. Front, side and top references help refine different coordinates;
-one photograph cannot reveal hidden depth or physical scale. Read the
-[photo modeling guide](docs/TANK_MODELING.md). Draft files do not command live hardware.
+The **public website** contains build notes and a standalone photo-reference
+builder. It does not show your live feeds or control hardware. The **local hub**
+runs on a PC or Pi and connects to your tank nodes. The builder's drafts stay
+separate from it; photos assist placement, not automatic 3D reconstruction.
+See the [photo modeling guide](docs/TANK_MODELING.md).
+
+[Current software](#what-works-today) · [Build photographs](#from-model-to-installation) · [Run a demo](#try-it-without-hardware) · [Open work](docs/TANK_TODO.md) · [Project history](#project-history)
 
 ## How the pieces fit together
 
@@ -46,35 +47,26 @@ A camera supplies a view; its tank node establishes where it belongs; the spatia
 
 ## The Sync Tank mission
 
-Sync Tank exists to make aquarium work easier to connect, understand, share, and improve. Each aquarium can keep its footage, controls, and analysis on a local hub while still benefiting from a wider open-source community.
+Make it easier to observe an aquarium, understand what changed, and share what
+was learned without giving up local ownership.
 
-### Start with two, design for many
-
-- Prove that separate Raspberry Pi tank nodes can report into one local Sync hub.
-- Keep tank identity, camera identity, layout, and control boundaries intact as the network grows.
-- Allow each node to keep working when another tank, the internet, a camera, or an optional analysis service is unavailable.
-- Let viewing, mapping, inspection, and observation tools use the same tank and camera identities.
-- Treat the two-tank deployment as a real reference implementation for larger personal, classroom, research, and community installations.
-
-### More eyes on aquatic life
-
-The long-term goal is a community of aquarists who can choose to share useful footage, Sightings, failure cases, configurations, and improvements. More people observing similar animals and systems can create earlier signals when something is unusual:
-
-- changes in movement, appearance, hiding, feeding response, or habitat use;
-- equipment failures, blocked views, stale cameras, unsafe motion, or environmental changes;
-- recurring false detections and difficult visual conditions;
-- software, firmware, network, and hardware vulnerabilities;
-- patterns that one person or one short observation might miss.
-
-Sync Tank should help turn those signals into understandable notifications for the people responsible for the aquarium. It is not a substitute for attentive husbandry, water testing, veterinary expertise, or human judgment; its value is helping the right person notice and investigate sooner.
-
-### Local ownership, voluntary sharing
-
-Community participation must not require sending every feed to a central service. Raw footage and controls stay local by default. Sharing should be explicit and selective—such as a chosen clip, a captured Sighting, an anonymized failure case, or an open-source fix. The same model lets contributors improve camera support, tests, safety limits, visual analysis, documentation, and hardware designs without needing identical tanks.
-
-Success means that someone can add a new node or observation tool for their own aquarium, keep control of it locally, and still contribute knowledge that makes other aquariums safer and easier to understand.
+- **Start with two, design for more.** Keep tank identities, layouts and control
+  boundaries intact as nodes are added. A missing camera or optional service
+  should not prevent unrelated local work.
+- **Help people notice.** Useful observations include changes in habitat use,
+  blocked views, stale feeds, equipment problems and difficult detection cases.
+  These are prompts to investigate, not diagnoses or substitutes for aquarium
+  care, water testing or veterinary expertise.
+- **Share by choice.** The long-term community goal is voluntary exchange of
+  selected footage, Sightings, build notes, failures and improvements. It does
+  not require uploading every feed to a central service. Contributors can work
+  on cameras, security, analysis or mechanical designs without identical tanks.
 
 ## What works today
+
+These are capabilities of the maintained local software, not a guarantee that
+every listed camera or physical rig has passed acceptance testing. Outstanding
+hardware and integration checks are tracked in the [tank TODOs](docs/TANK_TODO.md).
 
 ### Multi-node local hub
 
@@ -136,7 +128,7 @@ Reels, Reeflex, and Raydar are equivalent at the system level: each is an inspec
 
 ## A digital copy of the tanks
 
-The interactive 3D tank model connects camera footage to physical locations and habitat landmarks:
+The local hub's interactive 3D tank model connects camera footage to physical locations and habitat landmarks:
 
 - Two separately labeled tanks can be viewed together or individually.
 - `FRONT`, `BACK`, `LEFT`, and `RIGHT` establish orientation.
@@ -146,7 +138,11 @@ The interactive 3D tank model connects camera footage to physical locations and 
 - Interior objects can be moved, rotated, scaled, labeled, colored, duplicated, or scattered for quick layout planning.
 - Orbit, pan, drag, zoom, overview, and tank-focus controls keep the model navigable on the portrait display.
 
-This creates a practical digital copy of each tank and its surroundings: cameras describe how the habitat is being seen, while structures and landmarks describe what is being seen and where.
+This is an editable spatial model, not a calibrated optical reconstruction.
+Camera locations and landmarks provide context; the schematic view cones do not
+account for water refraction, lens distortion or occlusion. The separate
+[public builder](https://looseleif.github.io/sync-tank/builder.html) is a smaller
+planning tool with photo references and no live-feed connection.
 
 ### From model to installation
 
@@ -255,7 +251,11 @@ Floaters are ESP32-S3 Sense still-camera nodes assigned to a specific tank Pi. T
 | Tank One | `tank-cam-001`, `tank-cam-002` | `TANK_ONE_AP_SSID` | `TANK_ONE_AP_IP/24` | `TANK_ONE_WIRED_IP` |
 | Tank Two | `tank-cam-003`, `tank-cam-004` | `TANK_TWO_AP_SSID` | `TANK_TWO_AP_IP/24` | `TANK_TWO_WIRED_IP` |
 
-The deployed AP password is `TANK_AP_PASSWORD`. These AP addresses are stable NetworkManager shared-mode gateway addresses, while individual Floater client addresses may change. The tank Pi stores the latest JPEG and exposes its inventory and image URL to Sync over the isolated wired link.
+The uppercase values in this section, including `TANK_AP_PASSWORD`, are
+configuration placeholders, not working addresses or a shared password. Set
+private credentials for the actual deployment. AP gateway addresses remain
+stable while individual Floater client addresses may change. The tank Pi stores
+the latest JPEG and exposes its inventory and image URL to Sync over the wired link.
 
 The tank Pis do not require a normal Wi-Fi or internet connection in deployment. Their `wlan0` interface serves the Floaters; their Ethernet/PoE connection is the only upstream path to the main Sync node at `SYNC_WIRED_IP`. This keeps camera collection working as a fully local chain:
 
@@ -272,10 +272,10 @@ In the interface, Floaters remain available as spatial markers. Their still imag
 | --- | --- |
 | [`tank/`](tank/) | Maintained Raspberry Pi tank-node service, ingest receiver, camera registry, controls, setup, and tests |
 | [`sync/`](sync/) | Multi-tank controller, SEE SEA TV dashboard, simulator, vision, Sightings, fake nodes, and tests |
-| [`docs/`](docs/) | Deployment and tank-specific handoff notes |
+| [`docs/`](docs/) | Setup, camera inventory, mounting, design sources, open work and deployment notes |
 | [`archive/`](archive/) | Historical prototypes retained for reference |
 | [`images/`](images/) | Project artwork, historical interface images, and README photography |
-| [`index.html`](index.html) and [`site/`](site/) | Retro public aquarium website and GitHub Pages setup; live tank services stay local |
+| [`index.html`](index.html), [`hardware.html`](hardware.html), [`builder.html`](builder.html), [`site/`](site/) | Public website, hardware notes and standalone tank builder; live tank services stay local |
 
 ## Try it without hardware
 
@@ -534,6 +534,9 @@ The [2026 prototype gallery](#from-model-to-installation) shows the first spatia
 
 ## License and acknowledgments
 
-Sync Tank is released under the [MIT License](LICENSE). The project is built in the spirit of open science, open hardware, and open curiosity.
+Sync Tank's project software is released under the [MIT License](LICENSE).
+Third-party software retains its [own notices](site/THIRD_PARTY.md). Mechanical
+designs, including EEZYbotARM Mk2, retain their upstream terms; this repository's
+software license does not relicense them. See [design sources and credits](docs/DESIGN_ORIGINS.md).
 
 Thanks to the robotics, maker, aquarist, and open-source communities whose tools, experiments, and contributions help the project grow.

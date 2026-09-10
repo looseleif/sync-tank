@@ -1,8 +1,10 @@
 # Public aquarium website
 
 The public project page is `index.html` at the repository root. Open it directly
-in a browser to preview it. Its retro aquarium-shop layout uses the original
-colorful fish artwork, a filterable project catalog, and a small pixel aquarium.
+in a browser to preview it. Its aquarium-workshop layout uses the original
+colorful fish artwork, a filterable build gallery, and a small pixel aquarium.
+Serif headings, ordinary underlined links and restrained borders give it an
+older personal-site feel without sale signs, novelty badges or mock shop copy.
 It uses plain HTML, CSS, JavaScript, and five existing project images. The catalog
 links to documentation and experiments; no products are sold here. It does not
 connect to tank nodes, show live feeds, or control hardware.

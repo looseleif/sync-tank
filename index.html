@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Sync Tank's aquarium curiosity shop: open-source cameras, tank maps, tiny habitats, and experiments from the underwater workbench.">
+  <meta name="description" content="Sync Tank: aquarium cameras, habitat models, and local control. Explore the builds, plan a tank, and follow the work in progress.">
   <meta name="theme-color" content="#103d36">
-  <title>Sync Tank | Aquarium Oddities &amp; Open-Source Goods</title>
+  <title>Sync Tank | Aquarium Workshop</title>
   <link rel="stylesheet" href="site/style.css">
   <script src="site/catalog.js" defer></script>
   <script src="site/aquarium.js" defer></script>
@@ -14,11 +14,9 @@
   <a class="skip" href="#welcome">Skip to the aquarium</a>
   <div class="page">
     <header class="storefront">
-      <div class="topline"><span>INDEPENDENT AQUARIUM EXPERIMENTS</span><span>ON THE WEB SINCE 2025</span></div>
+      <div class="topline"><span>AQUARIUM CAMERAS &amp; LOCAL CONTROL</span><span>PROJECT NOTEBOOK / 2025&ndash;2026</span></div>
       <div class="shop-sign">
-        <span class="sign-fish" aria-hidden="true">&gt;&lt;(((('&gt;</span>
-        <div><p class="sign-kicker">THE LITTLE UNDERWATER WORKSHOP</p><h1>Sync Tank</h1><p class="sign-subtitle">Aquarium oddities &amp; open-source goods</p></div>
-        <div class="open-sign">OPEN<span>for tinkering</span></div>
+        <div><h1>Sync Tank</h1><p class="sign-subtitle">An open-source aquarium workshop</p></div>
       </div>
       <div class="awning" aria-hidden="true"></div>
       <nav aria-label="Main navigation">
@@ -26,83 +24,75 @@
         <a href="#photos">[ tank tour ]</a>
         <a href="builder.html">[ tank builder ]</a>
         <a href="hardware.html">[ electronics ]</a>
-        <a href="#project">[ about the shop ]</a>
+        <a href="#project">[ about ]</a>
         <a href="#build">[ build your own ]</a>
         <a href="https://github.com/looseleif/sync-tank">[ source code ]</a>
       </nav>
-      <p class="shop-news"><strong>FROM THE WORKBENCH:</strong> Small cameras. Curious creatures. Very enthusiastic cable management.</p>
+      <p class="shop-news">Latest notes: <a href="hardware.html#cameras">camera inventory</a> &middot; <a href="hardware.html#mounting">mounts &amp; next steps</a></p>
     </header>
 
     <div class="shop-layout">
-      <aside class="shop-sidebar" aria-label="Shop directory">
-        <h2>DEPARTMENTS</h2>
+      <aside class="shop-sidebar" aria-label="Project directory">
+        <h2>DIRECTORY</h2>
         <ul class="aisles">
-          <li><a href="#photos">The curiosity catalog <span>&gt;</span></a></li>
+          <li><a href="#photos">Tanks &amp; builds <span>&gt;</span></a></li>
           <li><a href="builder.html">Build a tank from photos <span>&gt;</span></a></li>
           <li><a href="hardware.html">Electronics &amp; wiring <span>&gt;</span></a></li>
           <li><a href="#aquarium">The window tank <span>&gt;</span></a></li>
           <li><a href="https://github.com/looseleif/sync-tank/tree/main/tank#readme">Cameras &amp; Pi nodes <span>&gt;</span></a></li>
-          <li><a href="https://github.com/looseleif/sync-tank/tree/main/sync#readme">Software counter <span>&gt;</span></a></li>
+          <li><a href="https://github.com/looseleif/sync-tank/tree/main/sync#readme">The local hub <span>&gt;</span></a></li>
           <li><a href="https://github.com/looseleif/sync-tank#project-history">The old scrapbook <span>&gt;</span></a></li>
         </ul>
-        <div class="notice">
-          <p class="notice-title">TODAY'S SPECIAL</p>
-          <p class="free">FREE<span>source code</span></p>
-          <p>Bring your own tank.<br>Bring your curiosity.</p>
-          <a href="#build">Start tinkering &gt;&gt;</a>
-        </div>
-        <p class="sidebar-note">A catalog of things we're building. Plans, code, and experiments; nothing here is for sale.</p>
-        <div class="counter-note"><strong>NOTICE TO AQUARISTS</strong><p>The real cameras and controls stay on your local network.</p></div>
-        <p class="sidebar-fish" aria-hidden="true">&gt;&lt;&gt; &nbsp; &lt;&gt;&lt;<br>~ ~ ~ ~ ~ ~</p>
+        <div class="counter-note"><strong>ON THE BENCH</strong><p>Camera mounts, viewing angles, and reliable feeds.</p><a href="hardware.html#mounting">Open work &gt;&gt;</a></div>
+        <p class="sidebar-note">Build notes and source code, not a storefront. The real cameras and controls run on your local network.</p>
       </aside>
 
       <main>
         <section id="welcome" class="welcome">
-          <div class="section-label"><span>WELCOME, FELLOW FISH PERSON</span><span>EST. 2025</span></div>
+          <div class="section-label"><span>THE SYNC TANK PROJECT</span><span>TWO TANKS, WORK IN PROGRESS</span></div>
           <img class="banner" src="images/sync.jpg" alt="Original colorful Sync Tank artwork featuring aquarium fish" width="4096" height="2304" fetchpriority="high">
           <div class="welcome-copy">
-            <h2>A little shop of underwater curiosities.</h2>
-            <p>Peek into a hide. Map a tank. Wire up something interesting. We're connecting aquarium cameras, habitat models, and local computers so we can get to know our little worlds better.</p>
-            <p><a class="catalog-link" href="builder.html">Start with your own tank &gt;&gt;</a> <span class="stock-note">No Pi needed to experiment.</span></p>
-            <div class="start-links"><a href="builder.html">01 / Model a tank<span>Photos, cameras &amp; a little 3D world</span></a><a href="hardware.html">02 / Meet the electronics<span>Parts, product links &amp; wiring diagrams</span></a><a href="https://github.com/looseleif/sync-tank/blob/main/docs/GETTING_STARTED.md">03 / Get connected<span>From your first demo to a tank node</span></a></div>
+            <h2>A closer look inside the tank.</h2>
+            <p>Cameras, small habitats, and a map of where everything belongs. Two aquariums connected through a local Raspberry Pi system.</p>
+            <div class="start-links"><a href="builder.html">01 / Model a tank<span>Photo-reference builder</span></a><a href="hardware.html">02 / Parts &amp; wiring<span>Cameras, electronics &amp; mounts</span></a><a href="https://github.com/looseleif/sync-tank/blob/main/docs/GETTING_STARTED.md">03 / Get started<span>Run a demo or set up a Pi</span></a></div>
           </div>
         </section>
 
         <section id="photos">
-          <div class="section-heading"><h2>The curiosity catalog</h2><span class="stamp">BUILT, TESTED,<br>STILL TINKERING</span></div>
+          <div class="section-heading"><h2>Tanks &amp; builds</h2></div>
           <div class="catalog-toolbar" hidden>
             <div class="department-field"><label for="department">Department</label><select id="department"><option value="all">All departments</option><option value="habitat">Habitat</option><option value="hardware">Cameras &amp; hardware</option><option value="software">Software</option></select></div>
             <output id="catalog-count" aria-live="polite">4 experiments on the shelf</output>
           </div>
           <div class="products">
             <article class="product" data-department="habitat">
-              <div class="item-label"><span>No. 001 / HABITAT</span><span class="item-tag">TINY TENANTS</span></div>
+              <div class="item-label"><span>01 / HABITAT</span></div>
               <a class="product-photo" href="images/readme/shrimp-city-caridina-culls-wide.jpg"><img src="images/readme/shrimp-city-caridina-culls-wide.jpg" alt="Shrimp exploring the structures and open spaces of Shrimp City" loading="lazy" width="640" height="480"></a>
-              <div class="product-copy"><h3>Shrimp City</h3><p>Small-scale urban planning. Plenty of cover, recognizable landmarks, and neighbors with far too many legs.</p><a href="https://github.com/looseleif/sync-tank#shrimp-city">Visit the neighborhood &gt;&gt;</a><span class="product-type">HABITAT EXPERIMENT</span></div>
+              <div class="product-copy"><h3>Shrimp City</h3><p>A small neighborhood of shelters and open spaces, with landmarks that are easy to recognize across camera views.</p><a href="https://github.com/looseleif/sync-tank#shrimp-city">Visit the neighborhood &gt;&gt;</a></div>
             </article>
             <article class="product" data-department="hardware">
-              <div class="item-label"><span>No. 002 / THE NETWORK</span><span class="item-tag">LOCAL ONLY</span></div>
+              <div class="item-label"><span>02 / CAMERA NETWORK</span></div>
               <a class="product-photo" href="images/readme/see-sea-tv-in-water-test-setup.jpg"><img src="images/readme/see-sea-tv-in-water-test-setup.jpg" alt="Two aquarium test setups with connected camera and control hardware" loading="lazy" width="640" height="480"></a>
-              <div class="product-copy"><h3>Two tanks, one system</h3><p>A Pi for each tank, cameras in all the right places, and a shared local hub to bring the views together.</p><a href="https://github.com/looseleif/sync-tank/tree/main/tank#readme">Meet the tank nodes &gt;&gt;</a><span class="product-type">PLANS &amp; CODE / OPEN SOURCE</span></div>
+              <div class="product-copy"><h3>Two tanks, one system</h3><p>The in-water test setup: a Pi for each tank and a shared hub that keeps camera views tied to their own tank.</p><a href="https://github.com/looseleif/sync-tank/tree/main/tank#readme">Meet the tank nodes &gt;&gt;</a></div>
             </article>
             <article class="product" data-department="software">
-              <div class="item-label"><span>No. 003 / SOFTWARE</span><span class="item-tag">NO WATER NEEDED</span></div>
+              <div class="item-label"><span>03 / SPATIAL MODEL</span></div>
               <a class="product-photo" href="images/readme/see-sea-tv-dry-bench-demo.jpg"><img src="images/readme/see-sea-tv-dry-bench-demo.jpg" alt="Portrait display on the workbench testing the 3D tank model alongside a camera feed" loading="lazy" width="640" height="480"></a>
-              <div class="product-copy"><h3>A tank inside your computer</h3><p>Bench testing, before the water: the early local prototype paired a tank model with a camera feed. Try planning camera positions and habitat landmarks in the separate photo-reference builder.</p><a href="builder.html">Open the tank builder &gt;&gt;</a><span class="product-type">SOFTWARE / OPEN SOURCE</span></div>
+              <div class="product-copy"><h3>A tank inside your computer</h3><p>An early bench test paired a 3D tank with a camera feed. The separate browser builder lets you plan positions from your own photos.</p><a href="builder.html">Open the tank builder &gt;&gt;</a></div>
             </article>
             <article class="product" data-department="hardware">
-              <div class="item-label"><span>No. 004 / CAMERA RIGS</span><span class="item-tag">BENCH PROJECT</span></div>
+              <div class="item-label"><span>04 / INSPECTION ARM</span></div>
               <a class="product-photo" href="images/readme/reeflex-base-bearings-and-drive.jpg"><img src="images/readme/reeflex-base-bearings-and-drive.jpg" alt="Printed Reeflex base, circular bearing track, gear, and servo" loading="lazy" width="640" height="480"></a>
-              <div class="product-copy"><h3>Reeflex, under the hood</h3><p>Based on EEZYbotARM Mk2 from Autodesk Instructables, adapted for underwater camera inspection and automation experiments. Supervised operation; autonomy in development.</p><a href="hardware.html#origins">Meet the arm &amp; its source design &gt;&gt;</a><span class="product-type">HARDWARE IN DEVELOPMENT</span></div>
+              <div class="product-copy"><h3>Inside Reeflex</h3><p>An EEZYbotARM Mk2-based inspection rig. This assembly photo shows the base and drive; autonomous inspection is still in development.</p><a href="hardware.html#origins">The mechanism &amp; source design &gt;&gt;</a></div>
             </article>
           </div>
-          <p class="catalog-footnote">Photographs from actual builds and early prototypes. Hardware is a bring-your-own adventure.</p>
+          <p class="catalog-footnote">Photographs from project builds and tests. Earlier prototypes may differ from the current software.</p>
         </section>
 
         <section id="aquarium">
-          <div class="section-heading"><h2>The window tank</h2><span class="little-label">PLEASE DO FEED THE PIXELS</span></div>
+          <div class="section-heading"><h2>The window tank</h2></div>
           <div class="aquarium">
-            <div class="tank-label"><span>RESIDENTS OF THE WORLD WIDE WEB</span><span class="badge">SIMULATED</span></div>
+            <div class="tank-label"><span>A LITTLE AQUARIUM</span><span class="badge">SIMULATED</span></div>
             <canvas id="fish-tank" width="880" height="150" aria-label="Animated pixel fish aquarium. Use the Feed fish button to drop food.">A small pixel aquarium. The Sync Tank project photos and links work without JavaScript.</canvas>
             <div class="tank-controls">
               <span id="tank-status" role="status">Just swimming along.</span>
@@ -113,36 +103,35 @@
         </section>
 
         <section id="project">
-          <h2>What's this place, anyway?</h2>
+          <h2>About the project</h2>
           <p><strong>Sync Tank is the whole project:</strong> connected aquariums, cameras, inspection tools, spatial maps, and observations. Two tank nodes are our starting point, with room to grow.</p>
           <dl class="directory">
             <div><dt>EYES IN THE WATER</dt><dd>Floaters provide fixed views. Reels reach small spaces. Reeflex and Raydar explore motorized inspection with limits and stop controls.</dd></div>
-            <div><dt>SEE SEA TV</dt><dd>The display counter: browse camera perspectives and connect each view to its real tank and position. One part of the larger system.</dd></div>
+            <div><dt>SEE SEA TV</dt><dd>The local camera display connects each view to its real tank and position. One part of the larger system.</dd></div>
             <div><dt>SIGHTINGS</dt><dd>Save an image with its tank, camera, and time. Local motion analysis helps notice activity. Optional AI field notes are requested by a person.</dd></div>
           </dl>
-          <p><a href="https://github.com/looseleif/sync-tank#project-history">Flip through the full scrapbook &amp; original SSTV experiments &gt;&gt;</a></p>
+          <p><a href="https://github.com/looseleif/sync-tank#project-history">Project history &amp; early experiments &gt;&gt;</a></p>
         </section>
 
         <section id="build">
-          <h2>From our workbench to yours</h2>
+          <h2>Build your own</h2>
           <p>The code is free to explore. Start with simulated tank nodes, or bring a Raspberry Pi and some cameras. Ordinary aquarium care comes first.</p>
           <ul class="links">
-            <li><a href="hardware.html">Electronics counter: Pi, servos, PoE &amp; product links</a></li>
+            <li><a href="hardware.html">Electronics &amp; wiring: Pi, servos, PoE &amp; product links</a></li>
             <li><a href="https://github.com/looseleif/sync-tank/blob/main/docs/DESIGN_ORIGINS.md">Design origins: models, credits &amp; the missing pieces</a></li>
-            <li><a href="hardware.html#cameras">Camera shelf: used, tested &amp; candidate cameras</a></li>
+            <li><a href="hardware.html#cameras">Camera inventory: used, tested &amp; candidate cameras</a></li>
             <li><a href="hardware.html#mounting">Next around the tank: mounts, orientation &amp; open TODOs</a></li>
             <li><a href="https://github.com/looseleif/sync-tank#try-it-without-hardware">01. Try the hardware-free demo</a></li>
             <li><a href="https://github.com/looseleif/sync-tank/tree/main/tank#readme">02. Set up a tank node</a></li>
             <li><a href="https://github.com/looseleif/sync-tank/tree/main/sync#readme">03. Run the Sync hub &amp; display</a></li>
-            <li><a href="https://github.com/looseleif/sync-tank/issues">04. Leave a note at the service counter</a></li>
+            <li><a href="https://github.com/looseleif/sync-tank/issues">04. Report an issue or share a build</a></li>
           </ul>
         </section>
       </main>
     </div>
 
     <footer>
-      <p class="web-buttons"><span>100% FISH-INSPIRED</span><span>KEEP IT LOCAL</span><span>HTML INSIDE</span></p>
-      <p>Thanks for stopping by. Mind the cables on your way out.</p>
+      <p>Sync Tank &middot; An aquarium project in progress.</p>
       <p><a href="#top">Back to the surface</a> &middot; <a href="https://github.com/looseleif/sync-tank">GitHub</a> &middot; <a href="https://github.com/looseleif/sync-tank/blob/main/LICENSE">MIT License</a></p>
       <small>With thanks to the aquarist, maker, robotics, and open-source communities.</small>
     </footer>
