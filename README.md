@@ -210,7 +210,9 @@ tracks missing CAD sources and licenses for the printed assemblies.
 
 ### Inside Reeflex
 
-Reeflex is a motorized inspection platform built around printed mechanical parts, servos, and a PCA9685 controller. The base uses a ring of bearings to support rotation while a geared servo provides motion. Its control board separates multi-channel servo signaling from the Sync controller's higher-level motion-control and safety logic. Increasingly autonomous inspection remains a development goal rather than a current claim.
+Reeflex uses the [EEZYbotARM Mk2 robotic-arm design published on Autodesk Instructables](https://www.instructables.com/EEZYbotARM-Mk2-3D-Printed-Robot/) as its mechanical basis. Sync Tank applies the arm to underwater camera inspection and automation experiments; the original arm design is not a Sync Tank invention. See the [design-source record and creator credit](docs/DESIGN_ORIGINS.md#reeflex--eezybotarm-mk2) for attribution and outstanding build details.
+
+The platform combines printed mechanical parts, servos, and a PCA9685 controller. The base uses a ring of bearings to support rotation while a geared servo provides motion. Its control board separates multi-channel servo signaling from the Sync controller's higher-level motion-control and safety logic. Increasingly autonomous inspection remains a development goal rather than a current claim. This application does not establish that the original arm, servos, or electronics are submersible; camera mounting, sealing, and aquatic suitability need their own build records.
 
 <table>
   <tr>

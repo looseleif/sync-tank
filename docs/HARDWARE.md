@@ -23,6 +23,20 @@ Manufacturer links are references, not affiliate links or a verified shopping
 cart. MG995 and MG996R are not interchangeable names. Continuous-rotation
 variants do not interpret commands as absolute shaft angles.
 
+## Robotic-arm design
+
+Reeflex uses [EEZYbotARM Mk2, published on Autodesk Instructables](https://www.instructables.com/EEZYbotARM-Mk2-3D-Printed-Robot/),
+as the mechanical basis for underwater camera inspection and automation
+experiments. The linked guide is the upstream design and assembly reference;
+the Raspberry Pi, PCA9685, camera integration and motion software described here
+belong to the Sync Tank build, not necessarily the original guide's electronics.
+See the [source record and creator credit](DESIGN_ORIGINS.md#reeflex--eezybotarm-mk2)
+for attribution, model-license tracking and outstanding local modifications.
+
+Underwater inspection does not imply that the entire arm or its servos can be
+submerged. Record the actual wet/dry boundary, camera protection and sealing
+tests separately. Autonomous inspection remains in development.
+
 ## Data path
 
 ```mermaid

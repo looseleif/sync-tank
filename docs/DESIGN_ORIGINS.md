@@ -14,7 +14,7 @@ does not establish authorship or permission to redistribute a printed model.
 | PCA9685 electronics | Driver, defaults, board photograph | Chip family confirmed; breakout brand, PCB revision and schematic source pending; Adafruit link is a reference implementation |
 | MG995 servos | Project owner's report of use and testing | Supplier, variant, label photos, power/current measurements and travel calibration pending |
 | Raspberry Pi / PoE / NETGEAR network | Deployment docs and owner's report | Pi models, HAT/splitter model, switch model/adapter, port budget and dated test log pending |
-| Reeflex base, bearing ring, gears and mounts | Assembly photographs and servo-control software | Original CAD/STL source, designer attribution, model version and license not recorded |
+| Reeflex robotic arm | Assembly photographs, servo-control software and project owner's identification of the source design | [EEZYbotARM Mk2 on Autodesk Instructables](https://www.instructables.com/EEZYbotARM-Mk2-3D-Printed-Robot/); see the source record below. Exact file revision, local modifications and model-license record pending |
 | Raydar pan/tilt mechanics | Control implementation and deployment notes | Mount model, upstream design, local modifications and license not recorded |
 | Floater plates and camera housings | Camera-placement model and deployment notes | Mount geometry, fastening/sealing method, material and design source pending |
 | Shrimp City structures / hides | Aquarium photographs and simulator landmarks | Individual model sources, licenses, material, print settings and aquatic suitability evidence pending |
@@ -24,6 +24,19 @@ repository during this documentation pass. Do not describe these mechanical
 designs as original, licensed for reuse, waterproof, or ready to print until
 their individual records support it. The root software license does not relicense
 someone else's model.
+
+## Reeflex / EEZYbotARM Mk2
+
+- **Source design:** [EEZYbotARM Mk2 - 3D Printed Robot](https://www.instructables.com/EEZYbotARM-Mk2-3D-Printed-Robot/), published on Autodesk Instructables.
+- **Creator credit:** [theGHIZmo](https://www.instructables.com/member/theGHIZmo/), the creator listed on Instructables. Autodesk Instructables hosts the guide; the design is credited to its creator.
+- **Use in Sync Tank:** the project owner identifies this design as the basis of the Reeflex arm used for underwater camera inspection and automation experiments. The original mechanics are upstream work; Sync Tank's camera, controller and software integration are project-specific.
+- **Still to record:** the exact downloaded model revision and files, their license and required notices, any changed base or arm parts, camera mounts, print materials, sealing methods and test results. Identifying the arm does not establish the origin of every accessory.
+- **Scope:** underwater inspection describes this project's application, not a waterproof rating for the upstream design or its electronics. Fully autonomous inspection remains a development goal.
+
+Follow the upstream guide for its model sources and assembly instructions. No
+upstream CAD or STL files are redistributed here. Keep the mechanical design's
+license separate from this repository's MIT software license; record the terms
+for the exact files before adding them or publishing modified models.
 
 ## Record each physical design
 
