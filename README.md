@@ -1,4 +1,4 @@
-![Sync Tank](images/sync-tank-banner.png)
+![Sync Tank aquarium artwork](images/sync.jpg)
 
 # Sync Tank
 

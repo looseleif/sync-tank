@@ -33,8 +33,8 @@ jobs:
         run: |
           mkdir -p _site/site _site/images/readme
           cp index.html _site/
-          cp site/style.css site/aquarium.js _site/site/
-          cp images/sync-tank-banner.png _site/images/
+          cp site/style.css site/aquarium.js site/catalog.js _site/site/
+          cp images/sync.jpg _site/images/
           cp images/readme/shrimp-city-caridina-culls-wide.jpg _site/images/readme/
           cp images/readme/see-sea-tv-in-water-test-setup.jpg _site/images/readme/
           cp images/readme/see-sea-tv-2026-simulator-detail.jpg _site/images/readme/
