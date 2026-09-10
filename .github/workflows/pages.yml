@@ -41,7 +41,7 @@ jobs:
           cp images/sync.jpg _site/images/
           cp images/readme/shrimp-city-caridina-culls-wide.jpg _site/images/readme/
           cp images/readme/see-sea-tv-in-water-test-setup.jpg _site/images/readme/
-          cp images/readme/see-sea-tv-2026-simulator-detail.jpg _site/images/readme/
+          cp images/readme/see-sea-tv-dry-bench-demo.jpg _site/images/readme/
           cp images/readme/reeflex-base-bearings-and-drive.jpg _site/images/readme/
           cp images/readme/reeflex-servo-control-board.jpg _site/images/readme/
       - name: Check public page assets and scripts

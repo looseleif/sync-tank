@@ -151,16 +151,11 @@ This creates a practical digital copy of each tank and its surroundings: cameras
 
 These early 2026 prototypes show the spatial model beside camera feeds and device state, followed by bench and in-water testing. They document an earlier interface generation, rather than a finished view of the current software.
 
-<table>
-  <tr>
-    <td width="50%"><img src="images/readme/see-sea-tv-2026-interface-overview.jpg" alt="Full portrait view of a first 2026 SEE SEA TV interface prototype"></td>
-    <td width="50%"><img src="images/readme/see-sea-tv-2026-simulator-detail.jpg" alt="Close view of the 2026 tank simulator and camera field-of-view guides"></td>
-  </tr>
-  <tr>
-    <td><em>A complete early portrait prototype with simulator, feeds, device status, and motion focus.</em></td>
-    <td><em>A close look at the first spatial tank model and camera geometry.</em></td>
-  </tr>
-</table>
+<p align="center">
+  <img src="images/readme/see-sea-tv-2026-interface-overview.jpg" alt="Full portrait view of an early 2026 SEE SEA TV interface prototype" width="560">
+</p>
+
+*Interface prototyping: bringing the spatial model, camera feeds, device status, and motion focus together on one portrait display.*
 
 <p align="center">
   <img src="images/readme/see-sea-tv-dry-bench-demo.jpg" alt="First 2026 SEE SEA TV dry-bench demo showing the tank simulation above a live camera feed" width="560">
@@ -397,16 +392,14 @@ The original interface concentrated on getting useful pictures onto a screen. It
 
 #### Camera and vision experiments
 
-The 2025 archive also preserves the messy middle of development: individual animal frames, alternate SSTV layouts, and object-detection trials that were often confidently wrong. Those false positives are part of the project history and helped establish why current Sync reports interesting motion without claiming that it has identified an animal.
+The 2025 archive preserves two development steps: testing alternate SSTV feed layouts and evaluating object-detection output. The detection trials include false positives, not verified animal sightings. These failure cases helped establish why current Sync reports interesting motion without claiming that it has identified an animal.
 
 <table>
   <tr>
-    <td width="33%"><img src="images/readme/2025/starfish-camera-view.webp" alt="A humorous 2025 aquarium camera frame"></td>
-    <td width="33%"><img src="images/readme/2025/sstv-fish-dominant-feed.png" alt="Early SSTV dominant feed showing fish near the substrate"></td>
-    <td width="33%"><img src="images/readme/2025/sstv-six-camera-caption-experiment.png" alt="Six-camera SSTV experiment with detections and generated captions"></td>
+    <td width="50%"><img src="images/readme/2025/sstv-fish-dominant-feed.png" alt="Early SSTV dominant feed showing fish near the substrate"></td>
+    <td width="50%"><img src="images/readme/2025/sstv-six-camera-caption-experiment.png" alt="Six-camera SSTV experiment with detections and generated captions"></td>
   </tr>
   <tr>
-    <td><em>An early aquarium camera frame from the 2025 experiments.</em></td>
     <td><em>An alternate dominant-feed page focused on fish near the substrate.</em></td>
     <td><em>A six-camera caption experiment combining tank and out-of-tank views.</em></td>
   </tr>

@@ -7,6 +7,13 @@ It uses plain HTML, CSS, JavaScript, and five existing project images. The catal
 links to documentation and experiments; no products are sold here. It does not
 connect to tank nodes, show live feeds, or control hardware.
 
+Keep the colorful original artwork as the banner. Gallery images should document
+a specific project activity: habitat setup, bench testing, hardware assembly,
+interface experiments, or installation. Captions must distinguish earlier
+prototypes from the current software and tests from verified results. The
+software catalog photograph shows the actual dry-bench test, not the browser
+builder or a live feed from this website.
+
 `hardware.html` explains the electronics, product references, provenance gaps and
 connections. `builder.html` provides the photo-reference 3D tank sandbox with
 local draft storage and JSON import/export. See [the modeling guide](../docs/TANK_MODELING.md).
