@@ -21,6 +21,7 @@ The current installation connects two independent tank nodes. That is the refere
 | No hardware at all | [Getting started](docs/GETTING_STARTED.md), then the [local simulated-node demo](#try-it-without-hardware) |
 | A Pi and cameras | [Maintained tank-node setup](tank/README.md); identify the node role and leave motor power disconnected during initial installation |
 | A model or printed part | [Design origins](docs/DESIGN_ORIGINS.md): source links, licenses, local modifications and the information still needed |
+| Cameras to mount or troubleshoot | [Camera inventory and feed paths](docs/HARDWARE.md#camera-inventory-and-feed-paths), [underwater mounting workflow](docs/CAMERA_MOUNTING.md), and [tank development TODOs](docs/TANK_TODO.md) |
 
 The browser builder is a photo-assisted planning sandbox, not automatic 3D
 reconstruction. Front, side and top references help refine different coordinates;
@@ -350,6 +351,34 @@ python3 sync/scripts/soak_test.py --overnight
 ```
 
 The test environment uses virtual servos and a completely mocked OpenAI transport. It must not move physical hardware, spend API credits, or transmit captured images.
+
+## Camera setup and next work
+
+The underwater views have used **Tonysa NTSC cameras through USB capture
+adapters** and **1 m LED endoscope probes**. An **Arducam autofocus USB camera**
+is used on the Pi-connected pan/tilt rig. The **REVODATA I704-2-P-HSV6 PoE IP
+camera** was tested; the **I704-P** is recorded as a candidate, not a confirmed
+tested camera. These are owner-reported build details, not new performance tests.
+Product references and outstanding identifiers are in the
+[camera inventory](docs/HARDWARE.md#camera-inventory-and-feed-paths).
+
+Analog-to-USB capture, direct USB video and PoE IP video are different paths.
+The PoE camera needs a verified network ingest/relay path; it does not become a
+USB feed just because it shares the switch. Product water-resistance claims also
+need checking before immersion.
+
+Next, prototype **one adjustable rim-mounted endoscope support**, identify its
+live feed, align it with observed tank landmarks, lock the mount and record
+drift. The [mounting workflow](docs/CAMERA_MOUNTING.md) explains this proposed
+process without claiming that a mount has already been built or wet-tested.
+Additional arms follow a review of blind spots, loads, cable routing and safe
+motion limits.
+
+The [open tank TODO list](docs/TANK_TODO.md) tracks camera identities, missing or
+stale feeds, tank ownership, placement persistence, underwater orientation,
+PoE integration and inspection automation. Start with **REV-01: review necessary
+updates on each deployed tank**. The public builder can hold task IDs in object
+notes; spatial TODO markers and live-hub transfer remain future work.
 
 ## Hardware acceptance
 

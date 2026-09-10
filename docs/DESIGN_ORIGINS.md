@@ -14,6 +14,10 @@ does not establish authorship or permission to redistribute a printed model.
 | PCA9685 electronics | Driver, defaults, board photograph | Chip family confirmed; breakout brand, PCB revision and schematic source pending; Adafruit link is a reference implementation |
 | MG995 servos | Project owner's report of use and testing | Supplier, variant, label photos, power/current measurements and travel calibration pending |
 | Raspberry Pi / PoE / NETGEAR network | Deployment docs and owner's report | Pi models, HAT/splitter model, switch model/adapter, port budget and dated test log pending |
+| Tonysa underwater camera and analog capture adapter | Owner reports underwater use through a video-to-USB adapter | [Tonysa B08HW881QV](https://www.amazon.com/dp/B08HW881QV); exact adapter/chipset, signal connector, power and immersion evidence pending |
+| USB endoscope probes | Owner reports 1 m soft-cord LED borescopes in use | Manufacturer, product link, probe dimensions, video modes and immersion conditions pending |
+| Arducam pan/tilt camera | Owner reports metal-case IMX219 autofocus USB model in use | [Matching B029201 reference](https://www.arducam.com/arducam-autofoucs-imx219-usb-camera-b029201.html); installed SKU and measured modes pending |
+| REVODATA PoE IP cameras | I704-2-P-HSV6 reported tested; I704-P identified as a candidate only | [Tested model reference](https://www.amazon.com/dp/B0DK737JCZ), [candidate reference](https://www.amazon.com/dp/B0B17FHLV6); firmware, endpoint, codec, integration and test records pending |
 | Reeflex robotic arm | Assembly photographs, servo-control software and project owner's identification of the source design | [EEZYbotARM Mk2 on Autodesk Instructables](https://www.instructables.com/EEZYbotARM-Mk2-3D-Printed-Robot/); see the source record below. Exact file revision, local modifications and model-license record pending |
 | Raydar pan/tilt mechanics | Control implementation and deployment notes | Mount model, upstream design, local modifications and license not recorded |
 | Floater plates and camera housings | Camera-placement model and deployment notes | Mount geometry, fastening/sealing method, material and design source pending |
@@ -71,6 +75,8 @@ photo_paths: []
 failures_and_limitations: []
 ```
 
-The hardware families are reported used; entries remain pending until exact
-models and evidence are supplied. This keeps the gaps visible without inventing
-purchase history or test results.
+Hardware status is recorded per entry: used, tested by owner report, or candidate.
+Remaining identifiers and evidence stay pending until supplied. See the
+[camera inventory](HARDWARE.md#camera-inventory-and-feed-paths) and
+[tank TODOs](TANK_TODO.md). This keeps the gaps visible without inventing purchase
+history or test results.

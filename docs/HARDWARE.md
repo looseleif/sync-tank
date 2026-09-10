@@ -23,6 +23,79 @@ Manufacturer links are references, not affiliate links or a verified shopping
 cart. MG995 and MG996R are not interchangeable names. Continuous-rotation
 variants do not interpret commands as absolute shaft angles.
 
+## Camera inventory and feed paths
+
+The following use history comes from the project owner. Listing descriptions
+identify purchases or candidates, not independently measured specifications.
+Keep private order links, order numbers and camera credentials out of this repo.
+
+| Camera | Project status and role | Connection to the system | Reference / still needed |
+| --- | --- | --- | --- |
+| Tonysa Mini CCTV, advertised 170-degree wired NTSC camera | Used for underwater camera positions | Analog video into a USB capture adapter, then the tank Pi | [B08HW881QV](https://www.amazon.com/dp/B08HW881QV); adapter model/chipset, camera power requirements and immersion limits pending |
+| REVODATA I704-2-P-HSV6, advertised 5MP, IP65, 3.6 mm, H.265 | Owner reports testing this PoE IP camera; current hub integration not verified | Ethernet/PoE to switch; network decoder/relay needed for hub viewing | [B0DK737JCZ](https://www.amazon.com/dp/B0DK737JCZ); firmware, working stream endpoint, codec profile and test results pending |
+| REVODATA I704-P, advertised 5MP, IP65, 3.6 mm | Candidate the owner identified; use or testing not confirmed | Proposed Ethernet/PoE path, not a USB device | [B0B17FHLV6](https://www.amazon.com/dp/B0B17FHLV6); confirm whether acquired and tested |
+| Endoscope Camera With Adjustable LED Light, Waterproof Inspection Borescope, 1 Meter Soft Cord | Used as the interior endoscopic cameras | USB to tank Pi, subject to confirming the exact connector and Linux capture mode | No brand/model or product URL supplied; record probe diameter, focus range, cable length, supported video modes and immersion conditions |
+| Arducam 4K 8MP IMX219 Autofocus USB Camera Module with Metal Case | Used on the Pi-connected pan/tilt camera rig | Direct UVC USB video to tank Pi | [Matching Arducam B029201 product reference](https://www.arducam.com/arducam-autofoucs-imx219-usb-camera-b029201.html); confirm installed SKU, resolution/FPS and focus behavior |
+
+Arducam's current page offers newer variants as well. Its product title is not
+proof of the installed sensor revision, sustained 4K video or its frame rate.
+The two REVODATA models are separate records, not interchangeable aliases.
+The first two Amazon pages could not be independently read during this pass;
+their descriptions above are from the supplied product titles.
+
+```mermaid
+flowchart LR
+  A["Tonysa analog camera"] -->|"NTSC video; connector to confirm"| C["Active analog-to-USB capture adapter"]
+  C -->|"USB / Linux capture"| P["Owning tank Pi"]
+  E["USB endoscope probes"] -->|USB| P
+  R["Arducam pan/tilt camera"] -->|"UVC / USB"| P
+  P -->|"Local camera stream + snapshots"| H["Sync hub"]
+  IP["REVODATA PoE IP camera"] -->|Ethernet| SW["PoE switch"]
+  SW -.->|"Network decoder/relay: integration TODO"| P
+```
+
+### Analog capture is an active conversion
+
+The owner described a component-to-USB connection. For an NTSC camera this is
+likely **composite/CVBS** video, commonly on a single yellow RCA connector,
+rather than three-channel component video. Confirm the actual connectors and
+adapter label before choosing replacements. The USB device digitizes the signal;
+a passive cable alone does not perform that conversion. A
+[capture-adapter manufacturer's reference](https://media.startech.com/cms/pdfs/svid2usb232_datasheet.pdf)
+illustrates the signal distinction, not the installed adapter or a Pi-compatible
+replacement recommendation.
+
+The Pi sees the capture adapter, not the Tonysa model. Record its USB identity,
+input channel, NTSC/PAL setting and supported V4L2 modes. The camera may need
+separate power at its specified voltage; do not assume USB powers it through
+the video lead. Wrong input/standard, missing camera power, unsupported modes
+or a driver issue can produce a blank feed even when a USB device is listed.
+
+### IP cameras need a network ingest path
+
+A PoE IP camera does not appear as `/dev/video*`. The maintained
+[USB capture code](../tank/sync_tank/cameras/usb.py) uses V4L2 and FFmpeg;
+the current documentation does not establish a tested REVODATA network adapter.
+Confirm the camera's actual RTSP/HTTP/ONVIF capabilities and credentials locally,
+then add or verify a decoder/relay that supplies the hub's expected stream and
+snapshot contract. Do not guess an RTSP URL or put credentials in public JSON.
+H.265 in a listing is not proof that the browser or current hub can decode it.
+Record the chosen codec, resolution, FPS, frame age and reconnect behavior.
+
+### Water exposure is a separate qualification
+
+IP65 covers water jets, not immersion. The REVODATA cameras should remain out
+of the water unless a separately qualified underwater housing is documented.
+Even immersion ratings have manufacturer-specific depth and duration limits;
+see the [Axis guide to ingress ratings](https://whitepapers.axis.com/en-us/quick-guide-to-axis-datasheets).
+The words "waterproof" in the Tonysa/endoscope titles do not establish continuous
+aquarium immersion, saltwater suitability, or waterproof USB connectors.
+Owner-reported underwater use is valuable history, not a certified rating.
+
+For the mounting prototype and the follow-up work, see
+[underwater camera mounting](CAMERA_MOUNTING.md) and the
+[tank development TODOs](TANK_TODO.md).
+
 ## Robotic-arm design
 
 Reeflex uses [EEZYbotARM Mk2, published on Autodesk Instructables](https://www.instructables.com/EEZYbotARM-Mk2-3D-Printed-Robot/),

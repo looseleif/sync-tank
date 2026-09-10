@@ -69,6 +69,19 @@ camera/node identities. A future adapter should explicitly map the builder's
 centimeter sizes and normalization into that schema, preserve ownership, and
 request review before applying changes. No automatic live-hub import is claimed.
 
+## Match a mounted camera and its open work
+
+Use the [physical mounting workflow](CAMERA_MOUNTING.md) to identify each real
+feed, position its probe and compare its aim with known landmarks. Keep body
+center, lens center, image roll/mirroring and measured versus estimated coverage
+distinct. The current builder has yaw/pitch and a schematic FOV, not calibrated
+underwater optics or roll controls.
+
+Put applicable [tank TODO IDs](TANK_TODO.md) in an object's observation notes
+and retain the exported draft with the per-tank evidence record. Leave unknown
+positions unplaced. A spatial issue layer, camera calibration extensions and a
+reviewed live-hub import adapter are future work, not existing features.
+
 ## What a future image reconstruction stage needs
 
 Multiple overlapping views, a known scale reference, camera calibration and
